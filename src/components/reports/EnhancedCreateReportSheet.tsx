@@ -22,12 +22,12 @@ import { ChevronDown, ChevronRight, X, Eye } from "lucide-react";
 import { mockProperties, dataSourceConfig, type Property, type ColumnConfig } from "@/data/mockData";
 import { ReportPreview } from "./ReportPreview";
 
-interface CreateReportModalProps {
+interface CreateReportSheetProps {
   onClose: () => void;
   template?: any;
 }
 
-export function EnhancedCreateReportModal({ onClose, template }: CreateReportModalProps) {
+export function EnhancedCreateReportSheet({ onClose, template }: CreateReportSheetProps) {
   const [step1Open, setStep1Open] = useState(true);
   const [step2Open, setStep2Open] = useState(false);
   const [step3Open, setStep3Open] = useState(false);

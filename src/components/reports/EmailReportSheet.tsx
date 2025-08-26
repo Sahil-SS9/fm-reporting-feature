@@ -8,12 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Mail, Send, Users, Calendar } from "lucide-react";
 
-interface EmailReportModalProps {
+interface EmailReportSheetProps {
   reportConfig: any;
   onClose: () => void;
 }
 
-export function EmailReportModal({ reportConfig, onClose }: EmailReportModalProps) {
+export function EmailReportSheet({ reportConfig, onClose }: EmailReportSheetProps) {
   const [recipients, setRecipients] = useState("");
   const [subject, setSubject] = useState(`Report: ${reportConfig.name}`);
   const [message, setMessage] = useState(`Please find the attached report "${reportConfig.name}" generated on ${new Date().toLocaleDateString()}.`);

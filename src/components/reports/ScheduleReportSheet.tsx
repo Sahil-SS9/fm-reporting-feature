@@ -15,12 +15,12 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Calendar, Clock, Mail, Users } from "lucide-react";
 
-interface ScheduleReportModalProps {
+interface ScheduleReportSheetProps {
   reportConfig: any;
   onClose: () => void;
 }
 
-export function ScheduleReportModal({ reportConfig, onClose }: ScheduleReportModalProps) {
+export function ScheduleReportSheet({ reportConfig, onClose }: ScheduleReportSheetProps) {
   const [frequency, setFrequency] = useState("weekly");
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [time, setTime] = useState("09:00");

@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, FileText, TrendingUp, BarChart3, Star } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { EnhancedCreateReportModal } from "@/components/reports/EnhancedCreateReportModal";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { EnhancedCreateReportSheet } from "@/components/reports/EnhancedCreateReportSheet";
 import { EnhancedReportCard } from "@/components/reports/EnhancedReportCard";
 import { EmailHistory } from "@/components/reports/EmailHistory";
 import { ScheduleManagement } from "@/components/reports/ScheduleManagement";
@@ -90,28 +90,28 @@ export default function Reporting() {
           </p>
         </div>
         <div className="flex items-center space-x-3">
-          <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-            <DialogTrigger asChild>
+          <Sheet open={showCreateModal} onOpenChange={setShowCreateModal}>
+            <SheetTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 Create report
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>
+            </SheetTrigger>
+            <SheetContent side="right" className="sm:max-w-4xl">
+              <SheetHeader>
+                <SheetTitle>
                   {selectedTemplate ? `Create ${selectedTemplate.title}` : 'Create report'}
-                </DialogTitle>
-              </DialogHeader>
-              <EnhancedCreateReportModal 
+                </SheetTitle>
+              </SheetHeader>
+              <EnhancedCreateReportSheet 
                 template={selectedTemplate}
                 onClose={() => {
                   setShowCreateModal(false);
                   setSelectedTemplate(null);
                 }} 
               />
-            </DialogContent>
-          </Dialog>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
 

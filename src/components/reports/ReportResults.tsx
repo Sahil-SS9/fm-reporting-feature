@@ -18,12 +18,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   Search,
   Download,
@@ -36,8 +36,8 @@ import {
   Share2
 } from "lucide-react";
 import { dataSourceConfig, mockProperties } from "@/data/mockData";
-import { EmailReportModal } from "./EmailReportModal";
-import { ScheduleReportModal } from "./ScheduleReportModal";
+import { EmailReportSheet } from "./EmailReportSheet";
+import { ScheduleReportSheet } from "./ScheduleReportSheet";
 
 interface ReportResultsProps {
   config: any;
@@ -209,41 +209,41 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
         </div>
 
         <div className="flex items-center space-x-2">
-          <Dialog open={showEmailModal} onOpenChange={setShowEmailModal}>
-            <DialogTrigger asChild>
+          <Sheet open={showEmailModal} onOpenChange={setShowEmailModal}>
+            <SheetTrigger asChild>
               <Button variant="outline">
                 <Mail className="h-4 w-4 mr-2" />
                 Email
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Email Report</DialogTitle>
-              </DialogHeader>
-              <EmailReportModal 
+            </SheetTrigger>
+            <SheetContent side="right" className="sm:max-w-md">
+              <SheetHeader>
+                <SheetTitle>Email Report</SheetTitle>
+              </SheetHeader>
+              <EmailReportSheet 
                 reportConfig={config}
                 onClose={() => setShowEmailModal(false)}
               />
-            </DialogContent>
-          </Dialog>
+            </SheetContent>
+          </Sheet>
 
-          <Dialog open={showScheduleModal} onOpenChange={setShowScheduleModal}>
-            <DialogTrigger asChild>
+          <Sheet open={showScheduleModal} onOpenChange={setShowScheduleModal}>
+            <SheetTrigger asChild>
               <Button variant="outline">
                 <Calendar className="h-4 w-4 mr-2" />
                 Schedule
               </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Schedule Report</DialogTitle>
-              </DialogHeader>
-              <ScheduleReportModal 
+            </SheetTrigger>
+            <SheetContent side="right" className="sm:max-w-md">
+              <SheetHeader>
+                <SheetTitle>Schedule Report</SheetTitle>
+              </SheetHeader>
+              <ScheduleReportSheet 
                 reportConfig={config}
                 onClose={() => setShowScheduleModal(false)}
               />
-            </DialogContent>
-          </Dialog>
+            </SheetContent>
+          </Sheet>
 
           <Button onClick={handleExportCSV}>
             <Download className="h-4 w-4 mr-2" />

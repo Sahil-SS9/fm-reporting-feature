@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
   Search,
   Filter,
@@ -29,8 +29,8 @@ import {
   Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { EmailReportModal } from "./EmailReportModal";
-import { EnhancedCreateReportModal } from "./EnhancedCreateReportModal";
+import { EmailReportSheet } from "./EmailReportSheet";
+import { EnhancedCreateReportSheet } from "./EnhancedCreateReportSheet";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Report {
@@ -303,14 +303,14 @@ export function ReportTable({ onViewReport }: ReportTableProps) {
         </div>
       </div>
 
-      {/* Email Modal */}
-      <Dialog open={showEmailModal} onOpenChange={setShowEmailModal}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Email Report</DialogTitle>
-          </DialogHeader>
+      {/* Email Sheet */}
+      <Sheet open={showEmailModal} onOpenChange={setShowEmailModal}>
+        <SheetContent side="right" className="sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>Email Report</SheetTitle>
+          </SheetHeader>
           {selectedReport && (
-            <EmailReportModal 
+            <EmailReportSheet 
               reportConfig={{
                 name: selectedReport.subject,
                 id: selectedReport.id,
@@ -319,17 +319,17 @@ export function ReportTable({ onViewReport }: ReportTableProps) {
               onClose={() => setShowEmailModal(false)}
             />
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
-      {/* Edit Modal */}
-      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Report</DialogTitle>
-          </DialogHeader>
+      {/* Edit Sheet */}
+      <Sheet open={showEditModal} onOpenChange={setShowEditModal}>
+        <SheetContent side="right" className="sm:max-w-4xl">
+          <SheetHeader>
+            <SheetTitle>Edit Report</SheetTitle>
+          </SheetHeader>
           {selectedReport && (
-            <EnhancedCreateReportModal 
+            <EnhancedCreateReportSheet 
               template={null}
               onClose={() => {
                 setShowEditModal(false);
@@ -337,8 +337,8 @@ export function ReportTable({ onViewReport }: ReportTableProps) {
               }}
             />
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
