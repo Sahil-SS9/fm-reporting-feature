@@ -158,23 +158,15 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
             )}
           </div>
 
-          <div className="flex gap-2 pt-2">
+          <div className="pt-2">
             <Button
               variant="default"
               size="sm"
               onClick={() => onView(report)}
-              className="flex-1"
+              className="w-full"
             >
               <Eye className="mr-2 h-4 w-4" />
               View Report
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onDownload(report)}
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Download
             </Button>
           </div>
         </div>
