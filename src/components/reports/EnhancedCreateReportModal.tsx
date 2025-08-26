@@ -282,14 +282,14 @@ export function EnhancedCreateReportModal({ onClose, template }: CreateReportMod
                         <Label>{column.label}</Label>
                         {column.type === "select" && column.options && (
                           <Select
-                            value={filters[column.key] || ""}
-                            onValueChange={(value) => handleFilterChange(column.key, value)}
+                            value={filters[column.key] || undefined}
+                            onValueChange={(value) => handleFilterChange(column.key, value === "all" ? "" : value)}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder={`Filter by ${column.label}`} />
+                              <SelectValue placeholder={`Filter by ${column.label} (All)`} />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="">All</SelectItem>
+                              <SelectItem value="all">All</SelectItem>
                               {column.options.map((option) => (
                                 <SelectItem key={option} value={option}>
                                   {option}
