@@ -6,7 +6,7 @@ import { Plus, FileText, TrendingUp, BarChart3 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { EnhancedCreateReportModal } from "@/components/reports/EnhancedCreateReportModal";
 import { ReportResults } from "@/components/reports/ReportResults";
-import { quickReportTemplates } from "@/data/mockData";
+import { quickReportTemplates, mockSavedReports } from "@/data/mockData";
 
 const reportTypes = quickReportTemplates;
 
@@ -15,6 +15,7 @@ export default function Reporting() {
   const [hasReports, setHasReports] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
   const [currentView, setCurrentView] = useState<'main' | 'results'>('main');
+  const [savedReports, setSavedReports] = useState(mockSavedReports);
   const [reportResults, setReportResults] = useState<any>(null);
 
   const handleTemplateClick = (template: any) => {
@@ -25,6 +26,42 @@ export default function Reporting() {
   const handleViewResults = (reportConfig: any) => {
     setReportResults(reportConfig);
     setCurrentView('results');
+  };
+
+  const handleToggleFavorite = (reportId: string) => {
+    setSavedReports(prev => prev.map(report => 
+      report.id === reportId 
+        ? { ...report, favorite: !report.favorite }
+        : report
+    ));
+  };
+
+  const handleEditReport = (report: any) => {
+    setSelectedTemplate(report);
+    setShowCreateModal(true);
+  };
+
+  const handleCopyReport = (report: any) => {
+    const copiedReport = {
+      ...report,
+      id: `report-${Date.now()}`,
+      name: `${report.name} (Copy)`,
+      createdDate: new Date().toISOString(),
+      favorite: false
+    };
+    setSavedReports(prev => [...prev, copiedReport]);
+  };
+
+  const handleDeleteReport = (report: any) => {
+    setSavedReports(prev => prev.filter(r => r.id !== report.id));
+  };
+
+  const handleEmailReport = (report: any) => {
+    console.log('Email report:', report);
+  };
+
+  const handleDownloadReport = (report: any) => {
+    console.log('Download report:', report);
   };
 
   if (currentView === 'results' && reportResults) {

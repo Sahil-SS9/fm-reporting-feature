@@ -7,6 +7,58 @@ export interface Property {
   type: "Office" | "Retail" | "Warehouse" | "Mixed Use";
 }
 
+export interface SavedReport {
+  id: string;
+  name: string;
+  description: string;
+  dataSource: string;
+  columns: string[];
+  filters: Record<string, any>;
+  createdDate: string;
+  lastRun?: string;
+  lastSent?: string;
+  favorite: boolean;
+  userId: string;
+  reportType: 'Activity' | 'Performance';
+}
+
+export interface ScheduledReport {
+  id: string;
+  reportId: string;
+  frequency: 'daily' | 'weekly' | 'monthly';
+  time: string;
+  timezone: string;
+  recipients: string[];
+  ccRecipients?: string[];
+  status: 'active' | 'paused' | 'expired';
+  nextRun: string;
+  lastRun?: string;
+  createdDate: string;
+  startDate: string;
+  endDate?: string;
+  enabled: boolean;
+}
+
+export interface EmailHistory {
+  id: string;
+  reportId: string;
+  reportName: string;
+  sentDate: string;
+  recipients: string[];
+  ccRecipients?: string[];
+  subject: string;
+  type: 'manual' | 'scheduled';
+  status: 'sent' | 'failed' | 'pending';
+  attachmentSize?: string;
+  userId: string;
+}
+
+export interface UserAccess {
+  userId: string;
+  propertyIds: string[];
+  role: 'admin' | 'manager' | 'technician';
+}
+
 export interface WorkOrder {
   id: string;
   title: string;
@@ -363,33 +415,198 @@ export const dataSourceConfig = {
   }
 };
 
-// Quick report templates
+// Mock saved reports
+export const mockSavedReports: SavedReport[] = [
+  {
+    id: "report-1",
+    name: "Weekly Work Orders Summary",
+    description: "Summary of work orders created and completed this week",
+    dataSource: "Work Orders",
+    columns: ["id", "title", "status", "priority", "createdDate", "completedDate"],
+    filters: { status: ["Completed"] },
+    createdDate: "2024-01-15T10:30:00Z",
+    lastRun: "2024-01-22T09:15:00Z",
+    lastSent: "2024-01-22T09:20:00Z",
+    favorite: true,
+    userId: "user1",
+    reportType: 'Activity'
+  },
+  {
+    id: "report-2",
+    name: "Asset Maintenance Schedule",
+    description: "Upcoming maintenance schedule for all active assets",
+    dataSource: "Assets",
+    columns: ["name", "type", "nextInspection", "status", "location"],
+    filters: { status: ["Active"] },
+    createdDate: "2024-01-10T14:20:00Z",
+    lastRun: "2024-01-20T08:30:00Z",
+    favorite: false,
+    userId: "user1",
+    reportType: 'Performance'
+  },
+  {
+    id: "report-3",
+    name: "Critical Priority Tasks",
+    description: "All high and critical priority work orders",
+    dataSource: "Work Orders",
+    columns: ["id", "title", "priority", "status", "dueDate", "assigneeId"],
+    filters: { priority: ["High", "Critical"] },
+    createdDate: "2024-01-08T11:45:00Z",
+    lastRun: "2024-01-21T16:10:00Z",
+    lastSent: "2024-01-21T16:15:00Z",
+    favorite: true,
+    userId: "user1",
+    reportType: 'Activity'
+  }
+];
+
+// Mock scheduled reports
+export const mockScheduledReports: ScheduledReport[] = [
+  {
+    id: "sched-1",
+    reportId: "report-1",
+    frequency: 'weekly',
+    time: '09:00',
+    timezone: 'GMT',
+    recipients: ['manager@company.com', 'supervisor@company.com'],
+    status: 'active',
+    nextRun: "2024-01-29T09:00:00Z",
+    lastRun: "2024-01-22T09:00:00Z",
+    createdDate: "2024-01-15T10:35:00Z",
+    startDate: "2024-01-15T10:35:00Z",
+    enabled: true
+  },
+  {
+    id: "sched-2",
+    reportId: "report-3",
+    frequency: 'daily',
+    time: '08:30',
+    timezone: 'GMT',
+    recipients: ['alerts@company.com'],
+    ccRecipients: ['manager@company.com'],
+    status: 'paused',
+    nextRun: "2024-01-23T08:30:00Z",
+    lastRun: "2024-01-19T08:30:00Z",
+    createdDate: "2024-01-08T11:50:00Z",
+    startDate: "2024-01-08T11:50:00Z",
+    enabled: false
+  }
+];
+
+// Mock email history
+export const mockEmailHistory: EmailHistory[] = [
+  {
+    id: "email-1",
+    reportId: "report-1",
+    reportName: "Weekly Work Orders Summary",
+    sentDate: "2024-01-22T09:20:00Z",
+    recipients: ['manager@company.com', 'supervisor@company.com'],
+    subject: "Weekly Work Orders Summary - January 22, 2024",
+    type: 'scheduled',
+    status: 'sent',
+    attachmentSize: "245 KB",
+    userId: "user1"
+  },
+  {
+    id: "email-2",
+    reportId: "report-3",
+    reportName: "Critical Priority Tasks",
+    sentDate: "2024-01-21T16:15:00Z",
+    recipients: ['alerts@company.com'],
+    ccRecipients: ['manager@company.com'],
+    subject: "Critical Priority Tasks - Urgent Review Required",
+    type: 'manual',
+    status: 'sent',
+    attachmentSize: "189 KB",
+    userId: "user1"
+  },
+  {
+    id: "email-3",
+    reportId: "report-2",
+    reportName: "Asset Maintenance Schedule",
+    sentDate: "2024-01-20T10:45:00Z",
+    recipients: ['maintenance@company.com'],
+    subject: "Monthly Asset Maintenance Schedule",
+    type: 'manual',
+    status: 'sent',
+    attachmentSize: "312 KB",
+    userId: "user1"
+  },
+  {
+    id: "email-4",
+    reportId: "report-1",
+    reportName: "Weekly Work Orders Summary",
+    sentDate: "2024-01-15T09:20:00Z",
+    recipients: ['manager@company.com', 'supervisor@company.com'],
+    subject: "Weekly Work Orders Summary - January 15, 2024",
+    type: 'scheduled',
+    status: 'sent',
+    attachmentSize: "298 KB",
+    userId: "user1"
+  }
+];
+
+// Mock user access control
+export const mockUserAccess: UserAccess[] = [
+  {
+    userId: "user1",
+    propertyIds: ["1", "2", "3", "4", "5"],
+    role: "admin"
+  },
+  {
+    userId: "user2",
+    propertyIds: ["1", "2"],
+    role: "manager"
+  },
+  {
+    userId: "user3",
+    propertyIds: ["3"],
+    role: "technician"
+  }
+];
+
+// Quick report templates with enhanced column suggestions
 export const quickReportTemplates = [
   {
     id: "template-1",
     title: "Cases report",
-    description: "Report about performance",
+    description: "Activity report focusing on work order tracking and task completion",
     dataSource: "Work Orders",
     defaultColumns: ["id", "title", "status", "priority", "createdDate", "dueDate"],
     defaultFilters: { status: ["Open", "In Progress"] },
-    icon: "FileText"
+    reportType: 'Activity',
+    icon: "FileText",
+    suggestedColumns: {
+      activity: ["id", "title", "status", "priority", "createdDate", "dueDate", "assigneeId", "category"],
+      performance: ["status", "priority", "estimatedHours", "actualHours", "completedDate"]
+    }
   },
   {
     id: "template-2", 
     title: "Inspections report",
-    description: "Report about inspections",
+    description: "Performance report analyzing asset inspection schedules and compliance",
     dataSource: "Assets",
     defaultColumns: ["id", "name", "type", "lastInspection", "nextInspection", "status"],
     defaultFilters: { status: ["Active"] },
-    icon: "TrendingUp"
+    reportType: 'Performance',
+    icon: "TrendingUp",
+    suggestedColumns: {
+      activity: ["id", "name", "type", "location", "status", "lastInspection"],
+      performance: ["lastInspection", "nextInspection", "status", "purchaseDate", "warrantyExpiry"]
+    }
   },
   {
     id: "template-3",
     title: "Maintenance report",
-    description: "Report about maintenance", 
+    description: "Activity report detailing maintenance tasks and resource utilization", 
     dataSource: "Work Orders",
     defaultColumns: ["id", "title", "category", "status", "actualHours", "completedDate"],
     defaultFilters: { category: ["HVAC", "Electrical", "Plumbing"] },
-    icon: "BarChart3"
+    reportType: 'Activity',
+    icon: "BarChart3",
+    suggestedColumns: {
+      activity: ["id", "title", "category", "status", "createdDate", "completedDate", "assigneeId"],
+      performance: ["category", "estimatedHours", "actualHours", "status", "completedDate"]
+    }
   }
 ];
