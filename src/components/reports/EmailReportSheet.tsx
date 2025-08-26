@@ -13,7 +13,7 @@ interface EmailReportSheetProps {
   onClose: () => void;
 }
 
-export function EmailReportSheet({ reportConfig, onClose }: EmailReportSheetProps) {
+function EmailReportSheet({ reportConfig, onClose }: EmailReportSheetProps) {
   const [recipients, setRecipients] = useState("");
   const [subject, setSubject] = useState(`Report: ${reportConfig.name}`);
   const [message, setMessage] = useState(`Please find the attached report "${reportConfig.name}" generated on ${new Date().toLocaleDateString()}.`);
@@ -177,3 +177,6 @@ export function EmailReportSheet({ reportConfig, onClose }: EmailReportSheetProp
     </div>
   );
 }
+
+export { EmailReportSheet };
+export default EmailReportSheet;
