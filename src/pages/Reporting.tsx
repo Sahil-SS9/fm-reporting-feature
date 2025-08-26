@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ReportTable } from "@/components/reports/ReportTable";
-import { Plus, FileText, TrendingUp, BarChart3 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus, FileText, TrendingUp, BarChart3, Star } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { EnhancedCreateReportModal } from "@/components/reports/EnhancedCreateReportModal";
+import { EnhancedReportCard } from "@/components/reports/EnhancedReportCard";
+import { EmailHistory } from "@/components/reports/EmailHistory";
+import { ScheduleManagement } from "@/components/reports/ScheduleManagement";
 import { ReportResults } from "@/components/reports/ReportResults";
-import { quickReportTemplates, mockSavedReports } from "@/data/mockData";
+import { quickReportTemplates, mockSavedReports, SavedReport } from "@/data/mockData";
 
 const reportTypes = quickReportTemplates;
 
@@ -16,6 +19,7 @@ export default function Reporting() {
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
   const [currentView, setCurrentView] = useState<'main' | 'results'>('main');
   const [savedReports, setSavedReports] = useState(mockSavedReports);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [reportResults, setReportResults] = useState<any>(null);
 
   const handleTemplateClick = (template: any) => {
@@ -160,15 +164,56 @@ export default function Reporting() {
             })}
           </div>
 
-          {/* Scheduled Reports */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Scheduled reports</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ReportTable onViewReport={handleViewResults} />
-            </CardContent>
-          </Card>
+          {/* Main Reports Section */}
+          <Tabs defaultValue="saved-reports" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="saved-reports">Saved Reports</TabsTrigger>
+              <TabsTrigger value="schedules">Scheduled Reports</TabsTrigger>
+              <TabsTrigger value="email-history">Email History</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="saved-reports" className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant={showFavoritesOnly ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                  >
+                    <Star className="h-4 w-4 mr-2" />
+                    Favorites Only
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {savedReports
+                  .filter(report => !showFavoritesOnly || report.favorite)
+                  .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
+                  .map((report) => (
+                    <EnhancedReportCard
+                      key={report.id}
+                      report={report}
+                      onView={handleViewResults}
+                      onEdit={handleEditReport}
+                      onCopy={handleCopyReport}
+                      onEmail={handleEmailReport}
+                      onDownload={handleDownloadReport}
+                      onDelete={handleDeleteReport}
+                      onToggleFavorite={handleToggleFavorite}
+                    />
+                  ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="schedules">
+              <ScheduleManagement />
+            </TabsContent>
+
+            <TabsContent value="email-history">
+              <EmailHistory />
+            </TabsContent>
+          </Tabs>
         </>
       ) : (
         /* Empty State */
