@@ -57,7 +57,19 @@ const mockReports: Report[] = [
 ];
 
 export function ReportTable() {
-  const [reports] = useState<Report[]>(mockReports);
+  const [reports, setReports] = useState<Report[]>(() => {
+    // Load saved reports from localStorage
+    const savedReports = JSON.parse(localStorage.getItem('savedReports') || '[]');
+    const convertedReports = savedReports.map((saved: any) => ({
+      id: saved.id,
+      subject: saved.name,
+      from: "User Created",
+      status: "Draft" as const,
+      lastRun: undefined,
+      nextRun: undefined
+    }));
+    return [...mockReports, ...convertedReports];
+  });
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredReports = reports.filter((report) =>

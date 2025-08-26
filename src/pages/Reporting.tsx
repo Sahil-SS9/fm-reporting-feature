@@ -4,29 +4,39 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ReportTable } from "@/components/reports/ReportTable";
 import { Plus, FileText, TrendingUp, BarChart3 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { CreateReportModal } from "@/components/reports/CreateReportModal";
+import { EnhancedCreateReportModal } from "@/components/reports/EnhancedCreateReportModal";
+import { ReportResults } from "@/components/reports/ReportResults";
+import { quickReportTemplates } from "@/data/mockData";
 
-const reportTypes = [
-  {
-    title: "Cases report",
-    description: "Report about performance",
-    icon: FileText,
-  },
-  {
-    title: "Inspections report", 
-    description: "Report about inspections",
-    icon: TrendingUp,
-  },
-  {
-    title: "Maintenance report",
-    description: "Report about maintenance",
-    icon: BarChart3,
-  },
-];
+const reportTypes = quickReportTemplates;
 
 export default function Reporting() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [hasReports, setHasReports] = useState(true);
+  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+  const [currentView, setCurrentView] = useState<'main' | 'results'>('main');
+  const [reportResults, setReportResults] = useState<any>(null);
+
+  const handleTemplateClick = (template: any) => {
+    setSelectedTemplate(template);
+    setShowCreateModal(true);
+  };
+
+  const handleViewResults = (reportConfig: any) => {
+    setReportResults(reportConfig);
+    setCurrentView('results');
+  };
+
+  if (currentView === 'results' && reportResults) {
+    return (
+      <div className="p-6">
+        <ReportResults 
+          config={reportResults} 
+          onBack={() => setCurrentView('main')}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -48,9 +58,17 @@ export default function Reporting() {
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Create report</DialogTitle>
+                <DialogTitle>
+                  {selectedTemplate ? `Create ${selectedTemplate.title}` : 'Create report'}
+                </DialogTitle>
               </DialogHeader>
-              <CreateReportModal onClose={() => setShowCreateModal(false)} />
+              <EnhancedCreateReportModal 
+                template={selectedTemplate}
+                onClose={() => {
+                  setShowCreateModal(false);
+                  setSelectedTemplate(null);
+                }} 
+              />
             </DialogContent>
           </Dialog>
         </div>
@@ -60,26 +78,49 @@ export default function Reporting() {
         <>
           {/* Quick Reports */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {reportTypes.map((report, index) => (
-              <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
-                <CardHeader className="pb-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <report.icon className="h-5 w-5 text-primary" />
+            {reportTypes.map((report, index) => {
+              const IconComponent = report.icon === "FileText" ? FileText : 
+                                   report.icon === "TrendingUp" ? TrendingUp : BarChart3;
+              
+              return (
+                <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <IconComponent className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-base">{report.title}</CardTitle>
+                        <p className="text-sm text-muted-foreground">{report.description}</p>
+                      </div>
                     </div>
-                    <div>
-                      <CardTitle className="text-base">{report.title}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{report.description}</p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <Button variant="outline" size="sm" className="w-full">
-                    View
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardHeader>
+                  <CardContent className="pt-0 space-y-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full"
+                      onClick={() => handleTemplateClick(report)}
+                    >
+                      Create Report
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      className="w-full"
+                      onClick={() => handleViewResults({
+                        ...report,
+                        name: report.title,
+                        properties: ["1", "2"], // Mock selection
+                        columns: report.defaultColumns,
+                        filters: report.defaultFilters
+                      })}
+                    >
+                      Quick View
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {/* Scheduled Reports */}
