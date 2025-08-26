@@ -129,7 +129,7 @@ export default function Reporting() {
               <CardTitle>Scheduled reports</CardTitle>
             </CardHeader>
             <CardContent>
-              <ReportTable />
+              <ReportTable onViewReport={handleViewResults} />
             </CardContent>
           </Card>
         </>

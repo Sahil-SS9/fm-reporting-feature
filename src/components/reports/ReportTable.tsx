@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Search,
   Filter,
@@ -28,6 +29,9 @@ import {
   Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { EmailReportModal } from "./EmailReportModal";
+import { EnhancedCreateReportModal } from "./EnhancedCreateReportModal";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Report {
   id: string;
@@ -36,6 +40,11 @@ interface Report {
   status: "Active" | "Scheduled" | "Draft";
   lastRun?: string;
   nextRun?: string;
+  favorite?: boolean;
+}
+
+interface ReportTableProps {
+  onViewReport?: (report: Report) => void;
 }
 
 const mockReports: Report[] = [
@@ -56,7 +65,7 @@ const mockReports: Report[] = [
   },
 ];
 
-export function ReportTable() {
+export function ReportTable({ onViewReport }: ReportTableProps) {
   const [reports, setReports] = useState<Report[]>(() => {
     // Load saved reports from localStorage
     const savedReports = JSON.parse(localStorage.getItem('savedReports') || '[]');
@@ -66,16 +75,99 @@ export function ReportTable() {
       from: "User Created",
       status: "Draft" as const,
       lastRun: undefined,
-      nextRun: undefined
+      nextRun: undefined,
+      favorite: false
     }));
-    return [...mockReports, ...convertedReports];
+    return [...mockReports.map(r => ({ ...r, favorite: false })), ...convertedReports];
   });
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState<"all" | "favorites">("all");
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+  const { toast } = useToast();
 
-  const filteredReports = reports.filter((report) =>
-    report.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    report.from.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredReports = reports.filter((report) => {
+    const matchesSearch = report.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.from.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterType === "all" || (filterType === "favorites" && report.favorite);
+    return matchesSearch && matchesFilter;
+  });
+
+  const handleToggleFavorite = (reportId: string) => {
+    setReports(prev => prev.map(report => 
+      report.id === reportId 
+        ? { ...report, favorite: !report.favorite }
+        : report
+    ));
+    toast({
+      title: "Updated",
+      description: "Report favorite status updated",
+    });
+  };
+
+  const handleEditReport = (report: Report) => {
+    setSelectedReport(report);
+    setShowEditModal(true);
+  };
+
+  const handleCopyReport = (report: Report) => {
+    const newReport = {
+      ...report,
+      id: Date.now().toString(),
+      subject: `${report.subject} (Copy)`,
+      status: "Draft" as const,
+      lastRun: undefined,
+      nextRun: undefined
+    };
+    setReports(prev => [...prev, newReport]);
+    toast({
+      title: "Report Copied",
+      description: `"${report.subject}" has been copied`,
+    });
+  };
+
+  const handleEmailReport = (report: Report) => {
+    setSelectedReport(report);
+    setShowEmailModal(true);
+  };
+
+  const handleDownloadReport = (report: Report) => {
+    // Simulate CSV download
+    const csvContent = `Report: ${report.subject}\nStatus: ${report.status}\nFrom: ${report.from}\nLast Run: ${report.lastRun || 'N/A'}\nNext Run: ${report.nextRun || 'N/A'}`;
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${report.subject.replace(/\s+/g, '_')}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+    toast({
+      title: "Download Started",
+      description: `"${report.subject}" is being downloaded`,
+    });
+  };
+
+  const handleDeleteReport = (report: Report) => {
+    setReports(prev => prev.filter(r => r.id !== report.id));
+    // Also remove from localStorage if it's a saved report
+    const savedReports = JSON.parse(localStorage.getItem('savedReports') || '[]');
+    const updatedSaved = savedReports.filter((saved: any) => saved.id !== report.id);
+    localStorage.setItem('savedReports', JSON.stringify(updatedSaved));
+    toast({
+      title: "Report Deleted",
+      description: `"${report.subject}" has been deleted`,
+      variant: "destructive"
+    });
+  };
+
+  const handleRowClick = (report: Report) => {
+    if (onViewReport) {
+      onViewReport(report);
+    }
+  };
 
   const getStatusBadge = (status: Report["status"]) => {
     switch (status) {
@@ -105,11 +197,19 @@ export function ReportTable() {
         </div>
         
         <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm">
+          <Button 
+            variant={filterType === "all" ? "default" : "outline"} 
+            size="sm"
+            onClick={() => setFilterType("all")}
+          >
             <Filter className="h-4 w-4 mr-2" />
             All reports
           </Button>
-          <Button variant="outline" size="sm">
+          <Button 
+            variant={filterType === "favorites" ? "default" : "outline"} 
+            size="sm"
+            onClick={() => setFilterType("favorites")}
+          >
             <Star className="h-4 w-4 mr-2" />
             Favourites
           </Button>
@@ -132,10 +232,19 @@ export function ReportTable() {
           </TableHeader>
           <TableBody>
             {filteredReports.map((report) => (
-              <TableRow key={report.id} className="hover:bg-muted/50">
-                <TableCell>
-                  <Button variant="ghost" size="icon" className="h-6 w-6">
-                    <Star className="h-3 w-3" />
+              <TableRow 
+                key={report.id} 
+                className="hover:bg-muted/50 cursor-pointer"
+                onClick={() => handleRowClick(report)}
+              >
+                <TableCell onClick={(e) => e.stopPropagation()}>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6"
+                    onClick={() => handleToggleFavorite(report.id)}
+                  >
+                    <Star className={cn("h-3 w-3", report.favorite && "fill-current text-yellow-500")} />
                   </Button>
                 </TableCell>
                 <TableCell className="font-medium">{report.subject}</TableCell>
@@ -147,31 +256,34 @@ export function ReportTable() {
                 <TableCell className="text-muted-foreground">
                   {report.nextRun || "-"}
                 </TableCell>
-                <TableCell>
+                <TableCell onClick={(e) => e.stopPropagation()}>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-6 w-6">
                         <MoreHorizontal className="h-3 w-3" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
+                    <DropdownMenuContent align="end" className="bg-background border shadow-md">
+                      <DropdownMenuItem onClick={() => handleEditReport(report)}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleCopyReport(report)}>
                         <Copy className="h-4 w-4 mr-2" />
                         Copy
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleEmailReport(report)}>
                         <Mail className="h-4 w-4 mr-2" />
                         Email
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDownloadReport(report)}>
                         <Download className="h-4 w-4 mr-2" />
                         Download
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-destructive">
+                      <DropdownMenuItem 
+                        className="text-destructive"
+                        onClick={() => handleDeleteReport(report)}
+                      >
                         <Trash2 className="h-4 w-4 mr-2" />
                         Delete
                       </DropdownMenuItem>
@@ -185,12 +297,48 @@ export function ReportTable() {
       </div>
 
       <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <div>Showing 1-2 of 2</div>
+        <div>Showing {filteredReports.length} of {reports.length}</div>
         <div className="flex items-center space-x-2">
-          <span>of</span>
-          <span>1</span>
+          <span>Page 1 of 1</span>
         </div>
       </div>
+
+      {/* Email Modal */}
+      <Dialog open={showEmailModal} onOpenChange={setShowEmailModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Email Report</DialogTitle>
+          </DialogHeader>
+          {selectedReport && (
+            <EmailReportModal 
+              reportConfig={{
+                name: selectedReport.subject,
+                id: selectedReport.id,
+                status: selectedReport.status
+              }}
+              onClose={() => setShowEmailModal(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Modal */}
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Report</DialogTitle>
+          </DialogHeader>
+          {selectedReport && (
+            <EnhancedCreateReportModal 
+              template={null}
+              onClose={() => {
+                setShowEditModal(false);
+                setSelectedReport(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
