@@ -9,6 +9,8 @@ import { EnhancedReportCard } from "@/components/reports/EnhancedReportCard";
 import { EmailHistory } from "@/components/reports/EmailHistory";
 import { ScheduleManagement } from "@/components/reports/ScheduleManagement";
 import { ReportResults } from "@/components/reports/ReportResults";
+import { EmailReportSheet } from "@/components/reports/EmailReportSheet";
+import { ScheduleReportSheet } from "@/components/reports/ScheduleReportSheet";
 import { quickReportTemplates, mockSavedReports, SavedReport } from "@/data/mockData";
 
 const reportTypes = quickReportTemplates;
@@ -21,6 +23,10 @@ export default function Reporting() {
   const [savedReports, setSavedReports] = useState(mockSavedReports);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [reportResults, setReportResults] = useState<any>(null);
+  const [showEmailSheet, setShowEmailSheet] = useState(false);
+  const [showScheduleSheet, setShowScheduleSheet] = useState(false);
+  const [emailReportConfig, setEmailReportConfig] = useState<any>(null);
+  const [scheduleReportConfig, setScheduleReportConfig] = useState<any>(null);
 
   const handleTemplateClick = (template: any) => {
     setSelectedTemplate(template);
@@ -61,11 +67,27 @@ export default function Reporting() {
   };
 
   const handleEmailReport = (report: any) => {
-    console.log('Email report:', report);
+    setEmailReportConfig(report);
+    setShowEmailSheet(true);
   };
 
   const handleDownloadReport = (report: any) => {
-    console.log('Download report:', report);
+    // Create CSV content
+    const csvContent = `Report Name,Data Source,Columns,Created Date\n${report.name},${report.dataSource || 'N/A'},${report.columns?.length || 0},${report.createdDate}`;
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${report.name.replace(/\s+/g, '_')}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  };
+
+  const handleScheduleReport = (report: any) => {
+    setScheduleReportConfig(report);
+    setShowScheduleSheet(true);
   };
 
   if (currentView === 'results' && reportResults) {
@@ -199,6 +221,7 @@ export default function Reporting() {
                       onCopy={handleCopyReport}
                       onEmail={handleEmailReport}
                       onDownload={handleDownloadReport}
+                      onSchedule={handleScheduleReport}
                       onDelete={handleDeleteReport}
                       onToggleFavorite={handleToggleFavorite}
                     />
@@ -232,6 +255,36 @@ export default function Reporting() {
           </Button>
         </div>
       )}
+
+      {/* Email Report Sheet */}
+      <Sheet open={showEmailSheet} onOpenChange={setShowEmailSheet}>
+        <SheetContent side="right" className="sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>Email Report</SheetTitle>
+          </SheetHeader>
+          {emailReportConfig && (
+            <EmailReportSheet 
+              reportConfig={emailReportConfig}
+              onClose={() => setShowEmailSheet(false)}
+            />
+          )}
+        </SheetContent>
+      </Sheet>
+
+      {/* Schedule Report Sheet */}
+      <Sheet open={showScheduleSheet} onOpenChange={setShowScheduleSheet}>
+        <SheetContent side="right" className="sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>Schedule Report</SheetTitle>
+          </SheetHeader>
+          {scheduleReportConfig && (
+            <ScheduleReportSheet 
+              reportConfig={scheduleReportConfig}
+              onClose={() => setShowScheduleSheet(false)}
+            />
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

@@ -6,8 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail, Send, Users, Calendar, X } from "lucide-react";
+import { Mail, Send, X } from "lucide-react";
 
 interface EmailReportSheetProps {
   reportConfig: any;
@@ -58,126 +57,112 @@ function EmailReportSheet({ reportConfig, onClose }: EmailReportSheetProps) {
 
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="send-now" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="send-now">Send email now</TabsTrigger>
-          <TabsTrigger value="schedule">Create a schedule</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="send-now" className="space-y-4 mt-6">
-          {/* From Field */}
-          <div className="space-y-2">
-            <Label>From</Label>
-            <div className="text-sm text-muted-foreground bg-muted/30 px-3 py-2 rounded-md">
-              {fromAddress}
+      <div className="space-y-4 mt-6">
+        {/* From Field */}
+        <div className="space-y-2">
+          <Label>From</Label>
+          <div className="text-sm text-muted-foreground bg-muted/30 px-3 py-2 rounded-md">
+            {fromAddress}
+          </div>
+        </div>
+
+        {/* Email To */}
+        <div className="space-y-2">
+          <Label htmlFor="recipients">Email to</Label>
+          <Input
+            id="recipients"
+            value={recipients}
+            onChange={(e) => setRecipients(e.target.value)}
+            placeholder="Enter email addresses, separated by commas"
+          />
+          {recipientList.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {recipientList.map((email, index) => (
+                <Badge key={index} variant="secondary" className="text-xs gap-1">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                  {email.trim()}
+                  <X 
+                    className="h-3 w-3 cursor-pointer hover:bg-destructive/20 rounded-full" 
+                    onClick={() => removeRecipient(email.trim(), 'to')}
+                  />
+                </Badge>
+              ))}
             </div>
-          </div>
+          )}
+        </div>
 
-          {/* Email To */}
-          <div className="space-y-2">
-            <Label htmlFor="recipients">Email to</Label>
-            <Input
-              id="recipients"
-              value={recipients}
-              onChange={(e) => setRecipients(e.target.value)}
-              placeholder="Enter email addresses, separated by commas"
-            />
-            {recipientList.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {recipientList.map((email, index) => (
-                  <Badge key={index} variant="secondary" className="text-xs gap-1">
-                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                    {email.trim()}
-                    <X 
-                      className="h-3 w-3 cursor-pointer hover:bg-destructive/20 rounded-full" 
-                      onClick={() => removeRecipient(email.trim(), 'to')}
-                    />
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
+        {/* Email CC */}
+        <div className="space-y-2">
+          <Label htmlFor="cc">Email CC</Label>
+          <Input
+            id="cc"
+            value={ccRecipients}
+            onChange={(e) => setCcRecipients(e.target.value)}
+            placeholder="Enter CC email addresses, separated by commas"
+          />
+          {ccList.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {ccList.map((email, index) => (
+                <Badge key={index} variant="outline" className="text-xs gap-1">
+                  <span className="w-2 h-2 bg-gray-500 rounded-full"></span>
+                  {email.trim()}
+                  <X 
+                    className="h-3 w-3 cursor-pointer hover:bg-destructive/20 rounded-full" 
+                    onClick={() => removeRecipient(email.trim(), 'cc')}
+                  />
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
 
-          {/* Email CC */}
-          <div className="space-y-2">
-            <Label htmlFor="cc">Email CC</Label>
-            <Input
-              id="cc"
-              value={ccRecipients}
-              onChange={(e) => setCcRecipients(e.target.value)}
-              placeholder="Enter CC email addresses, separated by commas"
-            />
-            {ccList.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {ccList.map((email, index) => (
-                  <Badge key={index} variant="outline" className="text-xs gap-1">
-                    <span className="w-2 h-2 bg-gray-500 rounded-full"></span>
-                    {email.trim()}
-                    <X 
-                      className="h-3 w-3 cursor-pointer hover:bg-destructive/20 rounded-full" 
-                      onClick={() => removeRecipient(email.trim(), 'cc')}
-                    />
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
+        {/* Email BCC */}
+        <div className="space-y-2">
+          <Label htmlFor="bcc">Email BCC</Label>
+          <Input
+            id="bcc"
+            value={bccRecipients}
+            onChange={(e) => setBccRecipients(e.target.value)}
+            placeholder="Enter BCC email addresses, separated by commas"
+          />
+          {bccList.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {bccList.map((email, index) => (
+                <Badge key={index} variant="outline" className="text-xs gap-1">
+                  <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                  {email.trim()}
+                  <X 
+                    className="h-3 w-3 cursor-pointer hover:bg-destructive/20 rounded-full" 
+                    onClick={() => removeRecipient(email.trim(), 'bcc')}
+                  />
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
 
-          {/* Email BCC */}
-          <div className="space-y-2">
-            <Label htmlFor="bcc">Email BCC</Label>
-            <Input
-              id="bcc"
-              value={bccRecipients}
-              onChange={(e) => setBccRecipients(e.target.value)}
-              placeholder="Enter BCC email addresses, separated by commas"
-            />
-            {bccList.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {bccList.map((email, index) => (
-                  <Badge key={index} variant="outline" className="text-xs gap-1">
-                    <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                    {email.trim()}
-                    <X 
-                      className="h-3 w-3 cursor-pointer hover:bg-destructive/20 rounded-full" 
-                      onClick={() => removeRecipient(email.trim(), 'bcc')}
-                    />
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
+        {/* Subject */}
+        <div className="space-y-2">
+          <Label htmlFor="subject">Subject</Label>
+          <Input
+            id="subject"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+          />
+        </div>
 
-          {/* Subject */}
-          <div className="space-y-2">
-            <Label htmlFor="subject">Subject</Label>
-            <Input
-              id="subject"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-            />
-          </div>
-
-          {/* Message */}
-          <div className="space-y-2">
-            <Label htmlFor="message">Message</Label>
-            <Textarea
-              id="message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              rows={3}
-              className="resize-none"
-            />
-          </div>
-        </TabsContent>
-
-        <TabsContent value="schedule" className="space-y-4 mt-6">
-          <div className="text-center py-8 text-muted-foreground">
-            <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Schedule functionality will be available soon</p>
-          </div>
-        </TabsContent>
-      </Tabs>
+        {/* Message */}
+        <div className="space-y-2">
+          <Label htmlFor="message">Message</Label>
+          <Textarea
+            id="message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            rows={3}
+            className="resize-none"
+          />
+        </div>
+      </div>
 
       <Separator />
 

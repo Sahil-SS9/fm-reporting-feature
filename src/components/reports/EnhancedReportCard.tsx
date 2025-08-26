@@ -14,6 +14,7 @@ interface EnhancedReportCardProps {
   onCopy: (report: SavedReport) => void;
   onEmail: (report: SavedReport) => void;
   onDownload: (report: SavedReport) => void;
+  onSchedule: (report: SavedReport) => void;
   onDelete: (report: SavedReport) => void;
   onToggleFavorite: (reportId: string) => void;
 }
@@ -25,6 +26,7 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
   onCopy,
   onEmail,
   onDownload,
+  onSchedule,
   onDelete,
   onToggleFavorite
 }) => {
@@ -108,6 +110,10 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
                 <DropdownMenuItem onClick={() => onDownload(report)}>
                   <Download className="mr-2 h-4 w-4" />
                   Download
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onSchedule(report)}>
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Schedule
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => onDelete(report)}
