@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Plus, FileText, TrendingUp, BarChart3, Star } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { EnhancedCreateReportSheet } from "@/components/reports/EnhancedCreateReportSheet";
@@ -139,52 +140,61 @@ export default function Reporting() {
 
       {hasReports ? (
         <>
-          {/* Quick Reports */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {reportTypes.map((report, index) => {
-              const IconComponent = report.icon === "FileText" ? FileText : 
-                                   report.icon === "TrendingUp" ? TrendingUp : BarChart3;
-              
-              return (
-                <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <IconComponent className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <CardTitle className="text-base">{report.title}</CardTitle>
-                        <p className="text-sm text-muted-foreground">{report.description}</p>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-0 space-y-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="w-full"
-                      onClick={() => handleTemplateClick(report)}
-                    >
-                      Create Report
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      className="w-full"
-                      onClick={() => handleViewResults({
-                        ...report,
-                        name: report.title,
-                        properties: ["1", "2"], // Mock selection
-                        columns: report.defaultColumns,
-                        filters: report.defaultFilters
-                      })}
-                    >
-                      Quick View
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+          {/* Report Templates */}
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="templates">
+              <AccordionTrigger className="text-lg font-semibold">
+                Report Templates
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+                  {reportTypes.map((report, index) => {
+                    const IconComponent = report.icon === "FileText" ? FileText : 
+                                         report.icon === "TrendingUp" ? TrendingUp : BarChart3;
+                    
+                    return (
+                      <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center space-x-3">
+                            <div className="p-2 bg-primary/10 rounded-lg">
+                              <IconComponent className="h-5 w-5 text-primary" />
+                            </div>
+                            <div>
+                              <CardTitle className="text-base">{report.title}</CardTitle>
+                              <p className="text-sm text-muted-foreground">{report.description}</p>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="pt-0 space-y-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full"
+                            onClick={() => handleTemplateClick(report)}
+                          >
+                            Create Report
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            className="w-full"
+                            onClick={() => handleViewResults({
+                              ...report,
+                              name: report.title,
+                              properties: ["1", "2"], // Mock selection
+                              columns: report.defaultColumns,
+                              filters: report.defaultFilters
+                            })}
+                          >
+                            Quick View
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
           {/* Main Reports Section */}
           <Tabs defaultValue="saved-reports" className="space-y-6">
