@@ -143,8 +143,9 @@ export default function Reporting() {
           {/* Report Templates */}
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="templates">
-              <AccordionTrigger className="text-lg font-semibold">
-                Report Templates
+              <AccordionTrigger className="text-lg font-semibold flex-col items-start space-y-2 hover:no-underline">
+                <span>Report Templates</span>
+                <div className="text-sm text-muted-foreground font-normal">Click to expand templates</div>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
