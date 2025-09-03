@@ -1,0 +1,134 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CreditCard, AlertCircle, TrendingUp } from "lucide-react";
+import { mockInvoices } from "@/data/mockData";
+import { cn } from "@/lib/utils";
+
+export function OutstandingInvoicesWidget() {
+  // Filter invoices by payment status
+  const outstandingInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Outstanding");
+  const overdueInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Overdue");
+  const paidInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Paid");
+  
+  // Calculate totals
+  const outstandingAmount = outstandingInvoices.reduce((sum, inv) => sum + inv.amount, 0);
+  const overdueAmount = overdueInvoices.reduce((sum, inv) => sum + inv.amount, 0);
+  const totalAmount = outstandingAmount + overdueAmount;
+  
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-GB', {
+      style: 'currency',
+      currency: 'GBP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+  
+  return (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <CreditCard className="h-5 w-5 text-primary" />
+            <span>Outstanding Invoices</span>
+          </div>
+          {totalAmount > 0 ? (
+            <Badge variant={overdueAmount > 0 ? "destructive" : "outline"} className="text-xs">
+              {outstandingInvoices.length + overdueInvoices.length} Pending
+            </Badge>
+          ) : (
+            <Badge variant="secondary" className="text-xs">
+              All Settled
+            </Badge>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {totalAmount === 0 ? (
+          <div className="text-center py-6">
+            <div className="text-2xl font-bold text-green-600 mb-2">£0</div>
+            <p className="text-sm text-muted-foreground">All invoices are up to date</p>
+          </div>
+        ) : (
+          <>
+            {/* Total Outstanding Amount */}
+            <div className="text-center pb-4 border-b">
+              <div className="text-3xl font-bold text-primary mb-1">
+                {formatCurrency(totalAmount)}
+              </div>
+              <div className="text-sm text-muted-foreground">Total Outstanding</div>
+            </div>
+            
+            {/* Breakdown by Status */}
+            <div className="space-y-3">
+              {overdueAmount > 0 && (
+                <div className="flex items-center justify-between p-3 bg-destructive/10 rounded-lg border border-destructive/20">
+                  <div className="flex items-center space-x-2">
+                    <AlertCircle className="h-4 w-4 text-destructive" />
+                    <div>
+                      <div className="text-sm font-medium text-destructive">Overdue</div>
+                      <div className="text-xs text-muted-foreground">
+                        {overdueInvoices.length} invoice{overdueInvoices.length !== 1 ? 's' : ''}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-destructive">
+                      {formatCurrency(overdueAmount)}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {outstandingAmount > 0 && (
+                <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
+                  <div className="flex items-center space-x-2">
+                    <TrendingUp className="h-4 w-4 text-orange-500" />
+                    <div>
+                      <div className="text-sm font-medium text-orange-700">Outstanding</div>
+                      <div className="text-xs text-muted-foreground">
+                        {outstandingInvoices.length} invoice{outstandingInvoices.length !== 1 ? 's' : ''}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-orange-700">
+                      {formatCurrency(outstandingAmount)}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Recent Outstanding Invoices */}
+            <div className="pt-2 border-t">
+              <div className="text-xs font-medium text-muted-foreground mb-2">Recent Outstanding:</div>
+              <div className="space-y-2">
+                {[...overdueInvoices, ...outstandingInvoices].slice(0, 3).map(invoice => (
+                  <div key={invoice.id} className="flex justify-between items-center text-xs">
+                    <div className="flex-1 min-w-0">
+                      <div className="truncate font-medium">{invoice.contractorTenant}</div>
+                      <div className="text-muted-foreground">
+                        Due: {new Date(invoice.dueDate).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2 ml-2">
+                      <span className="font-medium">{formatCurrency(invoice.amount)}</span>
+                      <Badge 
+                        variant={invoice.paymentStatus === "Overdue" ? "destructive" : "outline"}
+                        className="text-xs"
+                      >
+                        {invoice.paymentStatus}
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

@@ -78,14 +78,41 @@ export interface WorkOrder {
 export interface Asset {
   id: string;
   name: string;
-  type: string;
+  group?: string;
+  status: "Operational" | "Pending Repair" | "Missing" | "Out of Service";
+  description?: string;
+  serialNumber?: string;
+  purchaseCost?: number;
+  depreciationRate?: number;
+  estimatedValue?: number;
+  estimatedLifetime?: number;
+  installationDate?: string;
+  contractorResponsible?: string;
+  warrantyExpirationDate?: string;
+  location: string;
   propertyId: string;
-  status: "Active" | "Maintenance" | "Decommissioned";
+  parentAssetId?: string; // For sub-assets
+  subAssets?: string[]; // Array of sub-asset IDs
+  type: string;
   lastInspection?: string;
   nextInspection?: string;
   purchaseDate: string;
-  warrantyExpiry?: string;
-  location: string;
+  invoiceIds?: string[]; // Links to invoices
+}
+
+export interface Invoice {
+  id: string;
+  type: "Received" | "Issued";
+  invoiceNumber: string;
+  description: string;
+  contractorTenant: string;
+  amount: number;
+  dateIssued: string;
+  dueDate: string;
+  paymentStatus: "Outstanding" | "Overdue" | "Paid";
+  taxRate?: number;
+  assignedWorkOrderId?: string;
+  propertyId: string;
 }
 
 export interface Contractor {
@@ -105,11 +132,8 @@ export interface Document {
   name: string;
   type: string;
   propertyId?: string;
-  uploadDate: string;
-  expiryDate?: string;
-  category: string;
-  size: string;
-  status: "Active" | "Expired" | "Pending Review";
+  modified: string;
+  expires?: string;
 }
 
 // Mock Properties
@@ -202,47 +226,157 @@ export const mockAssets: Asset[] = [
     name: "Central HVAC Unit 1",
     type: "HVAC System",
     propertyId: "1",
-    status: "Active",
+    status: "Operational",
+    description: "Primary air conditioning system for floors 1-10",
+    serialNumber: "HVAC-2020-001",
+    purchaseCost: 75000,
+    depreciationRate: 0.1,
+    estimatedValue: 52500,
+    estimatedLifetime: 15,
+    installationDate: "2020-03-15",
+    contractorResponsible: "CON001",
+    warrantyExpirationDate: "2025-03-15",
     lastInspection: "2024-01-01",
     nextInspection: "2024-04-01",
     purchaseDate: "2020-03-15",
-    warrantyExpiry: "2025-03-15",
-    location: "Rooftop"
+    location: "Rooftop",
+    group: "HVAC Systems",
+    invoiceIds: ["INV001", "INV005"]
   },
   {
     id: "AS002",
     name: "Main Elevator A",
     type: "Elevator",
     propertyId: "1",
-    status: "Maintenance",
+    status: "Pending Repair",
+    description: "Primary passenger elevator serving all floors",
+    serialNumber: "ELEV-2018-A",
+    purchaseCost: 120000,
+    depreciationRate: 0.08,
+    estimatedValue: 64000,
+    estimatedLifetime: 25,
+    installationDate: "2018-06-20",
+    contractorResponsible: "CON004",
     lastInspection: "2024-01-10",
     nextInspection: "2024-02-10",
     purchaseDate: "2018-06-20",
-    location: "Core"
+    location: "Core",
+    group: "Vertical Transport"
   },
   {
     id: "AS003",
     name: "Generator Backup Unit",
     type: "Power System",
     propertyId: "2",
-    status: "Active",
+    status: "Operational",
+    description: "Emergency backup power generation system",
+    serialNumber: "GEN-2019-003",
+    purchaseCost: 45000,
+    depreciationRate: 0.12,
+    estimatedValue: 28000,
+    estimatedLifetime: 20,
+    installationDate: "2019-09-10",
+    contractorResponsible: "CON002",
+    warrantyExpirationDate: "2024-09-10",
     lastInspection: "2023-12-15",
     nextInspection: "2024-03-15",
     purchaseDate: "2019-09-10",
-    warrantyExpiry: "2024-09-10",
-    location: "Basement"
+    location: "Basement",
+    group: "Power Systems",
+    invoiceIds: ["INV003"]
   },
   {
     id: "AS004",
     name: "Fire Suppression System",
     type: "Safety Equipment",
     propertyId: "3",
-    status: "Active",
+    status: "Operational",
+    description: "Comprehensive fire detection and suppression system",
+    serialNumber: "FIRE-2021-001",
+    purchaseCost: 85000,
+    depreciationRate: 0.05,
+    estimatedValue: 72250,
+    estimatedLifetime: 30,
+    installationDate: "2021-11-30",
+    contractorResponsible: "CON004",
+    warrantyExpirationDate: "2026-11-30",
     lastInspection: "2024-01-05",
     nextInspection: "2024-07-05",
     purchaseDate: "2021-11-30",
-    warrantyExpiry: "2026-11-30",
-    location: "Throughout Building"
+    location: "Throughout Building",
+    group: "Safety Systems"
+  }
+];
+
+// Mock Invoices
+export const mockInvoices: Invoice[] = [
+  {
+    id: "INV001",
+    type: "Received",
+    invoiceNumber: "HVAC-2024-001",
+    description: "HVAC quarterly maintenance service",
+    contractorTenant: "HVAC Solutions Ltd",
+    amount: 2500.00,
+    dateIssued: "2024-01-15",
+    dueDate: "2024-02-15",
+    paymentStatus: "Outstanding",
+    taxRate: 0.20,
+    assignedWorkOrderId: "WO001",
+    propertyId: "1"
+  },
+  {
+    id: "INV002",
+    type: "Issued",
+    invoiceNumber: "RENT-2024-001",
+    description: "Monthly rent - Office Tower Unit 5A",
+    contractorTenant: "TechCorp Ltd",
+    amount: 8500.00,
+    dateIssued: "2024-01-01",
+    dueDate: "2024-01-31",
+    paymentStatus: "Paid",
+    taxRate: 0.00,
+    propertyId: "1"
+  },
+  {
+    id: "INV003",
+    type: "Received",
+    invoiceNumber: "ELEC-2024-007",
+    description: "Emergency elevator repair",
+    contractorTenant: "ElectriCorp",
+    amount: 4200.00,
+    dateIssued: "2024-01-12",
+    dueDate: "2024-02-12",
+    paymentStatus: "Overdue",
+    taxRate: 0.20,
+    assignedWorkOrderId: "WO002",
+    propertyId: "1"
+  },
+  {
+    id: "INV004",
+    type: "Received",
+    invoiceNumber: "SEC-2024-003", 
+    description: "Security system monthly monitoring",
+    contractorTenant: "SecureGuard Systems",
+    amount: 750.00,
+    dateIssued: "2024-01-05",
+    dueDate: "2024-02-05",
+    paymentStatus: "Paid",
+    taxRate: 0.20,
+    assignedWorkOrderId: "WO005",
+    propertyId: "4"
+  },
+  {
+    id: "INV005",
+    type: "Issued",
+    invoiceNumber: "UTIL-2024-001",
+    description: "Utility charges - Shopping Centre",
+    contractorTenant: "RetailCorp",
+    amount: 3200.00,
+    dateIssued: "2024-01-20",
+    dueDate: "2024-02-20",
+    paymentStatus: "Outstanding",
+    taxRate: 0.00,
+    propertyId: "2"
   }
 ];
 
@@ -301,42 +435,39 @@ export const mockDocuments: Document[] = [
     name: "Fire Safety Certificate",
     type: "Certificate",
     propertyId: "1",
-    uploadDate: "2023-06-15",
-    expiryDate: "2024-06-15",
-    category: "Safety",
-    size: "2.3 MB",
-    status: "Active"
+    modified: "2023-06-15",
+    expires: "2024-06-15"
   },
   {
     id: "DOC002",
     name: "HVAC Maintenance Manual",
     type: "Manual",
     propertyId: "1",
-    uploadDate: "2023-03-20",
-    category: "Equipment",
-    size: "15.7 MB",
-    status: "Active"
+    modified: "2023-03-20"
   },
   {
     id: "DOC003",
     name: "Building Insurance Policy",
     type: "Policy",
     propertyId: "2",
-    uploadDate: "2024-01-01",
-    expiryDate: "2024-12-31",
-    category: "Insurance",
-    size: "1.8 MB",
-    status: "Active"
+    modified: "2024-01-01",
+    expires: "2024-12-31"
   },
   {
     id: "DOC004",
     name: "Elevator Inspection Report",
     type: "Report",
     propertyId: "1",
-    uploadDate: "2024-01-10",
-    category: "Inspection",
-    size: "890 KB",
-    status: "Pending Review"
+    modified: "2024-01-10",
+    expires: "2024-04-10"
+  },
+  {
+    id: "DOC005",
+    name: "Electrical Safety Certificate",
+    type: "Certificate",
+    propertyId: "3",
+    modified: "2023-08-15",
+    expires: "2024-02-15"
   }
 ];
 
@@ -374,13 +505,37 @@ export const dataSourceConfig = {
       { key: "id", label: "Asset ID", type: "text" },
       { key: "name", label: "Asset Name", type: "text" },
       { key: "type", label: "Asset Type", type: "text" },
-      { key: "status", label: "Status", type: "select", options: ["Active", "Maintenance", "Decommissioned"] },
+      { key: "status", label: "Status", type: "select", options: ["Operational", "Pending Repair", "Missing", "Out of Service"] },
       { key: "propertyId", label: "Property", type: "text" },
+      { key: "group", label: "Asset Group", type: "text" },
+      { key: "serialNumber", label: "Serial Number", type: "text" },
+      { key: "purchaseCost", label: "Purchase Cost", type: "number" },
+      { key: "estimatedValue", label: "Current Value", type: "number" },
+      { key: "installationDate", label: "Installation Date", type: "date" },
+      { key: "contractorResponsible", label: "Contractor", type: "text" },
       { key: "lastInspection", label: "Last Inspection", type: "date" },
       { key: "nextInspection", label: "Next Inspection", type: "date" },
       { key: "purchaseDate", label: "Purchase Date", type: "date" },
-      { key: "warrantyExpiry", label: "Warranty Expiry", type: "date" },
+      { key: "warrantyExpirationDate", label: "Warranty Expiry", type: "date" },
       { key: "location", label: "Location", type: "text" }
+    ]
+  },
+  "Invoices": {
+    label: "Invoices",
+    data: mockInvoices,
+    columns: [
+      { key: "id", label: "Invoice ID", type: "text" },
+      { key: "type", label: "Type", type: "select", options: ["Received", "Issued"] },
+      { key: "invoiceNumber", label: "Invoice Number", type: "text" },
+      { key: "description", label: "Description", type: "text" },
+      { key: "contractorTenant", label: "Contractor/Tenant", type: "text" },
+      { key: "amount", label: "Amount", type: "number" },
+      { key: "dateIssued", label: "Date Issued", type: "date" },
+      { key: "dueDate", label: "Due Date", type: "date" },
+      { key: "paymentStatus", label: "Payment Status", type: "select", options: ["Outstanding", "Overdue", "Paid"] },
+      { key: "taxRate", label: "Tax Rate", type: "number" },
+      { key: "assignedWorkOrderId", label: "Work Order", type: "text" },
+      { key: "propertyId", label: "Property", type: "text" }
     ]
   },
   "Contractors": {
@@ -406,11 +561,8 @@ export const dataSourceConfig = {
       { key: "name", label: "Document Name", type: "text" },
       { key: "type", label: "Document Type", type: "text" },
       { key: "propertyId", label: "Property", type: "text" },
-      { key: "uploadDate", label: "Upload Date", type: "date" },
-      { key: "expiryDate", label: "Expiry Date", type: "date" },
-      { key: "category", label: "Category", type: "text" },
-      { key: "size", label: "File Size", type: "text" },
-      { key: "status", label: "Status", type: "select", options: ["Active", "Expired", "Pending Review"] }
+      { key: "modified", label: "Modified Date", type: "date" },
+      { key: "expires", label: "Expires Date", type: "date" }
     ]
   }
 };

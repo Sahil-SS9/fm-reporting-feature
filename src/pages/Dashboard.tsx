@@ -1,12 +1,15 @@
-import { MetricCard } from "@/components/dashboard/MetricCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { WorkOrdersOverviewWidget } from "@/components/dashboard/WorkOrdersOverviewWidget";
+import { CriticalPriorityWidget } from "@/components/dashboard/CriticalPriorityWidget";
+import { AssetMaintenanceWidget } from "@/components/dashboard/AssetMaintenanceWidget";
+import { OutstandingInvoicesWidget } from "@/components/dashboard/OutstandingInvoicesWidget";
+import { PropertyPerformanceWidget } from "@/components/dashboard/PropertyPerformanceWidget";
+import { DocumentExpiryWidget } from "@/components/dashboard/DocumentExpiryWidget";
 import {
-  ClipboardList,
-  AlertTriangle,
-  CheckCircle,
-  TrendingUp,
   Building2,
   Activity,
+  TrendingUp,
+  Users,
 } from "lucide-react";
 import {
   PieChart,
@@ -20,6 +23,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
+import { mockWorkOrders, mockProperties } from "@/data/mockData";
 
 const statusData = [
   { name: "Open", value: 45, color: "#3b82f6" },
@@ -49,38 +53,31 @@ export default function Dashboard() {
     <div className="p-6 space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold">Monday Morning Dashboard</h1>
         <p className="text-muted-foreground">
-          Overview of your facilities management operations
+          Critical insights and actionable items for facilities management
         </p>
       </div>
 
-      {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <MetricCard
-          title="Open Work Orders"
-          value="45"
-          change={{ value: "+12%", type: "negative" }}
-          icon={ClipboardList}
-          description="vs last month"
-        />
-        <MetricCard
-          title="Overdue Tasks"
-          value="8"
-          change={{ value: "-25%", type: "positive" }}
-          icon={AlertTriangle}
-          description="vs last month"
-        />
-        <MetricCard
-          title="This Week's Completions"
-          value="23"
-          change={{ value: "+8%", type: "positive" }}
-          icon={CheckCircle}
-          description="vs last week"
-        />
+      {/* Priority Action Items - Top Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <CriticalPriorityWidget />
+        <DocumentExpiryWidget />
       </div>
 
-      {/* Charts Grid */}
+      {/* Core Operations Widgets - Middle Rows */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <WorkOrdersOverviewWidget />
+        <AssetMaintenanceWidget />
+        <OutstandingInvoicesWidget />
+      </div>
+
+      {/* Property Performance - Full Width */}
+      <div className="grid grid-cols-1 gap-6">
+        <PropertyPerformanceWidget />
+      </div>
+
+      {/* Analytics Charts - Bottom Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Work Orders by Status */}
         <Card>
