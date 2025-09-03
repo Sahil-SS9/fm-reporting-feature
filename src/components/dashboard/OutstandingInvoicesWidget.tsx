@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, AlertCircle, TrendingUp } from "lucide-react";
+import { CreditCard, AlertCircle, TrendingUp, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { mockInvoices } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 
 export function OutstandingInvoicesWidget() {
+  const navigate = useNavigate();
   // Filter invoices by payment status
   const outstandingInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Outstanding");
   const overdueInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Overdue");
@@ -25,23 +27,38 @@ export function OutstandingInvoicesWidget() {
     }).format(amount);
   };
   
+  const handleClick = () => {
+    navigate('/reporting', { 
+      state: { 
+        reportType: 'invoices',
+        filter: { paymentStatus: ['Outstanding', 'Overdue'] }
+      }
+    });
+  };
+  
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card 
+      className="hover:shadow-lg transition-shadow cursor-pointer group" 
+      onClick={handleClick}
+    >
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <CreditCard className="h-5 w-5 text-primary" />
             <span>Outstanding Invoices</span>
           </div>
-          {totalAmount > 0 ? (
-            <Badge variant={overdueAmount > 0 ? "destructive" : "outline"} className="text-xs">
-              {outstandingInvoices.length + overdueInvoices.length} Pending
-            </Badge>
-          ) : (
-            <Badge variant="secondary" className="text-xs">
-              All Settled
-            </Badge>
-          )}
+          <div className="flex items-center space-x-2">
+            {totalAmount > 0 ? (
+              <Badge variant={overdueAmount > 0 ? "destructive" : "outline"} className="text-xs">
+                {outstandingInvoices.length + overdueInvoices.length} Pending
+              </Badge>
+            ) : (
+              <Badge variant="secondary" className="text-xs">
+                All Settled
+              </Badge>
+            )}
+            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

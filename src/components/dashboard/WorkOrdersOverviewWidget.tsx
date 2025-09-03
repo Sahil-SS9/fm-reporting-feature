@@ -1,11 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { ClipboardList, AlertCircle } from "lucide-react";
+import { ClipboardList, AlertCircle, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 
 export function WorkOrdersOverviewWidget() {
+  const navigate = useNavigate();
   // Calculate work order statistics
   const totalWorkOrders = mockWorkOrders.length;
   const completedWorkOrders = mockWorkOrders.filter(wo => wo.status === "Completed").length;
@@ -16,17 +18,31 @@ export function WorkOrdersOverviewWidget() {
   const completionRate = Math.round((completedWorkOrders / totalWorkOrders) * 100);
   const inProgressRate = Math.round((inProgressWorkOrders / totalWorkOrders) * 100);
   
+  const handleClick = () => {
+    navigate('/cases', { 
+      state: { 
+        filter: { status: ['Open', 'In Progress', 'Completed'] }
+      }
+    });
+  };
+  
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card 
+      className="hover:shadow-lg transition-shadow cursor-pointer group" 
+      onClick={handleClick}
+    >
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <ClipboardList className="h-5 w-5 text-primary" />
             <span>Work Orders Overview</span>
           </div>
-          <Badge variant="outline" className="text-xs">
-            {totalWorkOrders} Total
-          </Badge>
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="text-xs">
+              {totalWorkOrders} Total
+            </Badge>
+            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

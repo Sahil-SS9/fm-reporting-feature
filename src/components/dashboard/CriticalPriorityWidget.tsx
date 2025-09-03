@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Clock } from "lucide-react";
+import { AlertTriangle, Clock, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 
 export function CriticalPriorityWidget() {
+  const navigate = useNavigate();
   // Get critical and high priority work orders that need attention
   const criticalWorkOrders = mockWorkOrders.filter(
     wo => (wo.priority === "Critical" || wo.priority === "High") && wo.status !== "Completed"
@@ -13,9 +15,17 @@ export function CriticalPriorityWidget() {
   const urgentCount = criticalWorkOrders.filter(wo => wo.priority === "Critical").length;
   const highCount = criticalWorkOrders.filter(wo => wo.priority === "High").length;
   
+  const handleClick = () => {
+    navigate('/cases', { 
+      state: { 
+        filter: { priority: ['Critical', 'High'], status: ['Open', 'In Progress', 'On Hold'] }
+      }
+    });
+  };
+  
   return (
     <Card className={cn(
-      "hover:shadow-lg transition-shadow",
+      "hover:shadow-lg transition-shadow cursor-pointer group",
       criticalWorkOrders.length > 0 && "border-destructive/50 shadow-sm"
     )}>
       <CardHeader className="pb-3">
@@ -27,13 +37,16 @@ export function CriticalPriorityWidget() {
             )} />
             <span>Priority Items</span>
           </div>
-          {criticalWorkOrders.length > 0 ? (
-            <Badge variant="destructive" className="animate-pulse">
-              Action Required
-            </Badge>
-          ) : (
-            <Badge variant="secondary">All Clear</Badge>
-          )}
+          <div className="flex items-center space-x-2">
+            {criticalWorkOrders.length > 0 ? (
+              <Badge variant="destructive" className="animate-pulse">
+                Action Required
+              </Badge>
+            ) : (
+              <Badge variant="secondary">All Clear</Badge>
+            )}
+            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>

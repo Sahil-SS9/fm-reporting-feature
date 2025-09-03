@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Building2, TrendingUp, TrendingDown } from "lucide-react";
+import { Building2, TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { mockProperties, mockWorkOrders, mockAssets } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 
 export function PropertyPerformanceWidget() {
+  const navigate = useNavigate();
   // Calculate performance metrics per property
   const propertyMetrics = mockProperties.map(property => {
     const propertyWorkOrders = mockWorkOrders.filter(wo => wo.propertyId === property.id);
@@ -50,20 +52,35 @@ export function PropertyPerformanceWidget() {
     return score >= 80 ? TrendingUp : TrendingDown;
   };
   
+  const handleClick = () => {
+    navigate('/reporting', { 
+      state: { 
+        reportType: 'property-performance',
+        properties: sortedProperties
+      }
+    });
+  };
+  
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card 
+      className="hover:shadow-lg transition-shadow cursor-pointer group" 
+      onClick={handleClick}
+    >
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Building2 className="h-5 w-5 text-primary" />
             <span>Property Performance</span>
           </div>
-          <Badge 
-            variant={needsAttentionProperties.length > 0 ? "destructive" : "secondary"} 
-            className="text-xs"
-          >
-            {needsAttentionProperties.length} Need Attention
-          </Badge>
+          <div className="flex items-center space-x-2">
+            <Badge 
+              variant={needsAttentionProperties.length > 0 ? "destructive" : "secondary"} 
+              className="text-xs"
+            >
+              {needsAttentionProperties.length} Need Attention
+            </Badge>
+            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

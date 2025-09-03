@@ -1,11 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Settings, Calendar, AlertCircle } from "lucide-react";
+import { Settings, Calendar, AlertCircle, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { mockAssets } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 
 export function AssetMaintenanceWidget() {
+  const navigate = useNavigate();
   const today = new Date();
   const thirtyDaysFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
   const sixtyDaysFromNow = new Date(today.getTime() + 60 * 24 * 60 * 60 * 1000);
@@ -38,17 +40,31 @@ export function AssetMaintenanceWidget() {
   
   const totalUpcoming = due30Days.length + due60Days.length + due90Days.length + overdue.length;
   
+  const handleClick = () => {
+    navigate('/assets', { 
+      state: { 
+        filter: { status: 'maintenance-due', upcoming: true }
+      }
+    });
+  };
+  
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card 
+      className="hover:shadow-lg transition-shadow cursor-pointer group" 
+      onClick={handleClick}
+    >
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Settings className="h-5 w-5 text-primary" />
             <span>Asset Maintenance</span>
           </div>
-          <Badge variant={totalUpcoming > 0 ? "outline" : "secondary"} className="text-xs">
-            {totalUpcoming} Due
-          </Badge>
+          <div className="flex items-center space-x-2">
+            <Badge variant={totalUpcoming > 0 ? "outline" : "secondary"} className="text-xs">
+              {totalUpcoming} Due
+            </Badge>
+            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

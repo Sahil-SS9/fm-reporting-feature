@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, AlertCircle, Clock } from "lucide-react";
+import { FileText, AlertCircle, Clock, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { mockDocuments } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 
 export function DocumentExpiryWidget() {
+  const navigate = useNavigate();
   const today = new Date();
   const thirtyDaysFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
   
@@ -39,26 +41,40 @@ export function DocumentExpiryWidget() {
     return diffDays;
   };
   
+  const handleClick = () => {
+    navigate('/documentation', { 
+      state: { 
+        filter: { expiry: 'upcoming', expired: true }
+      }
+    });
+  };
+  
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card 
+      className="hover:shadow-lg transition-shadow cursor-pointer group" 
+      onClick={handleClick}
+    >
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <FileText className="h-5 w-5 text-primary" />
             <span>Document Expiry</span>
           </div>
-          {totalExpiringDocuments > 0 ? (
-            <Badge 
-              variant={expiredDocuments.length > 0 || expiringIn7Days.length > 0 ? "destructive" : "outline"} 
-              className="text-xs"
-            >
-              {totalExpiringDocuments} Expiring
-            </Badge>
-          ) : (
-            <Badge variant="secondary" className="text-xs">
-              All Current
-            </Badge>
-          )}
+          <div className="flex items-center space-x-2">
+            {totalExpiringDocuments > 0 ? (
+              <Badge 
+                variant={expiredDocuments.length > 0 || expiringIn7Days.length > 0 ? "destructive" : "outline"} 
+                className="text-xs"
+              >
+                {totalExpiringDocuments} Expiring
+              </Badge>
+            ) : (
+              <Badge variant="secondary" className="text-xs">
+                All Current
+              </Badge>
+            )}
+            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

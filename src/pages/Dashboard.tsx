@@ -5,6 +5,10 @@ import { AssetMaintenanceWidget } from "@/components/dashboard/AssetMaintenanceW
 import { OutstandingInvoicesWidget } from "@/components/dashboard/OutstandingInvoicesWidget";
 import { PropertyPerformanceWidget } from "@/components/dashboard/PropertyPerformanceWidget";
 import { DocumentExpiryWidget } from "@/components/dashboard/DocumentExpiryWidget";
+import { CasesCreatedClosedWidget } from "@/components/dashboard/CasesCreatedClosedWidget";
+import { WorkOrdersCreatedClosedWidget } from "@/components/dashboard/WorkOrdersCreatedClosedWidget";
+import { AverageCompletionTimeWidget } from "@/components/dashboard/AverageCompletionTimeWidget";
+import { DueTodayWidget } from "@/components/dashboard/DueTodayWidget";
 import {
   Building2,
   Activity,
@@ -53,27 +57,35 @@ export default function Dashboard() {
     <div className="p-6 space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold">Monday Morning Dashboard</h1>
+        <h1 className="text-2xl font-bold">Command Centre</h1>
         <p className="text-muted-foreground">
           Critical insights and actionable items for facilities management
         </p>
       </div>
 
-      {/* Priority Action Items - Top Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Operations Command Center - Top Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <WorkOrdersOverviewWidget />
         <CriticalPriorityWidget />
+        <DueTodayWidget />
+      </div>
+
+      {/* Performance Metrics - Second Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <AverageCompletionTimeWidget />
+        <CasesCreatedClosedWidget />
+        <WorkOrdersCreatedClosedWidget />
+      </div>
+
+      {/* Asset & Compliance - Third Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <AssetMaintenanceWidget />
         <DocumentExpiryWidget />
       </div>
 
-      {/* Core Operations Widgets - Middle Rows */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <WorkOrdersOverviewWidget />
-        <AssetMaintenanceWidget />
+      {/* Financial & Property - Fourth Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <OutstandingInvoicesWidget />
-      </div>
-
-      {/* Property Performance - Full Width */}
-      <div className="grid grid-cols-1 gap-6">
         <PropertyPerformanceWidget />
       </div>
 
