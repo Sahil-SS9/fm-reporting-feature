@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { WorkOrdersOverviewWidget } from "@/components/dashboard/WorkOrdersOverviewWidget";
 import { CriticalPriorityWidget } from "@/components/dashboard/CriticalPriorityWidget";
 import { AssetMaintenanceWidget } from "@/components/dashboard/AssetMaintenanceWidget";
@@ -63,115 +64,162 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Operations Command Center - Top Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <WorkOrdersOverviewWidget />
-        <CriticalPriorityWidget />
-        <DueTodayWidget />
-      </div>
+      {/* Dashboard Sections with Accordion */}
+      <Accordion type="multiple" defaultValue={["operations", "performance", "assets", "financial", "analytics", "activity"]} className="space-y-4">
+        
+        {/* Operations Command Center */}
+        <AccordionItem value="operations" className="border rounded-lg px-4">
+          <AccordionTrigger className="text-lg font-semibold hover:no-underline">
+            Operations Command Center
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <WorkOrdersOverviewWidget />
+              <CriticalPriorityWidget />
+              <DueTodayWidget />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Performance Metrics - Second Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <AverageCompletionTimeWidget />
-        <CasesCreatedClosedWidget />
-        <WorkOrdersCreatedClosedWidget />
-      </div>
+        {/* Performance Metrics */}
+        <AccordionItem value="performance" className="border rounded-lg px-4">
+          <AccordionTrigger className="text-lg font-semibold hover:no-underline">
+            Performance Metrics
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <AverageCompletionTimeWidget />
+              <CasesCreatedClosedWidget />
+              <WorkOrdersCreatedClosedWidget />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Asset & Compliance - Third Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <AssetMaintenanceWidget />
-        <DocumentExpiryWidget />
-      </div>
+        {/* Asset & Compliance */}
+        <AccordionItem value="assets" className="border rounded-lg px-4">
+          <AccordionTrigger className="text-lg font-semibold hover:no-underline">
+            Asset & Compliance Management
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <AssetMaintenanceWidget />
+              <DocumentExpiryWidget />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Financial & Property - Fourth Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <OutstandingInvoicesWidget />
-        <PropertyPerformanceWidget />
-      </div>
+        {/* Financial & Property */}
+        <AccordionItem value="financial" className="border rounded-lg px-4">
+          <AccordionTrigger className="text-lg font-semibold hover:no-underline">
+            Financial & Property Performance
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <OutstandingInvoicesWidget />
+              <PropertyPerformanceWidget />
+            </div>
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Analytics Charts - Bottom Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Work Orders by Status */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <TrendingUp className="h-5 w-5" />
-              <span>Work Orders by Status</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={statusData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({ name, value }) => `${name}: ${value}`}
-                >
-                  {statusData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+        {/* Analytics Charts */}
+        <AccordionItem value="analytics" className="border rounded-lg px-4">
+          <AccordionTrigger className="text-lg font-semibold hover:no-underline">
+            Analytics & Insights
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Work Orders by Status */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <TrendingUp className="h-5 w-5" />
+                    <span>Work Orders by Status</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={statusData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({ name, value }) => `${name}: ${value}`}
+                      >
+                        {statusData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* Top Properties by Volume */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Building2 className="h-5 w-5" />
+                    <span>Top 5 Properties by Volume</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={propertyData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis 
+                        dataKey="name" 
+                        tick={{ fontSize: 12 }}
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                      />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="hsl(var(--primary))" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Recent Activity */}
+        <AccordionItem value="activity" className="border rounded-lg px-4">
+          <AccordionTrigger className="text-lg font-semibold hover:no-underline">
+            Recent Activity
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Activity className="h-5 w-5" />
+                  <span>Recent Activity</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentActivities.map((activity) => (
+                    <div key={activity.id} className="flex items-start space-x-3 pb-3 border-b last:border-0">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                      <div className="flex-1">
+                        <p className="text-sm">{activity.action}</p>
+                        <p className="text-xs text-muted-foreground">{activity.time}</p>
+                      </div>
+                    </div>
                   ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Top Properties by Volume */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Building2 className="h-5 w-5" />
-              <span>Top 5 Properties by Volume</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={propertyData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="name" 
-                  tick={{ fontSize: 12 }}
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="value" fill="hsl(var(--primary))" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Activity className="h-5 w-5" />
-            <span>Recent Activity</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {recentActivities.map((activity) => (
-              <div key={activity.id} className="flex items-start space-x-3 pb-3 border-b last:border-0">
-                <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm">{activity.action}</p>
-                  <p className="text-xs text-muted-foreground">{activity.time}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              </CardContent>
+            </Card>
+          </AccordionContent>
+        </AccordionItem>
+
+      </Accordion>
     </div>
   );
 }
