@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Building2, TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
+import { Building2, TrendingUp, TrendingDown, ArrowRight, Award } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockProperties, mockWorkOrders, mockAssets } from "@/data/mockData";
+import { RadialProgress, SemiCircularGauge } from "@/components/ui/enhanced-charts";
 import { cn } from "@/lib/utils";
 
 export function PropertyPerformanceWidget() {
@@ -83,90 +84,86 @@ export function PropertyPerformanceWidget() {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Top Performer */}
-        <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-          <div className="flex items-center justify-between mb-2">
+      <CardContent className="space-y-6">
+        {/* Top Performer with Health Score Gauge */}
+        <div className="p-4 bg-dashboard-complete/5 rounded-lg border border-dashboard-complete/20">
+          <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-2">
-              <TrendingUp className="h-4 w-4 text-green-600" />
-              <span className="text-sm font-medium text-green-700">Top Performer</span>
+              <Award className="h-4 w-4 text-dashboard-complete" />
+              <span className="text-sm font-medium">Top Performer</span>
             </div>
-            <Badge variant="default" className="text-xs bg-green-600">
-              {topProperty.healthScore}%
-            </Badge>
+            <SemiCircularGauge 
+              value={topProperty.healthScore} 
+              size={80}
+              color="hsl(var(--dashboard-complete))"
+            />
           </div>
-          <div className="text-sm font-medium text-green-800 mb-1">
+          <div className="text-lg font-bold text-dashboard-complete mb-1">
             {topProperty.name}
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-sm text-muted-foreground">
             {topProperty.completionRate}% completion • {topProperty.overdueWorkOrders} overdue
           </div>
         </div>
         
-        {/* Properties List */}
-        <div className="space-y-2">
-          <div className="text-xs font-medium text-muted-foreground mb-2">All Properties:</div>
-          {sortedProperties.map((property) => {
+        {/* Properties Performance Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          {sortedProperties.slice(0, 4).map((property) => {
             const HealthIcon = getHealthIcon(property.healthScore);
             return (
               <div 
                 key={property.id} 
                 className={cn(
-                  "flex items-center justify-between p-2 rounded-lg border",
+                  "p-3 rounded-lg border",
                   property.healthScore < 70 
                     ? "bg-destructive/5 border-destructive/20" 
                     : property.healthScore < 80
-                    ? "bg-orange-50 border-orange-200"
-                    : "bg-secondary/30 border-border"
+                    ? "bg-warning/5 border-warning/20"
+                    : "bg-dashboard-complete/5 border-dashboard-complete/20"
                 )}
               >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2">
-                    <HealthIcon className={cn(
-                      "h-3 w-3 flex-shrink-0",
-                      property.healthScore >= 80 ? "text-green-600" : "text-orange-500"
-                    )} />
-                    <span className="text-sm font-medium truncate">
-                      {property.name}
-                    </span>
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {property.totalWorkOrders} orders • {property.completionRate}% complete
-                    {property.assetsNeedingMaintenance > 0 && (
-                      <span className="text-orange-600">
-                        • {property.assetsNeedingMaintenance} maintenance due
-                      </span>
-                    )}
-                  </div>
+                <div className="flex items-center justify-between mb-2">
+                  <HealthIcon className={cn(
+                    "h-4 w-4",
+                    property.healthScore >= 80 ? "text-dashboard-complete" : 
+                    property.healthScore >= 70 ? "text-warning" : "text-destructive"
+                  )} />
+                  <RadialProgress 
+                    value={property.healthScore} 
+                    size={40}
+                    color={
+                      property.healthScore >= 80 ? "hsl(var(--dashboard-complete))" : 
+                      property.healthScore >= 70 ? "hsl(var(--warning))" : "hsl(var(--destructive))"
+                    }
+                  />
                 </div>
-                <div className="flex items-center space-x-2 ml-2">
-                  <Badge 
-                    variant={getHealthBadgeVariant(property.healthScore)}
-                    className="text-xs"
-                  >
-                    {property.healthScore}%
-                  </Badge>
+                <div className="text-sm font-medium mb-1 truncate">
+                  {property.name}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {property.totalWorkOrders} orders
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {property.completionRate}% complete
                 </div>
               </div>
             );
           })}
         </div>
         
-        {/* Summary Stats */}
-        <div className="pt-2 border-t">
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div>
-              <div className="text-lg font-bold text-primary">
-                {Math.round(propertyMetrics.reduce((sum, p) => sum + p.healthScore, 0) / propertyMetrics.length)}%
-              </div>
-              <div className="text-xs text-muted-foreground">Avg Health Score</div>
+        {/* Summary Stats with Enhanced Visuals */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="text-center p-3 bg-primary/5 rounded-lg">
+            <div className="text-2xl font-bold text-primary">
+              {Math.round(propertyMetrics.reduce((sum, p) => sum + p.healthScore, 0) / propertyMetrics.length)}%
             </div>
-            <div>
-              <div className="text-lg font-bold text-primary">
-                {Math.round(propertyMetrics.reduce((sum, p) => sum + p.completionRate, 0) / propertyMetrics.length)}%
-              </div>
-              <div className="text-xs text-muted-foreground">Avg Completion</div>
+            <div className="text-sm text-muted-foreground">Avg Health Score</div>
+          </div>
+          <div className="text-center p-3 bg-muted/20 rounded-lg">
+            <div className="text-2xl font-bold">
+              {Math.round(propertyMetrics.reduce((sum, p) => sum + p.completionRate, 0) / propertyMetrics.length)}%
             </div>
+            <div className="text-sm text-muted-foreground">Avg Completion</div>
           </div>
         </div>
       </CardContent>

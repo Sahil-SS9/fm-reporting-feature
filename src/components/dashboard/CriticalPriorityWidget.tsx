@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Clock, ArrowRight } from "lucide-react";
+import { AlertTriangle, Clock, ArrowRight, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
+import { RadialProgress, StatusRing } from "@/components/ui/enhanced-charts";
 import { cn } from "@/lib/utils";
 
 export function CriticalPriorityWidget() {
@@ -49,32 +50,60 @@ export function CriticalPriorityWidget() {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
         {criticalWorkOrders.length === 0 ? (
           <div className="text-center py-6">
-            <div className="text-2xl font-bold text-muted-foreground mb-2">0</div>
+            <div className="flex justify-center mb-4">
+              <RadialProgress 
+                value={100} 
+                size={80}
+                color="hsl(var(--dashboard-complete))"
+                label="All Clear"
+              />
+            </div>
             <p className="text-sm text-muted-foreground">No critical items requiring attention</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {/* Summary Numbers */}
-            <div className="flex justify-center space-x-8">
-              {urgentCount > 0 && (
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-destructive">{urgentCount}</div>
-                  <div className="text-xs text-muted-foreground">Critical</div>
+          <>
+            {/* Priority Status Ring */}
+            <div className="flex justify-center">
+              <StatusRing 
+                segments={[
+                  ...(urgentCount > 0 ? [{ value: urgentCount, color: "hsl(var(--destructive))", label: "Critical" }] : []),
+                  ...(highCount > 0 ? [{ value: highCount, color: "hsl(var(--warning))", label: "High" }] : [])
+                ]}
+                size={100}
+                centerContent={
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-destructive">{criticalWorkOrders.length}</div>
+                    <div className="text-xs text-muted-foreground">Priority</div>
+                  </div>
+                }
+              />
+            </div>
+
+            {/* Priority Breakdown */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-3 bg-destructive/5 rounded-lg">
+                <div className="flex items-center justify-center space-x-2 mb-2">
+                  <Zap className="h-4 w-4 text-destructive" />
+                  <span className="text-sm font-medium">Critical</span>
                 </div>
-              )}
-              {highCount > 0 && (
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-500">{highCount}</div>
-                  <div className="text-xs text-muted-foreground">High</div>
+                <div className="text-2xl font-bold text-destructive">{urgentCount}</div>
+              </div>
+              
+              <div className="text-center p-3 bg-warning/5 rounded-lg">
+                <div className="flex items-center justify-center space-x-2 mb-2">
+                  <AlertTriangle className="h-4 w-4 text-warning" />
+                  <span className="text-sm font-medium">High</span>
                 </div>
-              )}
+                <div className="text-2xl font-bold text-warning">{highCount}</div>
+              </div>
             </div>
             
             {/* Critical Items List */}
             <div className="space-y-2">
+              <div className="text-sm font-medium text-muted-foreground">Immediate Attention:</div>
               {criticalWorkOrders.slice(0, 3).map((workOrder) => (
                 <div 
                   key={workOrder.id} 
@@ -82,7 +111,7 @@ export function CriticalPriorityWidget() {
                     "flex items-center justify-between p-2 rounded-lg border",
                     workOrder.priority === "Critical" 
                       ? "bg-destructive/5 border-destructive/20" 
-                      : "bg-orange-50 border-orange-200"
+                      : "bg-warning/5 border-warning/20"
                   )}
                 >
                   <div className="flex-1 min-w-0">
@@ -107,13 +136,13 @@ export function CriticalPriorityWidget() {
               
               {criticalWorkOrders.length > 3 && (
                 <div className="text-center pt-2">
-                  <span className="text-xs text-muted-foreground">
+                  <Badge variant="outline" className="text-xs">
                     +{criticalWorkOrders.length - 3} more items
-                  </span>
+                  </Badge>
                 </div>
               )}
             </div>
-          </div>
+          </>
         )}
       </CardContent>
     </Card>
