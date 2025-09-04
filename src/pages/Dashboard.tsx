@@ -1,7 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { WorkOrdersOverviewWidget } from "@/components/dashboard/WorkOrdersOverviewWidget";
-import { CriticalPriorityWidget } from "@/components/dashboard/CriticalPriorityWidget";
 import { AssetMaintenanceWidget } from "@/components/dashboard/AssetMaintenanceWidget";
 import { OutstandingInvoicesWidget } from "@/components/dashboard/OutstandingInvoicesWidget";
 import { PropertyPerformanceWidget } from "@/components/dashboard/PropertyPerformanceWidget";
@@ -10,6 +8,9 @@ import { CasesCreatedClosedWidget } from "@/components/dashboard/CasesCreatedClo
 import { WorkOrdersCreatedClosedWidget } from "@/components/dashboard/WorkOrdersCreatedClosedWidget";
 import { AverageCompletionTimeWidget } from "@/components/dashboard/AverageCompletionTimeWidget";
 import { DueTodayWidget } from "@/components/dashboard/DueTodayWidget";
+import { CreatedVsCompletedTrendWidget } from "@/components/dashboard/CreatedVsCompletedTrendWidget";
+import { WorkOrderPriorityWidget } from "@/components/dashboard/WorkOrderPriorityWidget";
+import { OnTimeVsOverdueWidget } from "@/components/dashboard/OnTimeVsOverdueWidget";
 import { DonutChartWithCenter } from "@/components/ui/enhanced-charts";
 import {
   Activity,
@@ -52,37 +53,43 @@ export default function Dashboard() {
             Operations Command Center
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              <WorkOrdersOverviewWidget />
-              <CriticalPriorityWidget />
-              <DueTodayWidget />
+            <div className="space-y-6">
+              {/* Trend Chart - Full Width */}
+              <CreatedVsCompletedTrendWidget />
               
-              {/* Work Order Status Chart */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Work Order Status</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-center">
-                    <DonutChartWithCenter 
-                      data={statusData}
-                      size={140}
-                      strokeWidth={16}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 mt-4">
-                    {statusData.map((status) => (
-                      <div key={status.name} className="flex items-center space-x-2">
-                        <div 
-                          className="w-3 h-3 rounded-full" 
-                          style={{ backgroundColor: status.color }}
-                        />
-                        <span className="text-xs text-muted-foreground">{status.name}: {status.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Charts Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                {/* Work Order Status Chart */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base">Work Order Status</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-center">
+                      <DonutChartWithCenter 
+                        data={statusData}
+                        size={140}
+                        strokeWidth={16}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 mt-4">
+                      {statusData.map((status) => (
+                        <div key={status.name} className="flex items-center space-x-2">
+                          <div 
+                            className="w-3 h-3 rounded-full" 
+                            style={{ backgroundColor: status.color }}
+                          />
+                          <span className="text-xs text-muted-foreground">{status.name}: {status.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <WorkOrderPriorityWidget />
+                <OnTimeVsOverdueWidget />
+                <DueTodayWidget />
+              </div>
             </div>
           </AccordionContent>
         </AccordionItem>
