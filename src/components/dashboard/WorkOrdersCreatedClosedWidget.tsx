@@ -47,52 +47,49 @@ export function WorkOrdersCreatedClosedWidget() {
         <CardTitle className="text-lg font-semibold">Work Orders This Week</CardTitle>
         <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Created</span>
-              <div className="flex items-center space-x-1">
-                {createdTrend >= 0 ? (
-                  <TrendingUp className="h-3 w-3 text-primary" />
-                ) : (
-                  <TrendingDown className="h-3 w-3 text-destructive" />
-                )}
-                <span className={`text-xs ${createdTrend >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                  {createdTrend >= 0 ? '+' : ''}{createdTrend}
-                </span>
-              </div>
+      <CardContent className="space-y-3">
+        {/* Compact Metrics Row */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="text-center">
+            <div className="text-lg font-bold">{workOrdersCreatedThisWeek}</div>
+            <div className="text-xs text-muted-foreground">Created</div>
+            <div className="flex items-center justify-center space-x-1 mt-1">
+              {createdTrend >= 0 ? (
+                <TrendingUp className="h-3 w-3 text-primary" />
+              ) : (
+                <TrendingDown className="h-3 w-3 text-destructive" />
+              )}
+              <span className={`text-xs ${createdTrend >= 0 ? 'text-primary' : 'text-destructive'}`}>
+                {createdTrend >= 0 ? '+' : ''}{createdTrend}
+              </span>
             </div>
-            <div className="text-2xl font-bold">{workOrdersCreatedThisWeek}</div>
           </div>
           
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Closed</span>
-              <div className="flex items-center space-x-1">
-                {closedTrend >= 0 ? (
-                  <TrendingUp className="h-3 w-3 text-primary" />
-                ) : (
-                  <TrendingDown className="h-3 w-3 text-destructive" />
-                )}
-                <span className={`text-xs ${closedTrend >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                  {closedTrend >= 0 ? '+' : ''}{closedTrend}
-                </span>
-              </div>
+          <div className="text-center">
+            <div className="text-lg font-bold">{workOrdersClosedThisWeek}</div>
+            <div className="text-xs text-muted-foreground">Closed</div>
+            <div className="flex items-center justify-center space-x-1 mt-1">
+              {closedTrend >= 0 ? (
+                <TrendingUp className="h-3 w-3 text-primary" />
+              ) : (
+                <TrendingDown className="h-3 w-3 text-destructive" />
+              )}
+              <span className={`text-xs ${closedTrend >= 0 ? 'text-primary' : 'text-destructive'}`}>
+                {closedTrend >= 0 ? '+' : ''}{closedTrend}
+              </span>
             </div>
-            <div className="text-2xl font-bold">{workOrdersClosedThisWeek}</div>
+          </div>
+
+          <div className="text-center">
+            <div className="text-lg font-bold">{closureRate.toFixed(0)}%</div>
+            <div className="text-xs text-muted-foreground">Rate</div>
+            <Badge variant={closureRate >= 85 ? "default" : closureRate >= 70 ? "secondary" : "destructive"} className="text-xs mt-1">
+              {closureRate >= 85 ? "Good" : closureRate >= 70 ? "Fair" : "Poor"}
+            </Badge>
           </div>
         </div>
         
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Closure Rate</span>
-            <Badge variant={closureRate >= 85 ? "default" : closureRate >= 70 ? "secondary" : "destructive"}>
-              {closureRate.toFixed(0)}%
-            </Badge>
-          </div>
-          <Progress value={closureRate} className="h-2" />
-        </div>
+        <Progress value={closureRate} className="h-2" />
       </CardContent>
     </Card>
   );

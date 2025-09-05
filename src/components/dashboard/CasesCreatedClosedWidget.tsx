@@ -47,26 +47,12 @@ export function CasesCreatedClosedWidget() {
         <CardTitle className="text-lg font-semibold">Cases This Week</CardTitle>
         <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Main Metrics */}
-        <div className="flex justify-center">
-          <SemiCircularGauge 
-            value={closureRate} 
-            size={120}
-            color={closureRate >= 80 ? "hsl(var(--dashboard-complete))" : 
-                   closureRate >= 60 ? "hsl(var(--warning))" : "hsl(var(--destructive))"}
-            label="Closure Rate"
-          />
-        </div>
-
-        {/* Created vs Closed Comparison */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="text-center p-3 bg-primary/5 rounded-lg">
-            <div className="flex items-center justify-center space-x-2 mb-2">
-              <Calendar className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">Created</span>
-            </div>
-            <div className="text-2xl font-bold">{casesCreatedThisWeek}</div>
+      <CardContent className="space-y-4">
+        {/* Compact Metrics Row */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="text-center">
+            <div className="text-lg font-bold">{casesCreatedThisWeek}</div>
+            <div className="text-xs text-muted-foreground">Created</div>
             <div className="flex items-center justify-center space-x-1 mt-1">
               {createdTrend >= 0 ? (
                 <TrendingUp className="h-3 w-3 text-primary" />
@@ -79,12 +65,9 @@ export function CasesCreatedClosedWidget() {
             </div>
           </div>
           
-          <div className="text-center p-3 bg-muted/20 rounded-lg">
-            <div className="flex items-center justify-center space-x-2 mb-2">
-              <Target className="h-4 w-4 text-dashboard-complete" />
-              <span className="text-sm font-medium">Closed</span>
-            </div>
-            <div className="text-2xl font-bold">{casesClosedThisWeek}</div>
+          <div className="text-center">
+            <div className="text-lg font-bold">{casesClosedThisWeek}</div>
+            <div className="text-xs text-muted-foreground">Closed</div>
             <div className="flex items-center justify-center space-x-1 mt-1">
               {closedTrend >= 0 ? (
                 <TrendingUp className="h-3 w-3 text-dashboard-complete" />
@@ -96,14 +79,12 @@ export function CasesCreatedClosedWidget() {
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Performance Indicator */}
-        <div className="p-3 bg-muted/10 rounded-lg">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Weekly Performance</span>
-            <Badge variant={closureRate >= 80 ? "default" : closureRate >= 60 ? "secondary" : "destructive"}>
-              {closureRate.toFixed(0)}% Rate
+          <div className="text-center">
+            <div className="text-lg font-bold">{closureRate.toFixed(0)}%</div>
+            <div className="text-xs text-muted-foreground">Rate</div>
+            <Badge variant={closureRate >= 80 ? "default" : closureRate >= 60 ? "secondary" : "destructive"} className="text-xs mt-1">
+              {closureRate >= 80 ? "Good" : closureRate >= 60 ? "Fair" : "Poor"}
             </Badge>
           </div>
         </div>

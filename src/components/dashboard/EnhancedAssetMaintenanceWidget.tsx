@@ -200,17 +200,41 @@ export function EnhancedAssetMaintenanceWidget() {
           </div>
         </div>
         
-        {/* Top 5 Assets by Ticket Volume */}
-        <div className="space-y-3">
+        {/* Top 5 Assets by Ticket Volume - Enhanced Display */}
+        <div className="space-y-4 p-4 bg-warning/5 rounded-lg border border-warning/20">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Top Assets by Tickets</span>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <div className="flex items-center space-x-2">
+              <TrendingUp className="h-4 w-4 text-warning" />
+              <span className="text-sm font-medium">Top Assets by Tickets</span>
+            </div>
+            <Badge variant="outline" className="text-xs">
+              High Maintenance
+            </Badge>
           </div>
+          
+          {/* Enhanced Bar Chart with More Space */}
           <VerticalBarChart 
             data={assetWorkOrderCounts}
-            height={100}
+            height={140}
             color="hsl(var(--warning))"
           />
+          
+          {/* Asset List with Details */}
+          <div className="space-y-2">
+            {assetWorkOrderCounts.slice(0, 3).map((asset, index) => (
+              <div key={asset.name} className="flex items-center justify-between p-2 bg-background/50 rounded">
+                <div className="flex items-center space-x-2">
+                  <div className="w-6 h-6 rounded-full bg-warning/20 flex items-center justify-center text-xs font-medium">
+                    {index + 1}
+                  </div>
+                  <span className="text-sm">{asset.name}</span>
+                </div>
+                <Badge variant="secondary" className="text-xs">
+                  {asset.value} tickets
+                </Badge>
+              </div>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>

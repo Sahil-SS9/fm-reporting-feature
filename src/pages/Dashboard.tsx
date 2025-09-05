@@ -49,7 +49,7 @@ export default function Dashboard() {
       </div>
 
       {/* Dashboard Sections with Accordion */}
-      <Accordion type="multiple" defaultValue={["operations", "performance", "assets", "financial", "analytics", "activity"]} className="space-y-4">
+      <Accordion type="multiple" defaultValue={["operations", "performance", "assets", "financial", "property", "activity"]} className="space-y-4">
         
         {/* Operations Command Center */}
         <AccordionItem value="operations" className="border rounded-lg px-4">
@@ -128,30 +128,25 @@ export default function Dashboard() {
           </AccordionContent>
         </AccordionItem>
 
-        {/* Financial & Property */}
+        {/* Financial Performance */}
         <AccordionItem value="financial" className="border rounded-lg px-4">
           <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-            Financial & Property Performance
+            Financial Performance
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <OutstandingInvoicesWidget />
-                <PropertyPerformanceWidget />
-              </div>
-              <PropertyComparisonChart />
-            </div>
+            <OutstandingInvoicesWidget />
           </AccordionContent>
         </AccordionItem>
 
-        {/* Analytics Charts */}
-        <AccordionItem value="analytics" className="border rounded-lg px-4">
+        {/* Property Performance */}
+        <AccordionItem value="property" className="border rounded-lg px-4">
           <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-            Analytics & Insights
+            Property Performance
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="text-muted-foreground text-center py-8">
-              Additional analytics and insights will be displayed here based on your facility management needs.
+            <div className="space-y-6">
+              <PropertyPerformanceWidget />
+              <PropertyComparisonChart />
             </div>
           </AccordionContent>
         </AccordionItem>
