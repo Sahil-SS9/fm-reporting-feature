@@ -10,7 +10,27 @@ export function TopAssetsWidget() {
   
   // Calculate comprehensive asset metrics
   const assetMetrics = mockAssets.map(asset => {
-    const workOrders = mockWorkOrders.filter(wo => wo.title.includes(asset.name) || wo.description?.includes(asset.name));
+    // Better filtering logic - match by asset type and work order category/title
+    const workOrders = mockWorkOrders.filter(wo => {
+      const titleLower = wo.title.toLowerCase();
+      const assetNameLower = asset.name.toLowerCase();
+      const assetTypeLower = (asset.type || '').toLowerCase();
+      const categoryLower = (wo.category || '').toLowerCase();
+      
+      // Try multiple matching strategies
+      return (
+        // Direct name match
+        titleLower.includes(assetNameLower) ||
+        assetNameLower.includes(titleLower) ||
+        // Type-based matching
+        (assetTypeLower.includes('hvac') && (titleLower.includes('hvac') || categoryLower.includes('hvac'))) ||
+        (assetTypeLower.includes('elevator') && (titleLower.includes('elevator') || categoryLower.includes('elevator'))) ||
+        (assetTypeLower.includes('power') && (titleLower.includes('generator') || titleLower.includes('power'))) ||
+        (assetTypeLower.includes('electrical') && (categoryLower.includes('electrical') || titleLower.includes('electrical'))) ||
+        (assetTypeLower.includes('plumbing') && (titleLower.includes('water') || titleLower.includes('plumbing') || categoryLower.includes('plumbing')))
+      );
+    });
+    
     const workOrderCount = workOrders.length;
     
     // Calculate critical issues count (Critical and High priority work orders)
