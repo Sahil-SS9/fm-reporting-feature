@@ -20,6 +20,7 @@ import { CreatedVsCompletedTrendWidget } from "@/components/dashboard/CreatedVsC
 import { WorkOrderPriorityWidget } from "@/components/dashboard/WorkOrderPriorityWidget";
 import { OnTimeVsOverdueWidget } from "@/components/dashboard/OnTimeVsOverdueWidget";
 import { SchedulingWidget } from "@/components/dashboard/SchedulingWidget";
+import { PerformanceSummaryWidget } from "@/components/dashboard/PerformanceSummaryWidget";
 import { DonutChartWithCenter } from "@/components/ui/enhanced-charts";
 import {
   Activity,
@@ -62,8 +63,22 @@ export default function Dashboard() {
       </div>
 
       {/* Dashboard Sections with Accordion */}
-      <Accordion type="multiple" defaultValue={["operations", "assets", "documents", "property"]} className="space-y-4">
+      <Accordion type="multiple" defaultValue={["overview", "operations", "assets", "documents", "property"]} className="space-y-4">
         
+        {/* Overview Section - Priority Inbox */}
+        <AccordionItem value="overview" className="border rounded-lg px-4">
+          <AccordionTrigger className="text-lg font-semibold hover:no-underline">
+            Overview
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="lg:col-span-2">
+                <PriorityInboxWidget />
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
         {/* Operations Command Center */}
         <AccordionItem value="operations" className="border rounded-lg px-4">
           <AccordionTrigger className="text-lg font-semibold hover:no-underline">
@@ -71,13 +86,6 @@ export default function Dashboard() {
           </AccordionTrigger>
           <AccordionContent className="pt-4">
             <div className="space-y-8">
-              {/* Priority Inbox - Hero Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="lg:col-span-2">
-                  <PriorityInboxWidget />
-                </div>
-              </div>
-
               {/* Essential Metrics - Visual Chunking */}
               <div>
                 <h3 className="text-lg font-medium mb-4 text-foreground">Today's Metrics</h3>
@@ -137,21 +145,7 @@ export default function Dashboard() {
                     variant={kpiMetrics.closureRate >= 80 ? "success" : "warning"}
                     description="Work orders completed"
                   />
-                  <Card className="lg:col-span-1">
-                    <CardHeader>
-                      <CardTitle className="text-base">Quick Actions</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                      <div className="text-sm text-muted-foreground">
-                        Most common actions needed:
-                      </div>
-                      <div className="space-y-1">
-                        <div className="text-xs">• Assign contractors ({kpiMetrics.critical} items)</div>
-                        <div className="text-xs">• Update status ({kpiMetrics.overdue} overdue)</div>
-                        <div className="text-xs">• Schedule inspections</div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <PerformanceSummaryWidget />
                 </div>
               </div>
               
@@ -174,11 +168,18 @@ export default function Dashboard() {
             Asset Management
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
-              <AssetStatusWidget />
-              <WarrantyExpiryWidget />
-              <PreventiveMaintenanceWidget />
-              <TopAssetsWidget />
+            <div className="space-y-6">
+              {/* Core Asset Widgets */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <AssetStatusWidget />
+                <WarrantyExpiryWidget />
+                <PreventiveMaintenanceWidget />
+              </div>
+              
+              {/* Expanded High Maintenance Assets */}
+              <div className="grid grid-cols-1 gap-4">
+                <TopAssetsWidget />
+              </div>
             </div>
           </AccordionContent>
         </AccordionItem>

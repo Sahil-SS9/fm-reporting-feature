@@ -1,26 +1,32 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Wrench, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockAssets } from "@/data/mockData";
-import { RadialProgress } from "@/components/ui/enhanced-charts";
 
 export function PreventiveMaintenanceWidget() {
   const navigate = useNavigate();
   
-  // Preventive maintenance tracking (separate from inspections)
-  const preventiveMaintenanceDue = mockAssets.filter(asset => {
-    // Mock preventive maintenance logic (separate from inspections)
-    return asset.status === "Operational" && Math.random() > 0.7; // Mock 30% due for PM
-  });
-  
+  // Enhanced preventive maintenance tracking with smart categorization
   const totalAssets = mockAssets.length;
-  const pmPercentage = (preventiveMaintenanceDue.length / totalAssets) * 100;
+  
+  // Categorize maintenance status (mock logic for realistic distribution)
+  const notDue = mockAssets.filter((_, index) => index % 5 !== 0); // 80% not due
+  const dueSoon = mockAssets.filter((_, index) => index % 5 === 0 && index % 10 !== 0); // 10% due soon
+  const overdue = mockAssets.filter((_, index) => index % 10 === 0); // 10% overdue
   
   const handleClick = () => {
     navigate('/maintenance', { 
       state: { 
         filter: { type: 'preventive' }
+      }
+    });
+  };
+  
+  const handleStatusClick = (status: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate('/maintenance', { 
+      state: { 
+        filter: { type: 'preventive', status }
       }
     });
   };
@@ -39,27 +45,38 @@ export function PreventiveMaintenanceWidget() {
           <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <div className="text-lg font-bold">{preventiveMaintenanceDue.length}</div>
-            <div className="text-sm text-muted-foreground">assets due</div>
+      <CardContent className="space-y-3">
+        {/* Status Grid */}
+        <div className="grid grid-cols-3 gap-2">
+          <div 
+            className="text-center p-2 rounded bg-dashboard-complete/10 hover:bg-dashboard-complete/20 transition-colors cursor-pointer"
+            onClick={(e) => handleStatusClick('not-due', e)}
+          >
+            <div className="text-lg font-bold text-dashboard-complete">{notDue.length}</div>
+            <div className="text-xs text-dashboard-complete font-medium">Not Due</div>
           </div>
-          <RadialProgress 
-            value={pmPercentage} 
-            size={60}
-            color="hsl(var(--primary))"
-          />
+          
+          <div 
+            className="text-center p-2 rounded bg-dashboard-medium/10 hover:bg-dashboard-medium/20 transition-colors cursor-pointer"
+            onClick={(e) => handleStatusClick('due-soon', e)}
+          >
+            <div className="text-lg font-bold text-dashboard-medium">{dueSoon.length}</div>
+            <div className="text-xs text-dashboard-medium font-medium">Due Soon</div>
+          </div>
+          
+          <div 
+            className="text-center p-2 rounded bg-dashboard-critical/10 hover:bg-dashboard-critical/20 transition-colors cursor-pointer"
+            onClick={(e) => handleStatusClick('overdue', e)}
+          >
+            <div className="text-lg font-bold text-dashboard-critical">{overdue.length}</div>
+            <div className="text-xs text-dashboard-critical font-medium">Overdue</div>
+          </div>
         </div>
-        <div className="text-xs text-muted-foreground">
-          Scheduled maintenance tasks requiring attention
+        
+        {/* Summary */}
+        <div className="text-xs text-muted-foreground text-center pt-1 border-t">
+          {totalAssets} total assets • {dueSoon.length + overdue.length} require attention
         </div>
-        <Badge 
-          variant={pmPercentage > 20 ? "destructive" : "secondary"} 
-          className="text-xs w-full justify-center"
-        >
-          {pmPercentage.toFixed(0)}% of assets
-        </Badge>
       </CardContent>
     </Card>
   );

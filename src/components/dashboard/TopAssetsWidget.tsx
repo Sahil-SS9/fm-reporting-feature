@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { TrendingUp, ArrowRight } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { TrendingUp, ArrowRight, DollarSign, Wrench } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockAssets, mockWorkOrders } from "@/data/mockData";
 import { VerticalBarChart } from "@/components/ui/enhanced-charts";
@@ -8,68 +8,137 @@ import { VerticalBarChart } from "@/components/ui/enhanced-charts";
 export function TopAssetsWidget() {
   const navigate = useNavigate();
   
-  // Top 5 assets by work order volume (mock enhanced data)
-  const assetWorkOrderCounts = mockAssets.map(asset => {
-    const workOrderCount = mockWorkOrders.filter(wo => wo.title.includes(asset.name) || wo.description.includes(asset.name)).length;
+  // Calculate comprehensive asset metrics
+  const assetMetrics = mockAssets.map(asset => {
+    const workOrders = mockWorkOrders.filter(wo => wo.title.includes(asset.name) || wo.description?.includes(asset.name));
+    const workOrderCount = workOrders.length;
+    
+    // Mock labor hours calculation (4-8h per WO based on priority)
+    const laborHours = workOrders.reduce((total, wo) => {
+      const priorityMultiplier = wo.priority === 'Critical' ? 8 : 
+                                wo.priority === 'High' ? 6 : 
+                                wo.priority === 'Medium' ? 4 : 2;
+      return total + priorityMultiplier;
+    }, 0);
+    
+    // Mock maintenance cost calculation ($50-150/hour based on asset type)
+    const hourlyRate = asset.type === 'HVAC' ? 150 : 
+                      asset.type === 'Electrical' ? 120 :
+                      asset.type === 'Plumbing' ? 100 : 75;
+    const maintenanceCost = laborHours * hourlyRate;
+    
     return {
-      name: asset.name.length > 15 ? asset.name.substring(0, 15) + "..." : asset.name,
-      value: workOrderCount + Math.floor(Math.random() * 8) // Enhanced mock data
+      ...asset,
+      workOrderCount,
+      laborHours,
+      maintenanceCost
     };
-  }).sort((a, b) => b.value - a.value).slice(0, 5);
-  
+  }).sort((a, b) => b.workOrderCount - a.workOrderCount).slice(0, 5);
+
   const handleClick = () => {
     navigate('/assets', { 
       state: { 
-        filter: { 
-          sortBy: 'ticket-volume',
-          showHighMaintenance: true
-        }
+        filter: { sortBy: 'workOrderCount', order: 'desc' }
       }
     });
   };
-  
+
   return (
     <Card 
-      className="hover:shadow-md transition-shadow cursor-pointer group" 
+      className="hover:shadow-md transition-shadow cursor-pointer group col-span-full" 
       onClick={handleClick}
     >
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <TrendingUp className="h-4 w-4 text-warning" />
-            <span className="text-base">High Maintenance Assets</span>
+            <TrendingUp className="h-5 w-5 text-primary" />
+            <span className="text-lg">High Maintenance Assets</span>
           </div>
-          <div className="flex items-center space-x-2">
-            <Badge variant="outline" className="text-xs">
-              Top 5
-            </Badge>
-            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
+          <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        {/* Enhanced Bar Chart */}
-        <VerticalBarChart 
-          data={assetWorkOrderCounts}
-          height={100}
-          color="hsl(var(--warning))"
-        />
-        
-        {/* Asset List with Details */}
-        <div className="space-y-1">
-          {assetWorkOrderCounts.slice(0, 3).map((asset, index) => (
-            <div key={asset.name} className="flex items-center justify-between p-1.5 bg-muted/10 rounded">
-              <div className="flex items-center space-x-2">
-                <div className="w-5 h-5 rounded-full bg-warning/20 flex items-center justify-center text-xs font-medium">
-                  {index + 1}
-                </div>
-                <span className="text-xs">{asset.name}</span>
-              </div>
-              <Badge variant="secondary" className="text-xs h-4">
-                {asset.value}
-              </Badge>
+      <CardContent>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* Labor Hours Panel */}
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <TrendingUp className="h-4 w-4 text-primary" />
+              <h4 className="font-medium">Labor Hours</h4>
             </div>
-          ))}
+            <div className="h-32">
+              <VerticalBarChart 
+                data={assetMetrics.map(asset => ({
+                  name: asset.name.length > 12 ? asset.name.substring(0, 12) + '...' : asset.name,
+                  value: asset.laborHours
+                }))}
+                color="hsl(var(--primary))"
+              />
+            </div>
+            <div className="space-y-1">
+              {assetMetrics.slice(0, 3).map((asset, index) => (
+                <div key={`labor-${asset.id}`} className="flex items-center justify-between text-xs">
+                  <span className="truncate text-muted-foreground">{asset.name}</span>
+                  <span className="font-medium">{asset.laborHours}h</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Separator orientation="vertical" className="hidden lg:block" />
+          
+          {/* Work Order Count Panel */}
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Wrench className="h-4 w-4 text-dashboard-medium" />
+              <h4 className="font-medium">Work Orders</h4>
+            </div>
+            <div className="h-32">
+              <VerticalBarChart 
+                data={assetMetrics.map(asset => ({
+                  name: asset.name.length > 12 ? asset.name.substring(0, 12) + '...' : asset.name,
+                  value: asset.workOrderCount
+                }))}
+                color="hsl(var(--dashboard-medium))"
+              />
+            </div>
+            <div className="space-y-1">
+              {assetMetrics.slice(0, 3).map((asset, index) => (
+                <div key={`wo-${asset.id}`} className="flex items-center justify-between text-xs">
+                  <span className="truncate text-muted-foreground">{asset.name}</span>
+                  <span className="font-medium">{asset.workOrderCount}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Separator orientation="vertical" className="hidden lg:block" />
+          
+          {/* Maintenance Cost Panel */}
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <DollarSign className="h-4 w-4 text-dashboard-high" />
+              <h4 className="font-medium">Maintenance Cost</h4>
+            </div>
+            <div className="h-32">
+              <VerticalBarChart 
+                data={assetMetrics.map(asset => ({
+                  name: asset.name.length > 12 ? asset.name.substring(0, 12) + '...' : asset.name,
+                  value: Math.round(asset.maintenanceCost / 100) // Scale for chart
+                }))}
+                color="hsl(var(--dashboard-high))"
+              />
+            </div>
+            <div className="space-y-1">
+              {assetMetrics.slice(0, 3).map((asset, index) => (
+                <div key={`cost-${asset.id}`} className="flex items-center justify-between text-xs">
+                  <span className="truncate text-muted-foreground">{asset.name}</span>
+                  <span className="font-medium">${(asset.maintenanceCost / 1000).toFixed(1)}k</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          
         </div>
       </CardContent>
     </Card>
