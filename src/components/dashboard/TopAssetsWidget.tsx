@@ -70,90 +70,111 @@ export function TopAssetsWidget() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Critical Issues Panel */}
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <TrendingUp className="h-4 w-4 text-destructive" />
-              <h4 className="font-medium">Critical Issues</h4>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2 pb-2">
+              <TrendingUp className="h-5 w-5 text-destructive" />
+              <h4 className="font-semibold text-base">Critical Issues</h4>
             </div>
-            <div className="h-32">
+            <div className="h-48 bg-card border rounded-lg p-4">
               <VerticalBarChart 
                 data={assetMetrics.map(asset => ({
-                  name: asset.name.length > 12 ? asset.name.substring(0, 12) + '...' : asset.name,
+                  name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
                   value: asset.criticalIssues
                 }))}
                 color="hsl(var(--destructive))"
                 width={280}
-                height={128}
+                height={180}
               />
             </div>
-            <div className="space-y-1">
-              {assetMetrics.slice(0, 3).map((asset, index) => (
-                <div key={`critical-${asset.id}`} className="flex items-center justify-between text-xs">
-                  <span className="truncate text-muted-foreground">{asset.name}</span>
-                  <span className="font-medium text-destructive">{asset.criticalIssues}</span>
+            <div className="mt-4">
+              <div className="bg-muted/30 rounded-lg p-3">
+                <h5 className="text-sm font-medium mb-2 text-muted-foreground">Top Assets</h5>
+                <div className="space-y-2">
+                  {assetMetrics.slice(0, 3).map((asset, index) => (
+                    <div key={`critical-${asset.id}`} className="flex items-center justify-between text-sm">
+                      <span className="truncate text-foreground font-medium">{asset.name}</span>
+                      <span className="font-semibold text-destructive bg-destructive/10 px-2 py-1 rounded">
+                        {asset.criticalIssues}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
 
           <Separator orientation="vertical" className="hidden lg:block" />
           
           {/* Work Order Count Panel */}
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <Wrench className="h-4 w-4 text-dashboard-medium" />
-              <h4 className="font-medium">Work Orders</h4>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2 pb-2">
+              <Wrench className="h-5 w-5 text-dashboard-medium" />
+              <h4 className="font-semibold text-base">Work Orders</h4>
             </div>
-            <div className="h-32">
+            <div className="h-48 bg-card border rounded-lg p-4">
               <VerticalBarChart 
                 data={assetMetrics.map(asset => ({
-                  name: asset.name.length > 12 ? asset.name.substring(0, 12) + '...' : asset.name,
+                  name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
                   value: asset.workOrderCount
                 }))}
                 color="hsl(var(--dashboard-medium))"
                 width={280}
-                height={128}
+                height={180}
               />
             </div>
-            <div className="space-y-1">
-              {assetMetrics.slice(0, 3).map((asset, index) => (
-                <div key={`wo-${asset.id}`} className="flex items-center justify-between text-xs">
-                  <span className="truncate text-muted-foreground">{asset.name}</span>
-                  <span className="font-medium">{asset.workOrderCount}</span>
+            <div className="mt-4">
+              <div className="bg-muted/30 rounded-lg p-3">
+                <h5 className="text-sm font-medium mb-2 text-muted-foreground">Top Assets</h5>
+                <div className="space-y-2">
+                  {assetMetrics.slice(0, 3).map((asset, index) => (
+                    <div key={`wo-${asset.id}`} className="flex items-center justify-between text-sm">
+                      <span className="truncate text-foreground font-medium">{asset.name}</span>
+                      <span className="font-semibold text-dashboard-medium bg-dashboard-medium/10 px-2 py-1 rounded">
+                        {asset.workOrderCount}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
 
           <Separator orientation="vertical" className="hidden lg:block" />
           
           {/* Frequency Score Panel */}
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <Wrench className="h-4 w-4 text-dashboard-high" />
-              <h4 className="font-medium">Frequency Score</h4>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2 pb-2">
+              <DollarSign className="h-5 w-5 text-dashboard-high" />
+              <h4 className="font-semibold text-base">Frequency Score</h4>
             </div>
-            <div className="h-32">
+            <div className="h-48 bg-card border rounded-lg p-4">
               <VerticalBarChart 
                 data={assetMetrics.map(asset => ({
-                  name: asset.name.length > 12 ? asset.name.substring(0, 12) + '...' : asset.name,
+                  name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
                   value: asset.frequencyScore
                 }))}
                 color="hsl(var(--dashboard-high))"
                 width={280}
-                height={128}
+                height={180}
               />
             </div>
-            <div className="space-y-1">
-              {assetMetrics.slice(0, 3).map((asset, index) => (
-                <div key={`freq-${asset.id}`} className="flex items-center justify-between text-xs">
-                  <span className="truncate text-muted-foreground">{asset.name}</span>
-                  <span className="font-medium">{asset.frequencyScore}/year</span>
+            <div className="mt-4">
+              <div className="bg-muted/30 rounded-lg p-3">
+                <h5 className="text-sm font-medium mb-2 text-muted-foreground">Top Assets</h5>
+                <div className="space-y-2">
+                  {assetMetrics.slice(0, 3).map((asset, index) => (
+                    <div key={`freq-${asset.id}`} className="flex items-center justify-between text-sm">
+                      <span className="truncate text-foreground font-medium">{asset.name}</span>
+                      <span className="font-semibold text-dashboard-high bg-dashboard-high/10 px-2 py-1 rounded">
+                        {asset.frequencyScore}/year
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
           
