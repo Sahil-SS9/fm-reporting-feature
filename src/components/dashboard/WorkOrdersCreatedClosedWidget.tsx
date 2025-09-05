@@ -53,7 +53,7 @@ export function WorkOrdersCreatedClosedWidget() {
           <div className="text-center">
             <div className="text-lg font-bold">{workOrdersCreatedThisWeek}</div>
             <div className="text-xs text-muted-foreground">Created</div>
-            <div className="flex items-center justify-center space-x-1 mt-1">
+            <div className="flex items-center justify-center space-x-1">
               {createdTrend >= 0 ? (
                 <TrendingUp className="h-3 w-3 text-primary" />
               ) : (
@@ -68,13 +68,13 @@ export function WorkOrdersCreatedClosedWidget() {
           <div className="text-center">
             <div className="text-lg font-bold">{workOrdersClosedThisWeek}</div>
             <div className="text-xs text-muted-foreground">Closed</div>
-            <div className="flex items-center justify-center space-x-1 mt-1">
+            <div className="flex items-center justify-center space-x-1">
               {closedTrend >= 0 ? (
-                <TrendingUp className="h-3 w-3 text-primary" />
+                <TrendingUp className="h-3 w-3 text-dashboard-complete" />
               ) : (
                 <TrendingDown className="h-3 w-3 text-destructive" />
               )}
-              <span className={`text-xs ${closedTrend >= 0 ? 'text-primary' : 'text-destructive'}`}>
+              <span className={`text-xs ${closedTrend >= 0 ? 'text-dashboard-complete' : 'text-destructive'}`}>
                 {closedTrend >= 0 ? '+' : ''}{closedTrend}
               </span>
             </div>
@@ -83,13 +83,11 @@ export function WorkOrdersCreatedClosedWidget() {
           <div className="text-center">
             <div className="text-lg font-bold">{closureRate.toFixed(0)}%</div>
             <div className="text-xs text-muted-foreground">Rate</div>
-            <Badge variant={closureRate >= 85 ? "default" : closureRate >= 70 ? "secondary" : "destructive"} className="text-xs mt-1">
+            <Badge variant={closureRate >= 85 ? "default" : closureRate >= 70 ? "secondary" : "destructive"} className="text-xs">
               {closureRate >= 85 ? "Good" : closureRate >= 70 ? "Fair" : "Poor"}
             </Badge>
           </div>
         </div>
-        
-        <Progress value={closureRate} className="h-2" />
       </CardContent>
     </Card>
   );

@@ -15,6 +15,7 @@ import { DueTodayWidget } from "@/components/dashboard/DueTodayWidget";
 import { CreatedVsCompletedTrendWidget } from "@/components/dashboard/CreatedVsCompletedTrendWidget";
 import { WorkOrderPriorityWidget } from "@/components/dashboard/WorkOrderPriorityWidget";
 import { OnTimeVsOverdueWidget } from "@/components/dashboard/OnTimeVsOverdueWidget";
+import { SchedulingWidget } from "@/components/dashboard/SchedulingWidget";
 import { DonutChartWithCenter } from "@/components/ui/enhanced-charts";
 import {
   Activity,
@@ -49,7 +50,7 @@ export default function Dashboard() {
       </div>
 
       {/* Dashboard Sections with Accordion */}
-      <Accordion type="multiple" defaultValue={["operations", "assets", "property"]} className="space-y-4">
+      <Accordion type="multiple" defaultValue={["operations", "assets", "documents", "property"]} className="space-y-4">
         
         {/* Operations Command Center */}
         <AccordionItem value="operations" className="border rounded-lg px-4">
@@ -95,10 +96,11 @@ export default function Dashboard() {
               {/* Weekly Performance Summary */}
               <div>
                 <h3 className="text-lg font-medium mb-4">Weekly Performance Summary</h3>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                   <EnhancedAverageCompletionTimeWidget />
                   <CasesCreatedClosedWidget />
                   <WorkOrdersCreatedClosedWidget />
+                  <SchedulingWidget />
                 </div>
               </div>
               
@@ -115,16 +117,23 @@ export default function Dashboard() {
         </AccordionItem>
 
 
-        {/* Asset & Compliance */}
+        {/* Asset Management */}
         <AccordionItem value="assets" className="border rounded-lg px-4">
           <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-            Asset & Compliance Management
+            Asset Management
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <EnhancedAssetMaintenanceWidget />
-              <DocumentExpiryWidget />
-            </div>
+            <EnhancedAssetMaintenanceWidget />
+          </AccordionContent>
+        </AccordionItem>
+
+        {/* Document Management */}
+        <AccordionItem value="documents" className="border rounded-lg px-4">
+          <AccordionTrigger className="text-lg font-semibold hover:no-underline">
+            Document Management
+          </AccordionTrigger>
+          <AccordionContent className="pt-4">
+            <DocumentExpiryWidget />
           </AccordionContent>
         </AccordionItem>
 

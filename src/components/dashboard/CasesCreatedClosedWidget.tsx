@@ -47,13 +47,13 @@ export function CasesCreatedClosedWidget() {
         <CardTitle className="text-lg font-semibold">Cases This Week</CardTitle>
         <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3">
         {/* Compact Metrics Row */}
         <div className="grid grid-cols-3 gap-3">
           <div className="text-center">
             <div className="text-lg font-bold">{casesCreatedThisWeek}</div>
             <div className="text-xs text-muted-foreground">Created</div>
-            <div className="flex items-center justify-center space-x-1 mt-1">
+            <div className="flex items-center justify-center space-x-1">
               {createdTrend >= 0 ? (
                 <TrendingUp className="h-3 w-3 text-primary" />
               ) : (
@@ -68,7 +68,7 @@ export function CasesCreatedClosedWidget() {
           <div className="text-center">
             <div className="text-lg font-bold">{casesClosedThisWeek}</div>
             <div className="text-xs text-muted-foreground">Closed</div>
-            <div className="flex items-center justify-center space-x-1 mt-1">
+            <div className="flex items-center justify-center space-x-1">
               {closedTrend >= 0 ? (
                 <TrendingUp className="h-3 w-3 text-dashboard-complete" />
               ) : (
@@ -83,7 +83,7 @@ export function CasesCreatedClosedWidget() {
           <div className="text-center">
             <div className="text-lg font-bold">{closureRate.toFixed(0)}%</div>
             <div className="text-xs text-muted-foreground">Rate</div>
-            <Badge variant={closureRate >= 80 ? "default" : closureRate >= 60 ? "secondary" : "destructive"} className="text-xs mt-1">
+            <Badge variant={closureRate >= 80 ? "default" : closureRate >= 60 ? "secondary" : "destructive"} className="text-xs">
               {closureRate >= 80 ? "Good" : closureRate >= 60 ? "Fair" : "Poor"}
             </Badge>
           </div>

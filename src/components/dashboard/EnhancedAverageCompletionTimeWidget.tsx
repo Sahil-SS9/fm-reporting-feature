@@ -65,77 +65,36 @@ export function EnhancedAverageCompletionTimeWidget() {
           <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Clear Current vs Target Display */}
+      <CardContent className="space-y-4">
+        {/* Current Metrics */}
         <div className="grid grid-cols-3 gap-4">
-          <div className="text-center p-3 bg-primary/5 rounded-lg">
-            <div className="text-2xl font-bold text-primary">{avgCompletionTime}</div>
-            <div className="text-sm text-muted-foreground">Current Avg</div>
-            <div className="text-xs text-muted-foreground">days</div>
+          <div className="text-center">
+            <div className="text-xl font-bold">{avgCompletionTime}</div>
+            <div className="text-sm text-muted-foreground">Days Avg</div>
           </div>
-          
-          <div className="text-center p-3 bg-muted/20 rounded-lg">
-            <div className="flex items-center justify-center space-x-1">
-              <Target className="h-4 w-4 text-muted-foreground" />
-              <div className="text-2xl font-bold">{targetTime}</div>
-            </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-dashboard-accent">{targetTime}</div>
             <div className="text-sm text-muted-foreground">Target</div>
-            <div className="text-xs text-muted-foreground">days</div>
           </div>
-          
-          <div className="text-center p-3 bg-muted/10 rounded-lg">
-            <div className="flex items-center justify-center space-x-1">
-              {trend <= 0 ? (
-                <TrendingDown className="h-4 w-4 text-success" />
-              ) : (
-                <TrendingUp className="h-4 w-4 text-destructive" />
-              )}
-              <div className="text-2xl font-bold">
-                {trend <= 0 ? '' : '+'}{trend.toFixed(1)}
-              </div>
+          <div className="text-center">
+            <div className={`text-xl font-bold ${isOnTarget ? 'text-dashboard-complete' : 'text-dashboard-warning'}`}>
+              {trend >= 0 ? '+' : ''}{trend.toFixed(1)}
             </div>
-            <div className="text-sm text-muted-foreground">vs Previous</div>
-            <div className="text-xs text-muted-foreground">days</div>
+            <div className="text-sm text-muted-foreground">vs Last Period</div>
+            <Badge variant={isOnTarget ? "default" : "secondary"} className="text-xs mt-1">
+              {isOnTarget ? "On Target" : "Attention"}
+            </Badge>
           </div>
         </div>
 
-        {/* Enhanced 30-Day Trend */}
-        <div className="p-4 bg-muted/5 rounded-lg">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium">30-Day Trend</span>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <MiniTrendChart 
-            data={trendData} 
-            width={280} 
-            height={60}
-            color={trend <= 0 ? "hsl(var(--success))" : "hsl(var(--destructive))"}
-            tooltipContent={`Improving ${Math.abs(trend).toFixed(1)} days over 30 days. Target: ${targetTime} days`}
-          />
-          <div className="flex justify-between items-center mt-2 text-xs text-muted-foreground">
-            <span>30 days ago: {trendData[0]?.value}d</span>
-            <span>Today: {avgCompletionTime}d</span>
-          </div>
-        </div>
-        
-        {/* Priority Performance Bar Chart */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Priority Breakdown</span>
-            <span className="text-xs text-muted-foreground">vs Targets</span>
-          </div>
-          <VerticalBarChart 
-            data={priorityBreakdown}
-            height={120}
-            color="hsl(var(--primary))"
-          />
-          <div className="grid grid-cols-3 gap-2 text-xs">
-            {priorityBreakdown.map((priority, index) => (
-              <div key={priority.name} className="text-center">
-                <div className="font-medium">{priority.value}d / {priority.target}d</div>
-                <div className="text-muted-foreground">{priority.name} Priority</div>
-              </div>
-            ))}
+        {/* Priority Breakdown */}
+        <div>
+          <h4 className="text-sm font-medium mb-3">Average Time by Priority vs Target</h4>
+          <div className="h-32">
+            <VerticalBarChart 
+              data={priorityBreakdown}
+              color="hsl(var(--primary))"
+            />
           </div>
         </div>
       </CardContent>
