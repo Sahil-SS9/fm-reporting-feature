@@ -89,12 +89,15 @@ export function EnhancedAverageCompletionTimeWidget() {
 
         {/* Priority Breakdown */}
         <div>
-          <h4 className="text-sm font-medium mb-3">Average Time by Priority vs Target</h4>
-          <div className="h-32">
-            <VerticalBarChart 
-              data={priorityBreakdown}
-              color="hsl(var(--primary))"
-            />
+          <h4 className="text-sm font-medium mb-2">Priority Breakdown (Days)</h4>
+          <div className="grid grid-cols-3 gap-2">
+            {priorityBreakdown.map((priority) => (
+              <div key={priority.name} className="text-center p-2 bg-muted/10 rounded-lg">
+                <div className="text-lg font-bold">{priority.value}</div>
+                <div className="text-xs text-muted-foreground">{priority.name}</div>
+                <div className="text-xs text-muted-foreground">Target: {priority.target}d</div>
+              </div>
+            ))}
           </div>
         </div>
       </CardContent>

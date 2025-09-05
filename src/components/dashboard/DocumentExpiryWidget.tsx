@@ -77,7 +77,7 @@ export function DocumentExpiryWidget() {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-2">
         {totalExpiringDocuments === 0 ? (
           <div className="text-center py-6">
             <div className="text-2xl font-bold text-green-600 mb-2">0</div>
@@ -86,7 +86,7 @@ export function DocumentExpiryWidget() {
         ) : (
           <>
             {/* Summary Stats */}
-            <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="grid grid-cols-3 gap-1 text-center">
               {expiredDocuments.length > 0 && (
                 <div className="p-2 bg-destructive/10 rounded-lg border border-destructive/20">
                   <div className="text-lg font-bold text-destructive">{expiredDocuments.length}</div>
@@ -109,7 +109,7 @@ export function DocumentExpiryWidget() {
             
             {/* Critical Expired Documents */}
             {expiredDocuments.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <div className="flex items-center space-x-2 text-sm font-medium text-destructive">
                   <AlertCircle className="h-4 w-4" />
                   <span>Expired Documents</span>
@@ -135,7 +135,7 @@ export function DocumentExpiryWidget() {
             
             {/* Upcoming Expiries */}
             {(expiringIn7Days.length > 0 || expiringIn30Days.length > 0) && (
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <div className="flex items-center space-x-2 text-sm font-medium text-orange-600">
                   <Clock className="h-4 w-4" />
                   <span>Upcoming Expiries</span>

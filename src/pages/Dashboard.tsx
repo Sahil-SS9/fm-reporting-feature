@@ -1,7 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { AssetMaintenanceWidget } from "@/components/dashboard/AssetMaintenanceWidget";
-import { EnhancedAssetMaintenanceWidget } from "@/components/dashboard/EnhancedAssetMaintenanceWidget";
+import { AssetStatusWidget } from "@/components/dashboard/AssetStatusWidget";
+import { WarrantyExpiryWidget } from "@/components/dashboard/WarrantyExpiryWidget"; 
+import { PreventiveMaintenanceWidget } from "@/components/dashboard/PreventiveMaintenanceWidget";
+import { TopAssetsWidget } from "@/components/dashboard/TopAssetsWidget";
 import { OutstandingInvoicesWidget } from "@/components/dashboard/OutstandingInvoicesWidget";
 import { PropertyPerformanceWidget } from "@/components/dashboard/PropertyPerformanceWidget";
 import { PropertyComparisonChart } from "@/components/dashboard/PropertyComparisonChart";
@@ -123,7 +126,12 @@ export default function Dashboard() {
             Asset Management
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <EnhancedAssetMaintenanceWidget />
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
+              <AssetStatusWidget />
+              <WarrantyExpiryWidget />
+              <PreventiveMaintenanceWidget />
+              <TopAssetsWidget />
+            </div>
           </AccordionContent>
         </AccordionItem>
 
