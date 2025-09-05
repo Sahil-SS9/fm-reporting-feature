@@ -20,16 +20,15 @@ export function EnhancedAverageCompletionTimeWidget() {
   const avgCompletionTime = completionTimes.length > 0 ? 
     Math.round(completionTimes.reduce((sum, time) => sum + time, 0) / completionTimes.length) : 0;
   
-  const targetTime = 5;
   const previousAvg = 7.2;
   const trend = avgCompletionTime - previousAvg;
-  const isOnTarget = avgCompletionTime <= targetTime;
+  const isImproving = trend <= 0;
   
   // Priority breakdown with realistic data
   const priorityBreakdown = [
-    { name: "High", value: 2.8, target: 3 },
-    { name: "Med", value: 4.2, target: 5 }, 
-    { name: "Low", value: 8.5, target: 10 }
+    { name: "High", value: 2.8 },
+    { name: "Med", value: 4.2 }, 
+    { name: "Low", value: 8.5 }
   ];
   
   // Enhanced trend data (30 days)
@@ -59,30 +58,26 @@ export function EnhancedAverageCompletionTimeWidget() {
           <span className="text-lg font-semibold">Completion Times</span>
         </CardTitle>
         <div className="flex items-center space-x-2">
-          <Badge variant={isOnTarget ? "default" : "destructive"} className="text-xs">
-            {isOnTarget ? "On Target" : "Over Target"}
+          <Badge variant={isImproving ? "default" : "secondary"} className="text-xs">
+            {isImproving ? "Improving" : "Trending Up"}
           </Badge>
           <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Current Metrics */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <div className="text-center">
             <div className="text-xl font-bold">{avgCompletionTime}</div>
             <div className="text-sm text-muted-foreground">Days Avg</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-bold text-dashboard-accent">{targetTime}</div>
-            <div className="text-sm text-muted-foreground">Target</div>
-          </div>
-          <div className="text-center">
-            <div className={`text-xl font-bold ${isOnTarget ? 'text-dashboard-complete' : 'text-dashboard-warning'}`}>
+            <div className={`text-xl font-bold ${isImproving ? 'text-dashboard-complete' : 'text-dashboard-warning'}`}>
               {trend >= 0 ? '+' : ''}{trend.toFixed(1)}
             </div>
             <div className="text-sm text-muted-foreground">vs Last Period</div>
-            <Badge variant={isOnTarget ? "default" : "secondary"} className="text-xs mt-1">
-              {isOnTarget ? "On Target" : "Attention"}
+            <Badge variant={isImproving ? "default" : "secondary"} className="text-xs mt-1">
+              {isImproving ? "Improving" : "Trending Up"}
             </Badge>
           </div>
         </div>
@@ -94,8 +89,7 @@ export function EnhancedAverageCompletionTimeWidget() {
             {priorityBreakdown.map((priority) => (
               <div key={priority.name} className="text-center p-2 bg-muted/10 rounded-lg">
                 <div className="text-lg font-bold">{priority.value}</div>
-                <div className="text-xs text-muted-foreground">{priority.name}</div>
-                <div className="text-xs text-muted-foreground">Target: {priority.target}d</div>
+                <div className="text-xs text-muted-foreground">{priority.name} Priority</div>
               </div>
             ))}
           </div>

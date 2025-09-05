@@ -83,9 +83,7 @@ export function WorkOrdersCreatedClosedWidget() {
           <div className="text-center">
             <div className="text-lg font-bold">{closureRate.toFixed(0)}%</div>
             <div className="text-xs text-muted-foreground">Rate</div>
-            <Badge variant={closureRate >= 85 ? "default" : closureRate >= 70 ? "secondary" : "destructive"} className="text-xs">
-              {closureRate >= 85 ? "Good" : closureRate >= 70 ? "Fair" : "Poor"}
-            </Badge>
+            <div className="text-xs text-muted-foreground">Closure Rate</div>
           </div>
         </div>
       </CardContent>

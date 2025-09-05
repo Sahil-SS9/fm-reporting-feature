@@ -83,9 +83,7 @@ export function CasesCreatedClosedWidget() {
           <div className="text-center">
             <div className="text-lg font-bold">{closureRate.toFixed(0)}%</div>
             <div className="text-xs text-muted-foreground">Rate</div>
-            <Badge variant={closureRate >= 80 ? "default" : closureRate >= 60 ? "secondary" : "destructive"} className="text-xs">
-              {closureRate >= 80 ? "Good" : closureRate >= 60 ? "Fair" : "Poor"}
-            </Badge>
+            <div className="text-xs text-muted-foreground">Closure Rate</div>
           </div>
         </div>
       </CardContent>

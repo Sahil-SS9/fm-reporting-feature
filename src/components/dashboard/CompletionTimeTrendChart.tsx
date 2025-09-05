@@ -38,7 +38,6 @@ export function CompletionTimeTrendChart({ className }: CompletionTimeTrendChart
         date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
         fullDate: date,
         completionTime: parseFloat(completionTime.toFixed(1)),
-        target: priority === "High" ? 3 : priority === "Medium" ? 5 : priority === "Low" ? 10 : 5,
         workOrderCount: Math.floor(Math.random() * 8) + 2
       });
     }
@@ -48,7 +47,6 @@ export function CompletionTimeTrendChart({ className }: CompletionTimeTrendChart
 
   const trendData = generateTrendData(parseInt(timeRange), priorityFilter);
   const averageTime = trendData.reduce((sum, d) => sum + d.completionTime, 0) / trendData.length;
-  const targetTime = trendData[0]?.target || 5;
   const trend = trendData.length >= 2 ? trendData[trendData.length - 1].completionTime - trendData[0].completionTime : 0;
   const isImproving = trend <= 0;
 
@@ -82,10 +80,6 @@ export function CompletionTimeTrendChart({ className }: CompletionTimeTrendChart
                 <div className="text-lg font-bold">{Math.abs(trend).toFixed(1)}</div>
               </div>
               <div className="text-sm text-muted-foreground">Change</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-muted-foreground">{targetTime}</div>
-              <div className="text-sm text-muted-foreground">Target</div>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -138,7 +132,7 @@ export function CompletionTimeTrendChart({ className }: CompletionTimeTrendChart
               labelFormatter={(label) => `Date: ${label}`}
               formatter={(value, name) => [
                 `${value} days`, 
-                name === 'completionTime' ? 'Avg Completion' : 'Target'
+                'Avg Completion'
               ]}
             />
             <Legend />
@@ -149,15 +143,6 @@ export function CompletionTimeTrendChart({ className }: CompletionTimeTrendChart
               strokeWidth={3}
               dot={{ fill: "hsl(var(--primary))", r: 4 }}
               name="Completion Time"
-            />
-            <Line 
-              type="monotone" 
-              dataKey="target" 
-              stroke="hsl(var(--muted-foreground))" 
-              strokeWidth={2}
-              strokeDasharray="5 5"
-              dot={false}
-              name="Target"
             />
           </LineChart>
         </ResponsiveContainer>
