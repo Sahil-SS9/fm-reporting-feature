@@ -70,7 +70,7 @@ export function TopAssetsWidget() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           
           {/* Critical Issues Panel */}
           <div className="space-y-4">
