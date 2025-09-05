@@ -66,6 +66,7 @@ export interface WorkOrder {
   status: "Open" | "In Progress" | "Completed" | "Overdue";
   priority: "Low" | "Medium" | "High" | "Critical";
   propertyId: string;
+  property?: string; // Property name for display
   assigneeId: string;
   createdDate: string;
   dueDate: string;
@@ -154,24 +155,26 @@ export const mockWorkOrders: WorkOrder[] = [
     status: "In Progress",
     priority: "Medium",
     propertyId: "1",
+    property: "Downtown Office Tower",
     assigneeId: "tech001",
-    createdDate: "2024-01-15",
-    dueDate: "2024-01-25",
+    createdDate: "2024-12-01",
+    dueDate: "2024-12-05", // Today
     category: "HVAC",
     estimatedHours: 8,
     actualHours: 6
   },
   {
     id: "WO002",
-    title: "Elevator Repair",
-    description: "Main elevator not responding to calls",
-    status: "Overdue",
-    priority: "High",
+    title: "Emergency Elevator Repair",
+    description: "Main elevator not responding to calls - tenant complaints",
+    status: "Open",
+    priority: "Critical",
     propertyId: "1",
+    property: "Downtown Office Tower",
     assigneeId: "tech002",
-    createdDate: "2024-01-10",
-    dueDate: "2024-01-20",
-    category: "Elevator",
+    createdDate: "2024-12-03",
+    dueDate: "2024-12-05", // Today - Critical
+    category: "Emergency",
     estimatedHours: 12
   },
   {
@@ -181,25 +184,27 @@ export const mockWorkOrders: WorkOrder[] = [
     status: "Completed",
     priority: "Low",
     propertyId: "2",
+    property: "Westfield Shopping Centre",
     assigneeId: "tech003",
-    createdDate: "2024-01-08",
-    dueDate: "2024-01-18",
-    completedDate: "2024-01-16",
+    createdDate: "2024-12-01",
+    dueDate: "2024-12-03",
+    completedDate: "2024-12-04", // Yesterday
     category: "Electrical",
     estimatedHours: 4,
     actualHours: 3
   },
   {
     id: "WO004",
-    title: "Plumbing Leak Investigation",
-    description: "Water leak reported in floor 5 bathroom",
+    title: "Water Leak Emergency",
+    description: "Major water leak in executive floor - immediate tenant impact",
     status: "Open",
     priority: "Critical",
     propertyId: "3",
+    property: "Industrial Park A",
     assigneeId: "tech001",
-    createdDate: "2024-01-20",
-    dueDate: "2024-01-22",
-    category: "Plumbing",
+    createdDate: "2024-12-04",
+    dueDate: "2024-12-03", // Overdue
+    category: "Emergency",
     estimatedHours: 6
   },
   {
@@ -209,13 +214,87 @@ export const mockWorkOrders: WorkOrder[] = [
     status: "Completed",
     priority: "Medium",
     propertyId: "4",
+    property: "Metro Business Complex",
     assigneeId: "tech004",
-    createdDate: "2024-01-05",
-    dueDate: "2024-01-15",
-    completedDate: "2024-01-12",
+    createdDate: "2024-11-25",
+    dueDate: "2024-12-01",
+    completedDate: "2024-12-04", // Yesterday
     category: "Security",
     estimatedHours: 3,
     actualHours: 2
+  },
+  {
+    id: "WO006",
+    title: "Fire Safety System Inspection",
+    description: "Quarterly fire suppression system inspection due",
+    status: "Open",
+    priority: "High",
+    propertyId: "2",
+    property: "Westfield Shopping Centre",
+    assigneeId: "tech003",
+    createdDate: "2024-12-02",
+    dueDate: "2024-12-05", // Today
+    category: "Safety",
+    estimatedHours: 4
+  },
+  {
+    id: "WO007",
+    title: "Generator Maintenance",
+    description: "Backup generator monthly maintenance check",
+    status: "In Progress",
+    priority: "Medium",
+    propertyId: "3",
+    property: "Industrial Park A",
+    assigneeId: "tech002",
+    createdDate: "2024-11-28",
+    dueDate: "2024-12-06", // Tomorrow
+    category: "Power",
+    estimatedHours: 3,
+    actualHours: 1
+  },
+  {
+    id: "WO008",
+    title: "Tenant Complaint - AC Not Working",
+    description: "Suite 15B reports air conditioning unit failure",
+    status: "Open",
+    priority: "High",
+    propertyId: "5",
+    property: "Riverside Office Park",
+    assigneeId: "tech001",
+    createdDate: "2024-12-04",
+    dueDate: "2024-12-05", // Today
+    category: "HVAC",
+    estimatedHours: 4
+  },
+  {
+    id: "WO009",
+    title: "Parking Lot Light Repair",
+    description: "Multiple parking lot lights not functioning",
+    status: "Completed",
+    priority: "Medium",
+    propertyId: "4",
+    property: "Metro Business Complex",
+    assigneeId: "tech004",
+    createdDate: "2024-11-30",
+    dueDate: "2024-12-02",
+    completedDate: "2024-12-04", // Yesterday
+    category: "Electrical",
+    estimatedHours: 6,
+    actualHours: 5
+  },
+  {
+    id: "WO010",
+    title: "Boiler System Critical Alert",
+    description: "Boiler system showing error codes - building heat at risk",
+    status: "Open",
+    priority: "Critical",
+    propertyId: "4",
+    property: "Metro Business Complex", 
+    assigneeId: "tech002",
+    createdDate: "2024-12-04",
+    dueDate: "2024-12-04", // Overdue (yesterday)
+    category: "Emergency",
+    estimatedHours: 8
   }
 ];
 

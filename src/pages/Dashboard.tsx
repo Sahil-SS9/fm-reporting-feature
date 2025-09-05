@@ -14,7 +14,8 @@ import { WorkOrdersCreatedClosedWidget } from "@/components/dashboard/WorkOrders
 import { AverageCompletionTimeWidget } from "@/components/dashboard/AverageCompletionTimeWidget";
 import { EnhancedAverageCompletionTimeWidget } from "@/components/dashboard/EnhancedAverageCompletionTimeWidget";
 import { CompletionTimeTrendChart } from "@/components/dashboard/CompletionTimeTrendChart";
-import { DueTodayWidget } from "@/components/dashboard/DueTodayWidget";
+import { PriorityInboxWidget } from "@/components/dashboard/PriorityInboxWidget";
+import { EssentialMetricsCard } from "@/components/dashboard/EssentialMetricsCard";
 import { CreatedVsCompletedTrendWidget } from "@/components/dashboard/CreatedVsCompletedTrendWidget";
 import { WorkOrderPriorityWidget } from "@/components/dashboard/WorkOrderPriorityWidget";
 import { OnTimeVsOverdueWidget } from "@/components/dashboard/OnTimeVsOverdueWidget";
@@ -22,7 +23,13 @@ import { SchedulingWidget } from "@/components/dashboard/SchedulingWidget";
 import { DonutChartWithCenter } from "@/components/ui/enhanced-charts";
 import {
   Activity,
+  AlertTriangle,
+  Clock,
+  CheckCircle,
+  TrendingUp,
+  Target
 } from "lucide-react";
+import { calculateKPIMetrics } from "@/lib/kpi-calculations";
 import { mockWorkOrders, mockProperties } from "@/data/mockData";
 
 const statusData = [
@@ -42,6 +49,8 @@ const recentActivities = [
 ];
 
 export default function Dashboard() {
+  const kpiMetrics = calculateKPIMetrics(mockWorkOrders);
+  
   return (
     <div className="p-6 space-y-6">
       {/* Page Header */}
@@ -61,49 +70,88 @@ export default function Dashboard() {
             Operations Command Center
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="space-y-6">
-              {/* Today's Priorities */}
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                <DueTodayWidget />
-                <WorkOrderPriorityWidget />
-                <OnTimeVsOverdueWidget />
-                
-                {/* Work Order Status Chart */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base">Work Order Status</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-center">
-                      <DonutChartWithCenter 
-                        data={statusData}
-                        size={140}
-                        strokeWidth={16}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 mt-4">
-                      {statusData.map((status) => (
-                        <div key={status.name} className="flex items-center space-x-2">
-                          <div 
-                            className="w-3 h-3 rounded-full" 
-                            style={{ backgroundColor: status.color }}
-                          />
-                          <span className="text-xs text-muted-foreground">{status.name}: {status.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+            <div className="space-y-8">
+              {/* Priority Inbox - Hero Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="lg:col-span-2">
+                  <PriorityInboxWidget />
+                </div>
               </div>
 
-              {/* Weekly Performance Summary */}
+              {/* Essential Metrics - Visual Chunking */}
               <div>
-                <h3 className="text-lg font-medium mb-4">Weekly Performance Summary</h3>
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                  <EnhancedAverageCompletionTimeWidget />
-                  <CasesCreatedClosedWidget />
-                  <WorkOrdersCreatedClosedWidget />
-                  <SchedulingWidget />
+                <h3 className="text-lg font-medium mb-4 text-foreground">Today's Metrics</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <EssentialMetricsCard
+                    title="Due Today"
+                    value={kpiMetrics.dueToday}
+                    icon={Clock}
+                    variant={kpiMetrics.dueToday > 5 ? "warning" : "default"}
+                    description="Work orders due today"
+                  />
+                  <EssentialMetricsCard
+                    title="Overdue Items"
+                    value={kpiMetrics.overdue}
+                    icon={AlertTriangle}
+                    variant={kpiMetrics.overdue > 0 ? "critical" : "success"}
+                    description="Past due work orders"
+                  />
+                  <EssentialMetricsCard
+                    title="Critical Issues"
+                    value={kpiMetrics.critical}
+                    icon={AlertTriangle}
+                    variant={kpiMetrics.critical > 0 ? "critical" : "success"}
+                    description="High priority items"
+                  />
+                  <EssentialMetricsCard
+                    title="On-Time Rate"
+                    value={`${kpiMetrics.onTimeRate}%`}
+                    icon={Target}
+                    variant={kpiMetrics.onTimeRate >= 80 ? "success" : kpiMetrics.onTimeRate >= 60 ? "warning" : "critical"}
+                    change={{
+                      value: `${kpiMetrics.weeklyTrend > 0 ? '+' : ''}${kpiMetrics.weeklyTrend}%`,
+                      type: kpiMetrics.weeklyTrend > 0 ? "positive" : kpiMetrics.weeklyTrend < 0 ? "negative" : "neutral",
+                      label: "vs last week"
+                    }}
+                    description="Completed on time"
+                  />
+                </div>
+              </div>
+
+              {/* Performance Insights - Grouped */}
+              <div>
+                <h3 className="text-lg font-medium mb-4 text-foreground">Performance Insights</h3>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                  <EssentialMetricsCard
+                    title="Avg Completion Time"
+                    value={`${kpiMetrics.avgCompletionTime}`}
+                    subValue="days"
+                    icon={TrendingUp}
+                    variant={kpiMetrics.avgCompletionTime <= 3 ? "success" : kpiMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
+                    description="Average time to complete"
+                  />
+                  <EssentialMetricsCard
+                    title="Closure Rate"
+                    value={`${kpiMetrics.closureRate}%`}
+                    icon={CheckCircle}
+                    variant={kpiMetrics.closureRate >= 80 ? "success" : "warning"}
+                    description="Work orders completed"
+                  />
+                  <Card className="lg:col-span-1">
+                    <CardHeader>
+                      <CardTitle className="text-base">Quick Actions</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="text-sm text-muted-foreground">
+                        Most common actions needed:
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs">• Assign contractors ({kpiMetrics.critical} items)</div>
+                        <div className="text-xs">• Update status ({kpiMetrics.overdue} overdue)</div>
+                        <div className="text-xs">• Schedule inspections</div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
               
