@@ -1,12 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { AssetMaintenanceWidget } from "@/components/dashboard/AssetMaintenanceWidget";
+import { EnhancedAssetMaintenanceWidget } from "@/components/dashboard/EnhancedAssetMaintenanceWidget";
 import { OutstandingInvoicesWidget } from "@/components/dashboard/OutstandingInvoicesWidget";
 import { PropertyPerformanceWidget } from "@/components/dashboard/PropertyPerformanceWidget";
+import { PropertyComparisonChart } from "@/components/dashboard/PropertyComparisonChart";
 import { DocumentExpiryWidget } from "@/components/dashboard/DocumentExpiryWidget";
 import { CasesCreatedClosedWidget } from "@/components/dashboard/CasesCreatedClosedWidget";
 import { WorkOrdersCreatedClosedWidget } from "@/components/dashboard/WorkOrdersCreatedClosedWidget";
 import { AverageCompletionTimeWidget } from "@/components/dashboard/AverageCompletionTimeWidget";
+import { EnhancedAverageCompletionTimeWidget } from "@/components/dashboard/EnhancedAverageCompletionTimeWidget";
+import { CompletionTimeTrendChart } from "@/components/dashboard/CompletionTimeTrendChart";
 import { DueTodayWidget } from "@/components/dashboard/DueTodayWidget";
 import { CreatedVsCompletedTrendWidget } from "@/components/dashboard/CreatedVsCompletedTrendWidget";
 import { WorkOrderPriorityWidget } from "@/components/dashboard/WorkOrderPriorityWidget";
@@ -54,7 +58,10 @@ export default function Dashboard() {
           </AccordionTrigger>
           <AccordionContent className="pt-4">
             <div className="space-y-6">
-              {/* Trend Chart - Full Width */}
+              {/* Enhanced Trend Chart - Full Width */}
+              <CompletionTimeTrendChart />
+              
+              {/* Original Trend Chart - Full Width */}
               <CreatedVsCompletedTrendWidget />
               
               {/* Charts Grid */}
@@ -101,7 +108,7 @@ export default function Dashboard() {
           </AccordionTrigger>
           <AccordionContent className="pt-4">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <AverageCompletionTimeWidget />
+              <EnhancedAverageCompletionTimeWidget />
               <CasesCreatedClosedWidget />
               <WorkOrdersCreatedClosedWidget />
             </div>
@@ -115,7 +122,7 @@ export default function Dashboard() {
           </AccordionTrigger>
           <AccordionContent className="pt-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <AssetMaintenanceWidget />
+              <EnhancedAssetMaintenanceWidget />
               <DocumentExpiryWidget />
             </div>
           </AccordionContent>
@@ -127,9 +134,12 @@ export default function Dashboard() {
             Financial & Property Performance
           </AccordionTrigger>
           <AccordionContent className="pt-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <OutstandingInvoicesWidget />
-              <PropertyPerformanceWidget />
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <OutstandingInvoicesWidget />
+                <PropertyPerformanceWidget />
+              </div>
+              <PropertyComparisonChart />
             </div>
           </AccordionContent>
         </AccordionItem>

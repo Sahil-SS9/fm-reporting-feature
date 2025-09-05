@@ -111,6 +111,7 @@ interface MiniTrendChartProps {
   height?: number;
   color?: string;
   className?: string;
+  tooltipContent?: string;
 }
 
 export function MiniTrendChart({ 
@@ -118,10 +119,20 @@ export function MiniTrendChart({
   width = 100, 
   height = 40, 
   color = "hsl(var(--primary))",
-  className = ""
+  className = "",
+  tooltipContent
 }: MiniTrendChartProps) {
+  const currentValue = data[data.length - 1]?.value || 0;
+  const previousValue = data[data.length - 2]?.value || 0;
+  const trend = currentValue - previousValue;
+  const trendPercent = previousValue !== 0 ? ((trend / previousValue) * 100).toFixed(1) : "0.0";
+  
   return (
-    <div className={cn("", className)} style={{ width, height }}>
+    <div 
+      className={cn("group relative cursor-help", className)} 
+      style={{ width, height }}
+      title={tooltipContent || `Current: ${currentValue}, Trend: ${trend > 0 ? '+' : ''}${trendPercent}%`}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <Line 
@@ -131,8 +142,23 @@ export function MiniTrendChart({
             strokeWidth={2}
             dot={false}
           />
+          <Tooltip 
+            contentStyle={{
+              backgroundColor: "hsl(var(--popover))",
+              border: "1px solid hsl(var(--border))",
+              borderRadius: "4px",
+              fontSize: "11px",
+              padding: "4px 8px"
+            }}
+            formatter={(value) => [`${value}`, "Value"]}
+            labelFormatter={() => ""}
+          />
         </LineChart>
       </ResponsiveContainer>
+      {/* Enhanced tooltip overlay */}
+      <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-popover border border-border rounded px-2 py-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+        {tooltipContent || `Trend: ${trend > 0 ? '+' : ''}${trendPercent}% vs previous`}
+      </div>
     </div>
   );
 }

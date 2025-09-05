@@ -56,16 +56,11 @@ export function OnTimeVsOverdueWidget() {
           </div>
         </div>
 
-        {/* Performance Badge */}
+        {/* Industry Benchmark Context */}
         <div className="flex justify-center">
-          <Badge 
-            variant={onTimePercentage >= 80 ? "default" : 
-                    onTimePercentage >= 60 ? "secondary" : "destructive"}
-            className="text-xs"
-          >
-            {onTimePercentage >= 80 ? "Excellent" : 
-             onTimePercentage >= 60 ? "Good" : "Needs Improvement"} Performance
-          </Badge>
+          <div className="text-xs text-muted-foreground text-center">
+            Industry benchmark: 75-85%
+          </div>
         </div>
       </CardContent>
     </Card>
