@@ -49,7 +49,7 @@ export default function Dashboard() {
       </div>
 
       {/* Dashboard Sections with Accordion */}
-      <Accordion type="multiple" defaultValue={["operations", "performance", "assets", "financial", "property", "activity"]} className="space-y-4">
+      <Accordion type="multiple" defaultValue={["operations", "assets", "property"]} className="space-y-4">
         
         {/* Operations Command Center */}
         <AccordionItem value="operations" className="border rounded-lg px-4">
@@ -58,14 +58,12 @@ export default function Dashboard() {
           </AccordionTrigger>
           <AccordionContent className="pt-4">
             <div className="space-y-6">
-              {/* Enhanced Trend Chart - Full Width */}
-              <CompletionTimeTrendChart />
-              
-              {/* Original Trend Chart - Full Width */}
-              <CreatedVsCompletedTrendWidget />
-              
-              {/* Charts Grid */}
+              {/* Today's Priorities */}
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <DueTodayWidget />
+                <WorkOrderPriorityWidget />
+                <OnTimeVsOverdueWidget />
+                
                 {/* Work Order Status Chart */}
                 <Card>
                   <CardHeader>
@@ -92,28 +90,30 @@ export default function Dashboard() {
                     </div>
                   </CardContent>
                 </Card>
-                
-                <WorkOrderPriorityWidget />
-                <OnTimeVsOverdueWidget />
-                <DueTodayWidget />
+              </div>
+
+              {/* Weekly Performance Summary */}
+              <div>
+                <h3 className="text-lg font-medium mb-4">Weekly Performance Summary</h3>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <EnhancedAverageCompletionTimeWidget />
+                  <CasesCreatedClosedWidget />
+                  <WorkOrdersCreatedClosedWidget />
+                </div>
+              </div>
+              
+              {/* Trend Analysis */}
+              <div>
+                <h3 className="text-lg font-medium mb-4">Trend Analysis</h3>
+                <div className="space-y-6">
+                  <CompletionTimeTrendChart />
+                  <CreatedVsCompletedTrendWidget />
+                </div>
               </div>
             </div>
           </AccordionContent>
         </AccordionItem>
 
-        {/* Performance Metrics */}
-        <AccordionItem value="performance" className="border rounded-lg px-4">
-          <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-            Performance Metrics
-          </AccordionTrigger>
-          <AccordionContent className="pt-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <EnhancedAverageCompletionTimeWidget />
-              <CasesCreatedClosedWidget />
-              <WorkOrdersCreatedClosedWidget />
-            </div>
-          </AccordionContent>
-        </AccordionItem>
 
         {/* Asset & Compliance */}
         <AccordionItem value="assets" className="border rounded-lg px-4">
@@ -128,24 +128,17 @@ export default function Dashboard() {
           </AccordionContent>
         </AccordionItem>
 
-        {/* Financial Performance */}
-        <AccordionItem value="financial" className="border rounded-lg px-4">
-          <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-            Financial Performance
-          </AccordionTrigger>
-          <AccordionContent className="pt-4">
-            <OutstandingInvoicesWidget />
-          </AccordionContent>
-        </AccordionItem>
-
-        {/* Property Performance */}
+        {/* Property & Financial Performance */}
         <AccordionItem value="property" className="border rounded-lg px-4">
           <AccordionTrigger className="text-lg font-semibold hover:no-underline">
-            Property Performance
+            Property & Financial Performance
           </AccordionTrigger>
           <AccordionContent className="pt-4">
             <div className="space-y-6">
-              <PropertyPerformanceWidget />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <PropertyPerformanceWidget />
+                <OutstandingInvoicesWidget />
+              </div>
               <PropertyComparisonChart />
             </div>
           </AccordionContent>
