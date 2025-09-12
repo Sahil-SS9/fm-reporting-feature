@@ -15,10 +15,13 @@ import { WorkOrdersCreatedClosedWidget } from "@/components/dashboard/WorkOrders
 import { AverageCompletionTimeWidget } from "@/components/dashboard/AverageCompletionTimeWidget";
 import { EnhancedAverageCompletionTimeWidget } from "@/components/dashboard/EnhancedAverageCompletionTimeWidget";
 import { CompletionTimeTrendChart } from "@/components/dashboard/CompletionTimeTrendChart";
+import { EnhancedCompletionTimeTrendChart } from "@/components/dashboard/EnhancedCompletionTimeTrendChart";
 import { PriorityInboxWidget } from "@/components/dashboard/PriorityInboxWidget";
 import { EssentialMetricsCard } from "@/components/dashboard/EssentialMetricsCard";
+import { EnhancedEssentialMetricsCard } from "@/components/dashboard/EnhancedEssentialMetricsCard";
 import { CreatedVsCompletedTrendWidget } from "@/components/dashboard/CreatedVsCompletedTrendWidget";
 import { WorkOrderPriorityWidget } from "@/components/dashboard/WorkOrderPriorityWidget";
+import { EnhancedWorkOrderPriorityWidget } from "@/components/dashboard/EnhancedWorkOrderPriorityWidget";
 import { OnTimeVsOverdueWidget } from "@/components/dashboard/OnTimeVsOverdueWidget";
 import { SchedulingWidget } from "@/components/dashboard/SchedulingWidget";
 import { PerformanceSummaryWidget } from "@/components/dashboard/PerformanceSummaryWidget";
@@ -66,10 +69,10 @@ export default function Dashboard() {
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 h-auto">
           <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
+          <TabsTrigger value="property" className="text-xs">Property</TabsTrigger>
           <TabsTrigger value="operations" className="text-xs">Operations</TabsTrigger>
           <TabsTrigger value="assets" className="text-xs">Assets</TabsTrigger>
           <TabsTrigger value="maintenance" className="text-xs">Maintenance</TabsTrigger>
-          <TabsTrigger value="property" className="text-xs">Property</TabsTrigger>
           <TabsTrigger value="financial" className="text-xs">Financial</TabsTrigger>
           <TabsTrigger value="documents" className="text-xs">Documents</TabsTrigger>
           <TabsTrigger value="activity" className="text-xs">Activity</TabsTrigger>
@@ -84,34 +87,34 @@ export default function Dashboard() {
           </div>
         </TabsContent>
 
-        {/* Operations Tab */}
-        <TabsContent value="operations" className="space-y-8">
+        {/* Property Overview Tab */}
+        <TabsContent value="property" className="space-y-8">
           {/* Essential Metrics */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
             <h3 className="text-xl font-semibold mb-6 text-foreground">Today's Metrics</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <EssentialMetricsCard
+              <EnhancedEssentialMetricsCard
                 title="Due Today"
                 value={kpiMetrics.dueToday}
                 icon={Clock}
                 variant={kpiMetrics.dueToday > 5 ? "warning" : "default"}
                 description="Work orders due today"
               />
-              <EssentialMetricsCard
+              <EnhancedEssentialMetricsCard
                 title="Overdue Items"
                 value={kpiMetrics.overdue}
                 icon={AlertTriangle}
                 variant={kpiMetrics.overdue > 0 ? "critical" : "success"}
                 description="Past due work orders"
               />
-              <EssentialMetricsCard
+              <EnhancedEssentialMetricsCard
                 title="Critical Issues"
                 value={kpiMetrics.critical}
                 icon={AlertTriangle}
                 variant={kpiMetrics.critical > 0 ? "critical" : "success"}
                 description="High priority items"
               />
-              <EssentialMetricsCard
+              <EnhancedEssentialMetricsCard
                 title="On-Time Rate"
                 value={`${kpiMetrics.onTimeRate}%`}
                 icon={Target}
@@ -130,7 +133,7 @@ export default function Dashboard() {
           <div className="bg-card rounded-lg p-6 shadow-sm">
             <h3 className="text-xl font-semibold mb-6 text-foreground">Performance Insights</h3>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <EssentialMetricsCard
+              <EnhancedEssentialMetricsCard
                 title="Avg Completion Time"
                 value={`${kpiMetrics.avgCompletionTime}`}
                 subValue="days"
@@ -138,8 +141,8 @@ export default function Dashboard() {
                 variant={kpiMetrics.avgCompletionTime <= 3 ? "success" : kpiMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
                 description="Average time to complete"
               />
-              <EssentialMetricsCard
-                title="Closure Rate"
+              <EnhancedEssentialMetricsCard
+                title="Closure Rate" 
                 value={`${kpiMetrics.closureRate}%`}
                 icon={CheckCircle}
                 variant={kpiMetrics.closureRate >= 80 ? "success" : "warning"}
@@ -149,14 +152,26 @@ export default function Dashboard() {
             </div>
           </div>
           
+          {/* Property Overview */}
+          <PropertyOverviewTab />
+          
           {/* Trend Analysis */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
             <h3 className="text-xl font-semibold mb-6">Trend Analysis</h3>
             <div className="space-y-6">
-              <CompletionTimeTrendChart />
+              <EnhancedCompletionTimeTrendChart />
               <CreatedVsCompletedTrendWidget />
             </div>
           </div>
+        </TabsContent>
+
+        {/* Operations Tab */}
+        <TabsContent value="operations" className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <EnhancedWorkOrderPriorityWidget />
+            <OnTimeVsOverdueWidget />
+          </div>
+          <SchedulingWidget />
         </TabsContent>
 
         {/* Assets Tab */}
@@ -180,10 +195,6 @@ export default function Dashboard() {
           </div>
         </TabsContent>
 
-        {/* Property Overview Tab */}
-        <TabsContent value="property" className="space-y-6">
-          <PropertyOverviewTab />
-        </TabsContent>
 
         {/* Financial Performance Tab */}
         <TabsContent value="financial" className="space-y-6">
