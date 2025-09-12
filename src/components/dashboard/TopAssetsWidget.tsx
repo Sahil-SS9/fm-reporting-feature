@@ -1,9 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { TrendingUp, ArrowRight, DollarSign, Wrench } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { TrendingUp, ArrowRight, DollarSign, Wrench, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockAssets, mockWorkOrders } from "@/data/mockData";
 import { VerticalBarChart } from "@/components/ui/enhanced-charts";
+import { DetailedViewModal } from "@/components/ui/detailed-view-modal";
 
 export function TopAssetsWidget() {
   const navigate = useNavigate();
@@ -55,6 +57,20 @@ export function TopAssetsWidget() {
     });
   };
 
+  // Prepare data for detailed view modal
+  const criticalData = assetMetrics.sort((a, b) => b.criticalIssues - a.criticalIssues);
+  const workOrderData = assetMetrics.sort((a, b) => b.workOrderCount - a.workOrderCount);
+  const frequencyData = assetMetrics.sort((a, b) => b.frequencyScore - a.frequencyScore);
+
+  const tableColumns = [
+    { key: 'name', label: 'Asset Name' },
+    { key: 'type', label: 'Type' },
+    { key: 'location', label: 'Location' },
+    { key: 'workOrderCount', label: 'Work Orders' },
+    { key: 'criticalIssues', label: 'Critical Issues' },
+    { key: 'frequencyScore', label: 'Frequency Score', format: (value: number) => `${value}/year` }
+  ];
+
   return (
     <Card 
       className="hover:shadow-md transition-shadow cursor-pointer group col-span-full" 
@@ -66,7 +82,65 @@ export function TopAssetsWidget() {
             <TrendingUp className="h-5 w-5 text-primary" />
             <span className="text-lg">High Maintenance Assets</span>
           </div>
-          <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="flex items-center space-x-2">
+            <DetailedViewModal
+              title="High Maintenance Assets"
+              chartComponent={
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-medium text-center">Critical Issues</h4>
+                    <div className="h-64">
+                      <VerticalBarChart 
+                        data={criticalData.map(asset => ({
+                          name: asset.name,
+                          value: asset.criticalIssues
+                        }))}
+                        color="hsl(var(--destructive))"
+                        width={300}
+                        height={240}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-medium text-center">Work Orders</h4>
+                    <div className="h-64">
+                      <VerticalBarChart 
+                        data={workOrderData.map(asset => ({
+                          name: asset.name,
+                          value: asset.workOrderCount
+                        }))}
+                        color="hsl(var(--dashboard-medium))"
+                        width={300}
+                        height={240}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-medium text-center">Frequency Score</h4>
+                    <div className="h-64">
+                      <VerticalBarChart 
+                        data={frequencyData.map(asset => ({
+                          name: asset.name,
+                          value: asset.frequencyScore
+                        }))}
+                        color="hsl(var(--dashboard-high))"
+                        width={300}
+                        height={240}
+                      />
+                    </div>
+                  </div>
+                </div>
+              }
+              tableData={assetMetrics}
+              tableColumns={tableColumns}
+            >
+              <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
+                <Eye className="h-4 w-4 mr-2" />
+                View More
+              </Button>
+            </DetailedViewModal>
+            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
