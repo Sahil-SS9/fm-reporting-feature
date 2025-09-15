@@ -280,8 +280,8 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
         </Card>
       </div>
 
-      {/* Search and Controls */}
-      <div className="flex items-center justify-between">
+      {/* Search and Filter Card */}
+      <div className="flex items-center justify-between gap-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -292,42 +292,54 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
           />
         </div>
         
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
-            Filter
-          </Button>
-        </div>
+        {/* Active Filters Card */}
+        <Card className="flex-1 max-w-md">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">
+                  {config.filters && Object.keys(config.filters).length > 0 
+                    ? Object.keys(config.filters).length 
+                    : 0}
+                </span>
+                <span className="text-sm text-muted-foreground">Active Filters</span>
+              </div>
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4 mr-2" />
+                Filter
+              </Button>
+            </div>
+            
+            {/* Filter Pills */}
+            {config.filters && Object.keys(config.filters).length > 0 && (
+              <div className="flex items-center gap-2 flex-wrap mt-3 pt-3 border-t">
+                {Object.entries(config.filters).map(([key, value]) => {
+                  if (!value || value === "") return null;
+                  const column = columnsConfig.find(col => col.key === key);
+                  const displayValue = typeof value === 'string' ? value : String(value);
+                  return (
+                    <Badge key={key} variant="secondary" className="gap-1">
+                      {column?.label}: {displayValue}
+                      <Button
+                        variant="ghost" 
+                        size="sm"
+                        className="h-auto p-0 ml-1"
+                        onClick={() => {
+                          const newFilters = { ...config.filters };
+                          delete newFilters[key];
+                          config.filters = newFilters;
+                        }}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </Badge>
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
-
-      {/* Filter Pills */}
-      {config.filters && Object.keys(config.filters).length > 0 && (
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm text-muted-foreground">Active Filters:</span>
-          {Object.entries(config.filters).map(([key, value]) => {
-            if (!value || value === "") return null;
-            const column = columnsConfig.find(col => col.key === key);
-            const displayValue = typeof value === 'string' ? value : String(value);
-            return (
-              <Badge key={key} variant="secondary" className="gap-1">
-                {column?.label}: {displayValue}
-                <Button
-                  variant="ghost" 
-                  size="sm"
-                  className="h-auto p-0 ml-1"
-                  onClick={() => {
-                    const newFilters = { ...config.filters };
-                    delete newFilters[key];
-                    config.filters = newFilters;
-                  }}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              </Badge>
-            );
-          })}
-        </div>
-      )}
 
       {/* Results Table */}
       <Card>
