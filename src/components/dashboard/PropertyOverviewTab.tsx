@@ -19,11 +19,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { 
-  Eye,
-  Search
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { 
+  Search,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import { mockProperties, mockWorkOrders, mockAssets, mockInvoices } from "@/data/mockData";
-import { DetailedViewModal } from "@/components/ui/detailed-view-modal";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface PropertyMetrics {
   property: any;
@@ -77,6 +84,18 @@ function getHealthScoreColor(score: number) {
 export function PropertyOverviewTab() {
   const [searchTerm, setSearchTerm] = useState("");
   const [propertyTypeFilter, setPropertyTypeFilter] = useState("all");
+  const [showAll, setShowAll] = useState(false);
+  const [detailsModal, setDetailsModal] = useState<{
+    isOpen: boolean;
+    type: string;
+    propertyId: string;
+    filter: string;
+  }>({
+    isOpen: false,
+    type: '',
+    propertyId: '',
+    filter: 'all'
+  });
 
   // Calculate comprehensive metrics for each property
   const propertyMetrics: PropertyMetrics[] = mockProperties.map(property => {
@@ -162,7 +181,71 @@ export function PropertyOverviewTab() {
     return matchesSearch && matchesType;
   });
 
-  const getDetailedViewData = (type: string, propertyId: string) => {
+  // Sort by health score and limit to top 10 unless showing all
+  const sortedProperties = filteredProperties.sort((a, b) => b.healthScore - a.healthScore);
+  const displayedProperties = showAll ? sortedProperties : sortedProperties.slice(0, 10);
+
+  const getChartData = (type: string, propertyId: string, filter: string) => {
+    const property = mockProperties.find(p => p.id === propertyId);
+    const propertyWorkOrders = mockWorkOrders.filter(wo => wo.propertyId === propertyId);
+    const propertyAssets = mockAssets.filter(asset => asset.propertyId === propertyId);
+    const propertyInvoices = mockInvoices.filter(invoice => invoice.propertyId === propertyId);
+
+    switch (type) {
+      case 'workOrders':
+        if (filter === 'priority') {
+          const priorityCounts = {
+            'Low': propertyWorkOrders.filter(wo => wo.priority === 'Low').length,
+            'Medium': propertyWorkOrders.filter(wo => wo.priority === 'Medium').length,
+            'High': propertyWorkOrders.filter(wo => wo.priority === 'High').length,
+            'Critical': propertyWorkOrders.filter(wo => wo.priority === 'Critical').length,
+          };
+          return Object.entries(priorityCounts).map(([priority, count]) => ({
+            name: priority,
+            value: count,
+          }));
+        } else {
+          return [
+            { name: 'Open', value: propertyWorkOrders.filter(wo => wo.status === 'Open').length },
+            { name: 'In Progress', value: propertyWorkOrders.filter(wo => wo.status === 'In Progress').length },
+            { name: 'Completed', value: propertyWorkOrders.filter(wo => wo.status === 'Completed').length },
+          ];
+        }
+      case 'preventativeMaintenance':
+        return [
+          { name: 'On Time', value: Math.round(propertyWorkOrders.length * 0.7) },
+          { name: 'Late', value: Math.round(propertyWorkOrders.length * 0.3) },
+        ];
+      case 'assets':
+        if (filter === 'status') {
+          return [
+            { name: 'Operational', value: propertyAssets.filter(asset => asset.status === 'Operational').length },
+            { name: 'Pending Repair', value: propertyAssets.filter(asset => asset.status === 'Pending Repair').length },
+            { name: 'Out of Service', value: propertyAssets.filter(asset => asset.status === 'Out of Service').length },
+          ];
+        } else {
+          return propertyAssets.reduce((acc, asset) => {
+            const existing = acc.find(item => item.name === asset.type);
+            if (existing) {
+              existing.value += 1;
+            } else {
+              acc.push({ name: asset.type, value: 1 });
+            }
+            return acc;
+          }, [] as { name: string; value: number }[]);
+        }
+      case 'invoicing':
+        return [
+          { name: 'Paid', value: propertyInvoices.filter(invoice => invoice.paymentStatus === 'Paid').length },
+          { name: 'Outstanding', value: propertyInvoices.filter(invoice => invoice.paymentStatus === 'Outstanding').length },
+          { name: 'Overdue', value: propertyInvoices.filter(invoice => invoice.paymentStatus === 'Overdue').length },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const getTableData = (type: string, propertyId: string) => {
     const property = mockProperties.find(p => p.id === propertyId);
     const propertyWorkOrders = mockWorkOrders.filter(wo => wo.propertyId === propertyId);
     const propertyAssets = mockAssets.filter(asset => asset.propertyId === propertyId);
@@ -171,9 +254,7 @@ export function PropertyOverviewTab() {
     switch (type) {
       case 'workOrders':
         return {
-          title: `Work Orders - ${property?.name}`,
-          chartComponent: <div className="h-64 flex items-center justify-center text-muted-foreground">Chart visualization coming soon</div>,
-          tableData: propertyWorkOrders.map(wo => ({
+          data: propertyWorkOrders.map(wo => ({
             id: wo.id,
             title: wo.title,
             status: wo.status,
@@ -181,7 +262,7 @@ export function PropertyOverviewTab() {
             dueDate: wo.dueDate,
             category: wo.category,
           })),
-          tableColumns: [
+          columns: [
             { key: 'id', label: 'ID' },
             { key: 'title', label: 'Title' },
             { key: 'status', label: 'Status' },
@@ -190,11 +271,26 @@ export function PropertyOverviewTab() {
             { key: 'category', label: 'Category' },
           ],
         };
+      case 'preventativeMaintenance':
+        return {
+          data: propertyWorkOrders.filter(wo => wo.category === 'Preventive Maintenance').map(wo => ({
+            id: wo.id,
+            title: wo.title,
+            status: wo.status,
+            dueDate: wo.dueDate,
+            schedule: 'Monthly', // Mock data
+          })),
+          columns: [
+            { key: 'id', label: 'ID' },
+            { key: 'title', label: 'Task' },
+            { key: 'status', label: 'Status' },
+            { key: 'dueDate', label: 'Due Date' },
+            { key: 'schedule', label: 'Schedule' },
+          ],
+        };
       case 'assets':
         return {
-          title: `Asset Status - ${property?.name}`,
-          chartComponent: <div className="h-64 flex items-center justify-center text-muted-foreground">Chart visualization coming soon</div>,
-          tableData: propertyAssets.map(asset => ({
+          data: propertyAssets.map(asset => ({
             id: asset.id,
             name: asset.name,
             status: asset.status,
@@ -202,7 +298,7 @@ export function PropertyOverviewTab() {
             location: asset.location,
             lastInspection: asset.lastInspection || 'N/A',
           })),
-          tableColumns: [
+          columns: [
             { key: 'id', label: 'ID' },
             { key: 'name', label: 'Asset Name' },
             { key: 'status', label: 'Status' },
@@ -211,11 +307,9 @@ export function PropertyOverviewTab() {
             { key: 'lastInspection', label: 'Last Inspection' },
           ],
         };
-      case 'invoices':
+      case 'invoicing':
         return {
-          title: `Invoicing - ${property?.name}`,
-          chartComponent: <div className="h-64 flex items-center justify-center text-muted-foreground">Chart visualization coming soon</div>,
-          tableData: propertyInvoices.map(invoice => ({
+          data: propertyInvoices.map(invoice => ({
             id: invoice.id,
             invoiceNumber: invoice.invoiceNumber,
             description: invoice.description,
@@ -223,7 +317,7 @@ export function PropertyOverviewTab() {
             dueDate: invoice.dueDate,
             paymentStatus: invoice.paymentStatus,
           })),
-          tableColumns: [
+          columns: [
             { key: 'id', label: 'ID' },
             { key: 'invoiceNumber', label: 'Invoice #' },
             { key: 'description', label: 'Description' },
@@ -233,13 +327,17 @@ export function PropertyOverviewTab() {
           ],
         };
       default:
-        return {
-          title: `Details - ${property?.name}`,
-          chartComponent: <div className="h-64 flex items-center justify-center text-muted-foreground">No data available</div>,
-          tableData: [],
-          tableColumns: [],
-        };
+        return { data: [], columns: [] };
     }
+  };
+
+  const openDetailsModal = (type: string, propertyId: string) => {
+    setDetailsModal({
+      isOpen: true,
+      type,
+      propertyId,
+      filter: 'all'
+    });
   };
 
   return (
@@ -277,7 +375,7 @@ export function PropertyOverviewTab() {
           </SelectContent>
         </Select>
         <Badge variant="outline" className="text-sm">
-          {filteredProperties.length} Properties
+          {displayedProperties.length} of {filteredProperties.length} Properties
         </Badge>
       </div>
 
@@ -289,169 +387,284 @@ export function PropertyOverviewTab() {
               <TableHead className="w-64">Property</TableHead>
               <TableHead className="text-center w-32">Health Score</TableHead>
               <TableHead className="text-center w-40">Work Orders</TableHead>
-              <TableHead className="text-center w-36">Priority</TableHead>
               <TableHead className="text-center w-44">Preventative Maintenance</TableHead>
               <TableHead className="text-center w-40">Asset Status</TableHead>
               <TableHead className="text-center w-36">Invoicing</TableHead>
               <TableHead className="text-center w-32">Compliance</TableHead>
               <TableHead className="text-center w-32">Operational</TableHead>
-              <TableHead className="text-center w-20">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredProperties.map((metrics) => {
+            {displayedProperties.map((metrics) => {
               const { grade, variant } = getHealthScoreGrade(metrics.healthScore);
               
               return (
-                <TableRow key={metrics.property.id} className="hover:bg-muted/50">
-                  <TableCell>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white text-xs font-bold">
-                        {getPropertyInitials(metrics.property.name)}
+                <React.Fragment key={metrics.property.id}>
+                  <TableRow className="hover:bg-muted/50">
+                    <TableCell>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white text-xs font-bold">
+                          {getPropertyInitials(metrics.property.name)}
+                        </div>
+                        <div>
+                          <div className="font-medium">{metrics.property.name}</div>
+                          <div className="text-sm text-muted-foreground">{metrics.property.location}</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="font-medium">{metrics.property.name}</div>
-                        <div className="text-sm text-muted-foreground">{metrics.property.location}</div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center space-x-2">
+                        <Badge variant={variant} className="w-8 h-8 rounded-full flex items-center justify-center p-0">
+                          {grade}
+                        </Badge>
+                        <span className={`text-sm font-bold ${getHealthScoreColor(metrics.healthScore)}`}>
+                          {metrics.healthScore}%
+                        </span>
                       </div>
-                    </div>
-                  </TableCell>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="space-y-2">
+                        <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
+                          <span>Open</span>
+                          <span>Overdue</span>
+                          <span>Completed</span>
+                        </div>
+                        <div className="text-sm font-medium grid grid-cols-3 gap-1">
+                          <span>{metrics.workOrders.open}</span>
+                          <span className="text-destructive">{metrics.workOrders.overdue}</span>
+                          <span className="text-success">{metrics.workOrders.completed}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="space-y-2">
+                        <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
+                          <span>Open</span>
+                          <span>Overdue</span>
+                          <span>Completed</span>
+                        </div>
+                        <div className="text-sm font-medium grid grid-cols-3 gap-1">
+                          <span>{metrics.preventativeMaintenance.open}</span>
+                          <span className="text-destructive">{metrics.preventativeMaintenance.overdue}</span>
+                          <span className="text-success">{metrics.preventativeMaintenance.completed}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="space-y-2">
+                        <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
+                          <span>Operational</span>
+                          <span>Repair</span>
+                          <span>Out</span>
+                        </div>
+                        <div className="text-sm font-medium grid grid-cols-3 gap-1">
+                          <span className="text-success">{metrics.assetStatus.operational}</span>
+                          <span className="text-warning">{metrics.assetStatus.pendingRepair}</span>
+                          <span className="text-destructive">{metrics.assetStatus.outOfService}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="space-y-2">
+                        <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
+                          <span>Outstanding</span>
+                          <span>Overdue</span>
+                          <span>Not Due</span>
+                        </div>
+                        <div className="text-sm font-medium grid grid-cols-3 gap-1">
+                          <span>{metrics.invoicing.outstanding}</span>
+                          <span className="text-destructive">{metrics.invoicing.overdue}</span>
+                          <span>{metrics.invoicing.notDue}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="space-y-1">
+                        <Progress value={metrics.complianceScore} className="w-16 h-2 mx-auto" />
+                        <span className="text-sm font-medium">{metrics.complianceScore}%</span>
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="space-y-1">
+                        <Progress value={metrics.operationalScore} className="w-16 h-2 mx-auto" />
+                        <span className="text-sm font-medium">{metrics.operationalScore}%</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
                   
-                  <TableCell className="text-center">
-                    <div className="flex items-center justify-center space-x-2">
-                      <Badge variant={variant} className="w-8 h-8 rounded-full flex items-center justify-center p-0">
-                        {grade}
-                      </Badge>
-                      <span className={`text-sm font-bold ${getHealthScoreColor(metrics.healthScore)}`}>
-                        {metrics.healthScore}%
-                      </span>
-                    </div>
-                  </TableCell>
-                  
-                  <TableCell className="text-center">
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
-                        <span>Open</span>
-                        <span>Overdue</span>
-                        <span>Completed</span>
-                      </div>
-                      <div className="text-sm font-medium grid grid-cols-3 gap-1">
-                        <span>{metrics.workOrders.open}</span>
-                        <span className="text-destructive">{metrics.workOrders.overdue}</span>
-                        <span className="text-success">{metrics.workOrders.completed}</span>
-                      </div>
-                      <DetailedViewModal {...getDetailedViewData('workOrders', metrics.property.id)}>
-                        <Button variant="ghost" size="sm" className="h-6 text-xs">
-                          <Eye className="w-3 h-3 mr-1" />
-                          View
+                  {/* View Details Row */}
+                  <TableRow>
+                    <TableCell colSpan={8} className="p-0">
+                      <div className="grid grid-cols-4 gap-2 p-2 bg-muted/30">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => openDetailsModal('workOrders', metrics.property.id)}
+                          className="h-8 text-xs"
+                        >
+                          View Work Orders Details
                         </Button>
-                      </DetailedViewModal>
-                    </div>
-                  </TableCell>
-                  
-                  <TableCell className="text-center">
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
-                        <span>Low</span>
-                        <span>Med</span>
-                        <span>High</span>
-                      </div>
-                      <div className="text-sm font-medium grid grid-cols-3 gap-1">
-                        <span>{metrics.priority.low}</span>
-                        <span className="text-warning">{metrics.priority.medium}</span>
-                        <span className="text-destructive">{metrics.priority.high}</span>
-                      </div>
-                    </div>
-                  </TableCell>
-                  
-                  <TableCell className="text-center">
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
-                        <span>Open</span>
-                        <span>Overdue</span>
-                        <span>Completed</span>
-                      </div>
-                      <div className="text-sm font-medium grid grid-cols-3 gap-1">
-                        <span>{metrics.preventativeMaintenance.open}</span>
-                        <span className="text-destructive">{metrics.preventativeMaintenance.overdue}</span>
-                        <span className="text-success">{metrics.preventativeMaintenance.completed}</span>
-                      </div>
-                    </div>
-                  </TableCell>
-                  
-                  <TableCell className="text-center">
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
-                        <span>Operational</span>
-                        <span>Repair</span>
-                        <span>Out</span>
-                      </div>
-                      <div className="text-sm font-medium grid grid-cols-3 gap-1">
-                        <span className="text-success">{metrics.assetStatus.operational}</span>
-                        <span className="text-warning">{metrics.assetStatus.pendingRepair}</span>
-                        <span className="text-destructive">{metrics.assetStatus.outOfService}</span>
-                      </div>
-                      <DetailedViewModal {...getDetailedViewData('assets', metrics.property.id)}>
-                        <Button variant="ghost" size="sm" className="h-6 text-xs">
-                          <Eye className="w-3 h-3 mr-1" />
-                          View
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => openDetailsModal('preventativeMaintenance', metrics.property.id)}
+                          className="h-8 text-xs"
+                        >
+                          View Maintenance Details
                         </Button>
-                      </DetailedViewModal>
-                    </div>
-                  </TableCell>
-                  
-                  <TableCell className="text-center">
-                    <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
-                        <span>Outstanding</span>
-                        <span>Overdue</span>
-                        <span>Not Due</span>
-                      </div>
-                      <div className="text-sm font-medium grid grid-cols-3 gap-1">
-                        <span>{metrics.invoicing.outstanding}</span>
-                        <span className="text-destructive">{metrics.invoicing.overdue}</span>
-                        <span>{metrics.invoicing.notDue}</span>
-                      </div>
-                      <DetailedViewModal {...getDetailedViewData('invoices', metrics.property.id)}>
-                        <Button variant="ghost" size="sm" className="h-6 text-xs">
-                          <Eye className="w-3 h-3 mr-1" />
-                          View
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => openDetailsModal('assets', metrics.property.id)}
+                          className="h-8 text-xs"
+                        >
+                          View Asset Details
                         </Button>
-                      </DetailedViewModal>
-                    </div>
-                  </TableCell>
-                  
-                  <TableCell className="text-center">
-                    <div className="space-y-1">
-                      <Progress value={metrics.complianceScore} className="w-16 h-2 mx-auto" />
-                      <span className="text-sm font-medium">{metrics.complianceScore}%</span>
-                    </div>
-                  </TableCell>
-                  
-                  <TableCell className="text-center">
-                    <div className="space-y-1">
-                      <Progress value={metrics.operationalScore} className="w-16 h-2 mx-auto" />
-                      <span className="text-sm font-medium">{metrics.operationalScore}%</span>
-                    </div>
-                  </TableCell>
-                  
-                  <TableCell className="text-center">
-                    <Select>
-                      <SelectTrigger className="w-20 h-8">
-                        <SelectValue placeholder="Actions" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="view">View Details</SelectItem>
-                        <SelectItem value="edit">Edit Property</SelectItem>
-                        <SelectItem value="reports">Generate Report</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                </TableRow>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => openDetailsModal('invoicing', metrics.property.id)}
+                          className="h-8 text-xs"
+                        >
+                          View Invoice Details
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </React.Fragment>
               );
             })}
           </TableBody>
         </Table>
       </div>
+
+      {/* Show More Button */}
+      {!showAll && filteredProperties.length > 10 && (
+        <div className="flex justify-center mt-4">
+          <Button 
+            variant="outline" 
+            onClick={() => setShowAll(true)}
+            className="flex items-center gap-2"
+          >
+            Show {filteredProperties.length - 10} More Properties
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
+      {showAll && filteredProperties.length > 10 && (
+        <div className="flex justify-center mt-4">
+          <Button 
+            variant="outline" 
+            onClick={() => setShowAll(false)}
+            className="flex items-center gap-2"
+          >
+            Show Less Properties
+            <ChevronUp className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
+      {/* Enhanced Details Modal */}
+      <Dialog open={detailsModal.isOpen} onOpenChange={(open) => setDetailsModal(prev => ({ ...prev, isOpen: open }))}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>
+                {detailsModal.type === 'workOrders' && 'Work Orders Details'}
+                {detailsModal.type === 'preventativeMaintenance' && 'Preventative Maintenance Details'}
+                {detailsModal.type === 'assets' && 'Asset Status Details'}
+                {detailsModal.type === 'invoicing' && 'Invoicing Details'}
+                {' - '}{mockProperties.find(p => p.id === detailsModal.propertyId)?.name}
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Filter Controls */}
+            <div className="flex items-center gap-4">
+              <Select 
+                value={detailsModal.filter} 
+                onValueChange={(value) => setDetailsModal(prev => ({ ...prev, filter: value }))}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Filter by..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {detailsModal.type === 'workOrders' && (
+                    <>
+                      <SelectItem value="priority">By Priority</SelectItem>
+                      <SelectItem value="status">By Status</SelectItem>
+                    </>
+                  )}
+                  {detailsModal.type === 'assets' && (
+                    <>
+                      <SelectItem value="status">By Status</SelectItem>
+                      <SelectItem value="type">By Type</SelectItem>
+                    </>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Bar Chart */}
+            <div className="bg-card rounded-lg p-6">
+              <h3 className="text-lg font-semibold mb-4">
+                {detailsModal.type === 'workOrders' && 'Work Orders Distribution'}
+                {detailsModal.type === 'preventativeMaintenance' && 'Maintenance Schedule Performance'}
+                {detailsModal.type === 'assets' && 'Asset Status Overview'}
+                {detailsModal.type === 'invoicing' && 'Invoice Payment Status'}
+              </h3>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={getChartData(detailsModal.type, detailsModal.propertyId, detailsModal.filter)}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="hsl(var(--primary))" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Data Table */}
+            <div className="bg-card rounded-lg p-6">
+              <h3 className="text-lg font-semibold mb-4">Detailed Data</h3>
+              <div className="border rounded-lg">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      {getTableData(detailsModal.type, detailsModal.propertyId).columns.map(column => (
+                        <TableHead key={column.key}>{column.label}</TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {getTableData(detailsModal.type, detailsModal.propertyId).data.map((row, index) => (
+                      <TableRow key={index}>
+                        {getTableData(detailsModal.type, detailsModal.propertyId).columns.map(column => (
+                          <TableCell key={column.key}>
+                            {row[column.key as keyof typeof row]}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
