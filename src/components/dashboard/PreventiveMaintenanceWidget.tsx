@@ -1,10 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wrench, ArrowRight } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Wrench, ArrowRight, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockAssets } from "@/data/mockData";
+import { useState } from "react";
 
 export function PreventiveMaintenanceWidget() {
   const navigate = useNavigate();
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   
   // Enhanced preventive maintenance tracking with smart categorization
   const totalAssets = mockAssets.length;
@@ -24,11 +27,33 @@ export function PreventiveMaintenanceWidget() {
   
   const handleStatusClick = (status: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate('/maintenance', { 
-      state: { 
-        filter: { type: 'preventive', status }
-      }
-    });
+    setSelectedStatus(selectedStatus === status ? null : status);
+  };
+
+  const getSelectedData = () => {
+    switch (selectedStatus) {
+      case 'not-due':
+        return notDue;
+      case 'due-soon':
+        return dueSoon;
+      case 'overdue':
+        return overdue;
+      default:
+        return [];
+    }
+  };
+
+  const getStatusLabel = () => {
+    switch (selectedStatus) {
+      case 'not-due':
+        return 'Not Due';
+      case 'due-soon':
+        return 'Due Soon';
+      case 'overdue':
+        return 'Overdue';
+      default:
+        return '';
+    }
   };
   
   return (
@@ -77,6 +102,57 @@ export function PreventiveMaintenanceWidget() {
         <div className="text-xs text-muted-foreground text-center pt-1 border-t">
           {totalAssets} total assets • {dueSoon.length + overdue.length} require attention
         </div>
+
+        {/* Data Table */}
+        {selectedStatus && (
+          <div className="mt-4 pt-4 border-t">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-medium">
+                {getStatusLabel()} Assets ({getSelectedData().length})
+              </h4>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedStatus(null);
+                }}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            
+            <div className="max-h-48 overflow-y-auto border rounded">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-xs">Asset Name</TableHead>
+                    <TableHead className="text-xs">Type</TableHead>
+                    <TableHead className="text-xs">Location</TableHead>
+                    <TableHead className="text-xs">Next Inspection</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {getSelectedData().slice(0, 10).map((asset) => (
+                    <TableRow key={asset.id}>
+                      <TableCell className="text-xs">{asset.name}</TableCell>
+                      <TableCell className="text-xs">{asset.type}</TableCell>
+                      <TableCell className="text-xs">{asset.location}</TableCell>
+                      <TableCell className="text-xs">
+                        {asset.nextInspection ? new Date(asset.nextInspection).toLocaleDateString() : 'N/A'}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+            
+            {getSelectedData().length > 10 && (
+              <div className="text-xs text-muted-foreground text-center mt-2">
+                Showing 10 of {getSelectedData().length} items
+              </div>
+            )}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

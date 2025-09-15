@@ -73,7 +73,7 @@ export function TopAssetsWidget() {
 
   return (
     <Card 
-      className="hover:shadow-md transition-shadow cursor-pointer group col-span-full" 
+      className="hover:shadow-md transition-shadow cursor-pointer group col-span-full min-h-[600px]" 
       onClick={handleClick}
     >
       <CardHeader className="pb-3">
@@ -86,11 +86,11 @@ export function TopAssetsWidget() {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
-        <div className="grid grid-cols-3 gap-3" style={{ minHeight: '300px' }}>
+        <div className="grid grid-cols-3 gap-3" style={{ minHeight: '480px' }}>
           
           {/* Critical Issues Panel */}
           <div className="space-y-2">
-            <div className="h-80 bg-card border rounded-lg p-4" style={{ minHeight: '180px' }}>
+            <div className="h-96 bg-card border rounded-lg p-4" style={{ minHeight: '240px' }}>
               <div className="flex justify-center mt-4 mb-5">
                 <VerticalBarChart 
                   data={criticalData.slice(0, 10).map(asset => ({
@@ -150,7 +150,7 @@ export function TopAssetsWidget() {
           
           {/* Work Order Count Panel */}
           <div className="space-y-2">
-            <div className="h-80 bg-card border rounded-lg p-4" style={{ minHeight: '180px' }}>
+            <div className="h-96 bg-card border rounded-lg p-4" style={{ minHeight: '240px' }}>
               <div className="flex justify-center mt-4 mb-5">
                 <VerticalBarChart 
                   data={workOrderData.slice(0, 10).map(asset => ({
@@ -210,7 +210,7 @@ export function TopAssetsWidget() {
           
           {/* Frequency Score Panel */}
           <div className="space-y-2">
-            <div className="h-80 bg-card border rounded-lg p-4" style={{ minHeight: '180px' }}>
+            <div className="h-96 bg-card border rounded-lg p-4" style={{ minHeight: '240px' }}>
               <div className="flex justify-center mt-4 mb-5">
                 <VerticalBarChart 
                   data={frequencyData.slice(0, 10).map(asset => ({
