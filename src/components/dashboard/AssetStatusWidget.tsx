@@ -53,38 +53,38 @@ export function AssetStatusWidget() {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        {/* Asset Status Overview */}
-        <div className="flex justify-center">
+      <CardContent className="space-y-1">
+        {/* Asset Status Overview with Horizontal Layout */}
+        <div className="flex items-center gap-4">
           <DonutChartWithCenter 
             data={statusData}
-            size={100}
+            size={160}
             strokeWidth={12}
             centerContent={
               <div className="text-center">
-                <div className="text-xl font-bold">{totalAssets}</div>
+                <div className="text-2xl font-bold">{totalAssets}</div>
                 <div className="text-xs text-muted-foreground">Assets</div>
               </div>
             }
           />
-        </div>
-
-        {/* Status Legend with Counts */}
-        <div className="grid grid-cols-2 gap-1">
-          {statusData.map((status) => (
-            <div key={status.name} className="flex items-center justify-between p-1.5 rounded bg-muted/10">
-              <div className="flex items-center space-x-1.5">
-                <div 
-                  className="w-2.5 h-2.5 rounded-full" 
-                  style={{ backgroundColor: status.color }}
-                />
-                <span className="text-xs">{status.name}</span>
+          
+          {/* Status Legend with Counts */}
+          <div className="flex-1 grid grid-cols-1 gap-1">
+            {statusData.map((status) => (
+              <div key={status.name} className="flex items-center justify-between p-1.5 rounded bg-muted/10">
+                <div className="flex items-center space-x-2">
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: status.color }}
+                  />
+                  <span className="text-sm font-medium">{status.name}</span>
+                </div>
+                <Badge variant="outline" className="text-xs h-5">
+                  {status.value}
+                </Badge>
               </div>
-              <Badge variant="outline" className="text-xs h-4">
-                {status.value}
-              </Badge>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>

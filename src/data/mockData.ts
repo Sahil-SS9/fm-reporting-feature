@@ -99,6 +99,8 @@ export interface Asset {
   nextInspection?: string;
   purchaseDate: string;
   invoiceIds?: string[]; // Links to invoices
+  priorityLevel?: "Critical" | "Medium" | "Low";
+  maintenanceType?: "Work Order" | "Inspection" | "Audit";
 }
 
 export interface Invoice {
@@ -633,7 +635,9 @@ export const mockAssets: Asset[] = [
     purchaseDate: "2020-03-15",
     location: "Rooftop",
     group: "HVAC Systems",
-    invoiceIds: ["INV001", "INV005"]
+    invoiceIds: ["INV001", "INV005"],
+    priorityLevel: "Critical",
+    maintenanceType: "Work Order"
   },
   {
     id: "AS002",
@@ -653,7 +657,9 @@ export const mockAssets: Asset[] = [
     nextInspection: "2025-02-02",
     purchaseDate: "2018-06-20",
     location: "Core",
-    group: "Vertical Transport"
+    group: "Vertical Transport",
+    priorityLevel: "Critical",
+    maintenanceType: "Inspection"
   },
   {
     id: "AS003",
@@ -674,7 +680,9 @@ export const mockAssets: Asset[] = [
     nextInspection: "2025-01-15",
     purchaseDate: "2020-07-30",
     location: "Mechanical Room",
-    group: "HVAC Systems"
+    group: "HVAC Systems",
+    priorityLevel: "Medium",
+    maintenanceType: "Audit"
   },
   {
     id: "AS004",
@@ -695,7 +703,9 @@ export const mockAssets: Asset[] = [
     nextInspection: "2025-01-12",
     purchaseDate: "2018-11-12",
     location: "Basement Level 2",
-    group: "Power Systems"
+    group: "Power Systems",
+    priorityLevel: "Critical",
+    maintenanceType: "Work Order"
   },
   {
     id: "AS005",
@@ -716,7 +726,9 @@ export const mockAssets: Asset[] = [
     nextInspection: "2025-01-08",
     purchaseDate: "2017-10-12",
     location: "Boiler Room",
-    group: "HVAC Systems"
+    group: "HVAC Systems",
+    priorityLevel: "Medium",
+    maintenanceType: "Inspection"
   },
 
   // Medium Maintenance Assets
@@ -739,7 +751,9 @@ export const mockAssets: Asset[] = [
     nextInspection: "2024-12-15",
     purchaseDate: "2021-05-20",
     location: "Rooftop",
-    group: "HVAC Systems"
+    group: "HVAC Systems",
+    priorityLevel: "Low",
+    maintenanceType: "Audit"
   },
   {
     id: "AS007",
@@ -760,7 +774,9 @@ export const mockAssets: Asset[] = [
     nextInspection: "2024-11-05",
     purchaseDate: "2019-03-10",
     location: "Warehouse Core",
-    group: "Vertical Transport"
+    group: "Vertical Transport",
+    priorityLevel: "Medium",
+    maintenanceType: "Work Order"
   },
 
   // Low Maintenance Assets - Newer and more reliable
@@ -784,7 +800,9 @@ export const mockAssets: Asset[] = [
     purchaseDate: "2019-09-10",
     location: "Basement",
     group: "Power Systems",
-    invoiceIds: ["INV003"]
+    invoiceIds: ["INV003"],
+    priorityLevel: "Low",
+    maintenanceType: "Audit"
   },
   {
     id: "AS009",
