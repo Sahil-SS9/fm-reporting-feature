@@ -340,6 +340,10 @@ export function PropertyOverviewTab() {
     });
   };
 
+  // Get top performers and needs attention
+  const topPerformers = sortedProperties.slice(0, 3);
+  const needsAttention = sortedProperties.slice(-3).reverse();
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -348,6 +352,49 @@ export function PropertyOverviewTab() {
           <p className="text-muted-foreground">
             Comprehensive view of all property metrics and performance indicators
           </p>
+        </div>
+      </div>
+
+      {/* Top Performers and Needs Attention */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-card rounded-lg p-6 border">
+          <h3 className="text-lg font-semibold text-success mb-4">🏆 Top Performers</h3>
+          <div className="space-y-3">
+            {topPerformers.map((metrics, index) => (
+              <div key={metrics.property.id} className="flex items-center justify-between p-3 bg-success/5 rounded-lg border border-success/20">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 rounded-lg bg-success flex items-center justify-center text-white text-xs font-bold">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <div className="font-medium">{metrics.property.name}</div>
+                    <div className="text-sm text-muted-foreground">{metrics.property.location}</div>
+                  </div>
+                </div>
+                <div className="text-success font-bold">{metrics.healthScore}%</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-card rounded-lg p-6 border">
+          <h3 className="text-lg font-semibold text-destructive mb-4">⚠️ Needs Attention</h3>
+          <div className="space-y-3">
+            {needsAttention.map((metrics, index) => (
+              <div key={metrics.property.id} className="flex items-center justify-between p-3 bg-destructive/5 rounded-lg border border-destructive/20">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 rounded-lg bg-destructive flex items-center justify-center text-white text-xs font-bold">
+                    !
+                  </div>
+                  <div>
+                    <div className="font-medium">{metrics.property.name}</div>
+                    <div className="text-sm text-muted-foreground">{metrics.property.location}</div>
+                  </div>
+                </div>
+                <div className="text-destructive font-bold">{metrics.healthScore}%</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -502,36 +549,28 @@ export function PropertyOverviewTab() {
                   {/* View Details Row */}
                   <TableRow>
                     <TableCell colSpan={8} className="p-0">
-                      <div className="grid grid-cols-4 gap-2 p-2 bg-muted/30">
+                      <div className="grid grid-cols-4 gap-3 p-4 bg-muted/20">
                         <Button 
-                          variant="outline" 
-                          size="sm" 
                           onClick={() => openDetailsModal('workOrders', metrics.property.id)}
-                          className="h-8 text-xs"
+                          className="h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
                         >
                           View Work Orders Details
                         </Button>
                         <Button 
-                          variant="outline" 
-                          size="sm" 
                           onClick={() => openDetailsModal('preventativeMaintenance', metrics.property.id)}
-                          className="h-8 text-xs"
+                          className="h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
                         >
                           View Maintenance Details
                         </Button>
                         <Button 
-                          variant="outline" 
-                          size="sm" 
                           onClick={() => openDetailsModal('assets', metrics.property.id)}
-                          className="h-8 text-xs"
+                          className="h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
                         >
                           View Asset Details
                         </Button>
                         <Button 
-                          variant="outline" 
-                          size="sm" 
                           onClick={() => openDetailsModal('invoicing', metrics.property.id)}
-                          className="h-8 text-xs"
+                          className="h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
                         >
                           View Invoice Details
                         </Button>
@@ -616,29 +655,47 @@ export function PropertyOverviewTab() {
             </div>
 
             {/* Bar Chart */}
-            <div className="bg-card rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4">
+            <div className="bg-card rounded-lg p-8 border">
+              <h3 className="text-xl font-semibold mb-6">
                 {detailsModal.type === 'workOrders' && 'Work Orders Distribution'}
                 {detailsModal.type === 'preventativeMaintenance' && 'Maintenance Schedule Performance'}
                 {detailsModal.type === 'assets' && 'Asset Status Overview'}
                 {detailsModal.type === 'invoicing' && 'Invoice Payment Status'}
               </h3>
-              <div className="h-80">
+              <div className="h-96 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={getChartData(detailsModal.type, detailsModal.propertyId, detailsModal.filter)}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="value" fill="hsl(var(--primary))" />
+                  <BarChart data={getChartData(detailsModal.type, detailsModal.propertyId, detailsModal.filter)} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.2)" />
+                    <XAxis 
+                      dataKey="name" 
+                      tick={{ fontSize: 12 }}
+                      stroke="hsl(var(--muted-foreground))"
+                    />
+                    <YAxis 
+                      tick={{ fontSize: 12 }}
+                      stroke="hsl(var(--muted-foreground))"
+                    />
+                    <Tooltip 
+                      contentStyle={{
+                        backgroundColor: 'hsl(var(--card))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Bar 
+                      dataKey="value" 
+                      fill="hsl(var(--primary))" 
+                      radius={[4, 4, 0, 0]}
+                      maxBarSize={60}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
             {/* Data Table */}
-            <div className="bg-card rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4">Detailed Data</h3>
+            <div className="bg-card rounded-lg p-8 border">
+              <h3 className="text-xl font-semibold mb-6">Detailed Data</h3>
               <div className="border rounded-lg">
                 <Table>
                   <TableHeader>
