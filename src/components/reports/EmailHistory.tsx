@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, Search, Calendar as CalendarIcon, Filter, Mail, Clock } from "lucide-react";
+import { Download, Search, Calendar as CalendarIcon, Filter, Mail, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { format, isWithinInterval, parseISO } from "date-fns";
 import { mockEmailHistory, type EmailHistory as EmailHistoryType } from "@/data/mockData";
@@ -225,16 +225,14 @@ export const EmailHistory: React.FC = () => {
 
           {/* Pagination */}
           <div className="flex justify-center mt-4">
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" disabled>
-                Previous
-              </Button>
-              <Button variant="default" size="sm">1</Button>
-              <Button variant="outline" size="sm">2</Button>
-              <Button variant="outline" size="sm">3</Button>
-              <Button variant="outline" size="sm">
-                Next
-              </Button>
+            <div className="flex items-center gap-2">
+              <button className="flex items-center justify-center w-8 h-8 text-muted-foreground hover:text-foreground disabled:opacity-50" disabled>
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <span className="text-sm text-muted-foreground">1 of 3</span>
+              <button className="flex items-center justify-center w-8 h-8 text-muted-foreground hover:text-foreground">
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
 

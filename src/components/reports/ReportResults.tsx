@@ -370,51 +370,24 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
               Showing {((currentPage - 1) * rowsPerPage) + 1} to {Math.min(currentPage * rowsPerPage, processedData.length)} of {processedData.length} results
             </div>
             
-            <div className="flex items-center space-x-1">
-              <Button
-                variant="outline"
-                size="sm"
+            <div className="flex items-center gap-2">
+              <button 
+                className="flex items-center justify-center w-8 h-8 text-muted-foreground hover:text-foreground disabled:opacity-50"
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-3"
               >
                 <ChevronLeft className="h-4 w-4" />
-              </Button>
-              
-              {Array.from({ length: Math.min(7, totalPages) }, (_, i) => {
-                let pageNum;
-                if (totalPages <= 7) {
-                  pageNum = i + 1;
-                } else if (currentPage <= 4) {
-                  pageNum = i + 1;
-                } else if (currentPage >= totalPages - 3) {
-                  pageNum = totalPages - 6 + i;
-                } else {
-                  pageNum = currentPage - 3 + i;
-                }
-                
-                return (
-                  <Button
-                    key={pageNum}
-                    variant={currentPage === pageNum ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(pageNum)}
-                    className="px-3"
-                  >
-                    {pageNum}
-                  </Button>
-                );
-              })}
-              
-              <Button
-                variant="outline"
-                size="sm"
+              </button>
+              <span className="text-sm text-muted-foreground">
+                {currentPage} of {totalPages}
+              </span>
+              <button 
+                className="flex items-center justify-center w-8 h-8 text-muted-foreground hover:text-foreground disabled:opacity-50"
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-3"
               >
                 <ChevronRight className="h-4 w-4" />
-              </Button>
+              </button>
             </div>
           </div>
         </CardContent>

@@ -65,12 +65,11 @@ const PaginationPrevious = ({
 }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink
     aria-label="Go to previous page"
-    size="default"
-    className={cn("gap-1 pl-2.5", className)}
+    size="icon"
+    className={cn("h-8 w-8", className)}
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
-    <span>Previous</span>
   </PaginationLink>
 )
 PaginationPrevious.displayName = "PaginationPrevious"
@@ -81,15 +80,43 @@ const PaginationNext = ({
 }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink
     aria-label="Go to next page"
-    size="default"
-    className={cn("gap-1 pr-2.5", className)}
+    size="icon"
+    className={cn("h-8 w-8", className)}
     {...props}
   >
-    <span>Next</span>
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
 )
 PaginationNext.displayName = "PaginationNext"
+
+const PaginationSimple = ({
+  currentPage = 1,
+  totalPages = 1,
+  onPreviousPage,
+  onNextPage,
+  className,
+}: {
+  currentPage?: number;
+  totalPages?: number;
+  onPreviousPage?: () => void;
+  onNextPage?: () => void;
+  className?: string;
+}) => (
+  <div className={cn("flex items-center justify-center gap-2", className)}>
+    <PaginationPrevious 
+      onClick={onPreviousPage}
+      className={currentPage <= 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+    />
+    <span className="text-sm text-muted-foreground">
+      {currentPage} of {totalPages}
+    </span>
+    <PaginationNext 
+      onClick={onNextPage}
+      className={currentPage >= totalPages ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+    />
+  </div>
+)
+PaginationSimple.displayName = "PaginationSimple"
 
 const PaginationEllipsis = ({
   className,
@@ -114,4 +141,5 @@ export {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationSimple,
 }
