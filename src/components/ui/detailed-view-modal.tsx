@@ -53,10 +53,6 @@ export function DetailedViewModal({
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span>{title} - Detailed View</span>
-            <Button variant="outline" size="sm" onClick={handleExport}>
-              <Download className="h-4 w-4 mr-2" />
-              Export Data
-            </Button>
           </DialogTitle>
         </DialogHeader>
         

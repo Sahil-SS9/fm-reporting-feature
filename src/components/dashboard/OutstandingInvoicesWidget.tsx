@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { CreditCard, AlertCircle, TrendingUp, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockInvoices } from "@/data/mockData";
@@ -48,9 +49,18 @@ export function OutstandingInvoicesWidget() {
             <span>Outstanding Invoices</span>
           </div>
           <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost" 
+              size="sm"
+              onClick={(e) => { e.stopPropagation(); handleClick(); }}
+              className="opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+            >
+              <ArrowRight className="h-3 w-3 mr-1" />
+              View Details
+            </Button>
             {totalAmount > 0 ? (
               <Badge variant={overdueAmount > 0 ? "destructive" : "outline"} className="text-xs">
-                {outstandingInvoices.length + overdueInvoices.length} Pending
+                {outstandingInvoices.length + overdueInvoices.length} Outstanding
               </Badge>
             ) : (
               <Badge variant="secondary" className="text-xs">

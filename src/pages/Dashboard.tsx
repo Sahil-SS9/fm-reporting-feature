@@ -6,6 +6,7 @@ import { WarrantyExpiryWidget } from "@/components/dashboard/WarrantyExpiryWidge
 import { PreventiveMaintenanceWidget } from "@/components/dashboard/PreventiveMaintenanceWidget";
 import { TopAssetsWidget } from "@/components/dashboard/TopAssetsWidget";
 import { OutstandingInvoicesWidget } from "@/components/dashboard/OutstandingInvoicesWidget";
+import { IssuedInvoicesWidget } from "@/components/dashboard/IssuedInvoicesWidget";
 import { PropertyPerformanceWidget } from "@/components/dashboard/PropertyPerformanceWidget";
 import { PropertyComparisonChart } from "@/components/dashboard/PropertyComparisonChart";
 import { PropertyOverviewTab } from "@/components/dashboard/PropertyOverviewTab";
@@ -68,14 +69,13 @@ export default function Dashboard() {
 
       {/* Dashboard Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7 h-auto">
+        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6 h-auto">
           <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
           <TabsTrigger value="property" className="text-xs">Property</TabsTrigger>
           <TabsTrigger value="operations" className="text-xs">Operations</TabsTrigger>
           <TabsTrigger value="assets" className="text-xs">Assets</TabsTrigger>
           <TabsTrigger value="financial" className="text-xs">Financial</TabsTrigger>
           <TabsTrigger value="documents" className="text-xs">Documents</TabsTrigger>
-          <TabsTrigger value="activity" className="text-xs">Activity</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab - Priority Inbox */}
@@ -200,27 +200,7 @@ export default function Dashboard() {
         <TabsContent value="financial" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <OutstandingInvoicesWidget />
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Monthly Revenue</span>
-                    <span className="text-2xl font-bold text-success">$248,500</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Outstanding</span>
-                    <span className="text-lg font-semibold text-warning">$52,300</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Collection Rate</span>
-                    <span className="text-lg font-semibold">92.5%</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <IssuedInvoicesWidget />
           </div>
           <ContractorInvoicingWidget />
         </TabsContent>
@@ -230,30 +210,6 @@ export default function Dashboard() {
           <DocumentExpiryWidget />
         </TabsContent>
 
-        {/* Recent Activity Tab */}
-        <TabsContent value="activity" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Activity className="h-5 w-5" />
-                <span>Recent Activity</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentActivities.map((activity) => (
-                  <div key={activity.id} className="flex items-start space-x-3 pb-3 border-b last:border-0">
-                    <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
-                    <div className="flex-1">
-                      <p className="text-sm">{activity.action}</p>
-                      <p className="text-xs text-muted-foreground">{activity.time}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
     </div>
   );
