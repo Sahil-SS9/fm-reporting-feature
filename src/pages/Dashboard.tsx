@@ -179,15 +179,17 @@ export default function Dashboard() {
 
         {/* Assets Tab */}
         <TabsContent value="assets" className="space-y-6">
-          {/* Core Asset Widgets - Asset Status and Asset Maintenance take majority width */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Core Asset Widgets - Asset Status and Asset Maintenance take majority width, Warranty Expiry compact */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             <div className="lg:col-span-2">
               <AssetStatusWidget />
             </div>
             <div className="lg:col-span-2">
               <AssetMaintenanceWidget />
             </div>
-            <WarrantyExpiryWidget />
+            <div className="lg:col-span-1">
+              <WarrantyExpiryWidget />
+            </div>
           </div>
           
           {/* High Maintenance Assets */}

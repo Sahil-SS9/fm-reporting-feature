@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, ArrowRight, DollarSign, Wrench, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -148,214 +147,228 @@ export function TopAssetsWidget() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
           
           {/* Critical Issues Panel */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center space-x-2 pb-2">
               <TrendingUp className="h-5 w-5 text-destructive" />
               <h4 className="font-semibold text-base">Critical Issues</h4>
             </div>
-            <div className="h-48 bg-card border rounded-lg p-4">
-              <VerticalBarChart 
-                data={criticalData.slice(0, 10).map(asset => ({
-                  name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
-                  value: asset.criticalIssues
-                }))}
-                color="hsl(var(--destructive))"
-                width={380}
-                height={180}
-              />
-            </div>
-            <div className="mt-4">
-              <div className="bg-muted/30 rounded-lg p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <h5 className="text-sm font-medium text-muted-foreground">Top Assets</h5>
-                  <DetailedViewModal
-                    title="Critical Issues - Top Assets"
-                    chartComponent={
-                      <div className="h-64">
-                        <VerticalBarChart 
-                          data={criticalData.slice(0, 10).map(asset => ({
-                            name: asset.name,
-                            value: asset.criticalIssues
-                          }))}
-                          color="hsl(var(--destructive))"
-                          width={600}
-                          height={240}
-                        />
-                      </div>
-                    }
-                    tableData={criticalData.slice(0, 10)}
-                    tableColumns={tableColumns}
-                  >
-                    <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
-                      <Eye className="h-3 w-3 mr-1" />
-                      View More
-                    </Button>
-                  </DetailedViewModal>
+            <div className="flex gap-4">
+              {/* Left side - Graph */}
+              <div className="flex-1">
+                <div className="h-72 bg-card border rounded-lg p-3">
+                  <VerticalBarChart 
+                    data={criticalData.slice(0, 10).map(asset => ({
+                      name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
+                      value: asset.criticalIssues
+                    }))}
+                    color="hsl(var(--destructive))"
+                    width={450}
+                    height={280}
+                  />
                 </div>
-                <div className="space-y-2">
-                  {criticalData.slice(0, showMoreCritical ? 10 : 5).map((asset, index) => (
-                    <div key={`critical-${asset.id}`} className="flex items-center justify-between text-sm">
-                      <span className="truncate text-foreground font-medium">{asset.name}</span>
-                      <span className="font-semibold text-destructive bg-destructive/10 px-2 py-1 rounded">
-                        {asset.criticalIssues}
-                      </span>
-                    </div>
-                  ))}
-                  {criticalData.length > 5 && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={(e) => { e.stopPropagation(); setShowMoreCritical(!showMoreCritical); }}
-                      className="w-full text-xs"
+              </div>
+              {/* Right side - Top Assets List */}
+              <div className="w-48">
+                <div className="bg-muted/30 rounded-lg p-3 h-72">
+                  <div className="flex items-center justify-between mb-2">
+                    <h5 className="text-sm font-medium text-muted-foreground">Top Assets</h5>
+                    <DetailedViewModal
+                      title="Critical Issues - Top Assets"
+                      chartComponent={
+                        <div className="h-64">
+                          <VerticalBarChart 
+                            data={criticalData.slice(0, 10).map(asset => ({
+                              name: asset.name,
+                              value: asset.criticalIssues
+                            }))}
+                            color="hsl(var(--destructive))"
+                            width={600}
+                            height={240}
+                          />
+                        </div>
+                      }
+                      tableData={criticalData.slice(0, 10)}
+                      tableColumns={tableColumns}
                     >
-                      {showMoreCritical ? "Show Less" : "Show More"}
-                    </Button>
-                  )}
+                      <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
+                        <Eye className="h-3 w-3 mr-1" />
+                        View More
+                      </Button>
+                    </DetailedViewModal>
+                  </div>
+                  <div className="space-y-2 overflow-y-auto max-h-56">
+                    {criticalData.slice(0, showMoreCritical ? 10 : 5).map((asset, index) => (
+                      <div key={`critical-${asset.id}`} className="flex items-center justify-between text-sm">
+                        <span className="truncate text-foreground font-medium text-xs">{asset.name}</span>
+                        <span className="font-semibold text-destructive bg-destructive/10 px-2 py-1 rounded text-xs">
+                          {asset.criticalIssues}
+                        </span>
+                      </div>
+                    ))}
+                    {criticalData.length > 5 && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={(e) => { e.stopPropagation(); setShowMoreCritical(!showMoreCritical); }}
+                        className="w-full text-xs"
+                      >
+                        {showMoreCritical ? "Show Less" : "Show More"}
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <Separator orientation="vertical" className="hidden lg:block" />
           
           {/* Work Order Count Panel */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center space-x-2 pb-2">
               <Wrench className="h-5 w-5 text-dashboard-medium" />
               <h4 className="font-semibold text-base">Work Orders</h4>
             </div>
-            <div className="h-48 bg-card border rounded-lg p-4">
-              <VerticalBarChart 
-                data={workOrderData.slice(0, 10).map(asset => ({
-                  name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
-                  value: asset.workOrderCount
-                }))}
-                color="hsl(var(--dashboard-medium))"
-                width={380}
-                height={180}
-              />
-            </div>
-            <div className="mt-4">
-              <div className="bg-muted/30 rounded-lg p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <h5 className="text-sm font-medium text-muted-foreground">Top Assets</h5>
-                  <DetailedViewModal
-                    title="Work Orders - Top Assets"
-                    chartComponent={
-                      <div className="h-64">
-                        <VerticalBarChart 
-                          data={workOrderData.slice(0, 10).map(asset => ({
-                            name: asset.name,
-                            value: asset.workOrderCount
-                          }))}
-                          color="hsl(var(--dashboard-medium))"
-                          width={600}
-                          height={240}
-                        />
-                      </div>
-                    }
-                    tableData={workOrderData.slice(0, 10)}
-                    tableColumns={tableColumns}
-                  >
-                    <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
-                      <Eye className="h-3 w-3 mr-1" />
-                      View More
-                    </Button>
-                  </DetailedViewModal>
+            <div className="flex gap-4">
+              {/* Left side - Graph */}
+              <div className="flex-1">
+                <div className="h-72 bg-card border rounded-lg p-3">
+                  <VerticalBarChart 
+                    data={workOrderData.slice(0, 10).map(asset => ({
+                      name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
+                      value: asset.workOrderCount
+                    }))}
+                    color="hsl(var(--dashboard-medium))"
+                    width={450}
+                    height={280}
+                  />
                 </div>
-                <div className="space-y-2">
-                  {workOrderData.slice(0, showMoreWorkOrders ? 10 : 5).map((asset, index) => (
-                    <div key={`wo-${asset.id}`} className="flex items-center justify-between text-sm">
-                      <span className="truncate text-foreground font-medium">{asset.name}</span>
-                      <span className="font-semibold text-dashboard-medium bg-dashboard-medium/10 px-2 py-1 rounded">
-                        {asset.workOrderCount}
-                      </span>
-                    </div>
-                  ))}
-                  {workOrderData.length > 5 && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={(e) => { e.stopPropagation(); setShowMoreWorkOrders(!showMoreWorkOrders); }}
-                      className="w-full text-xs"
+              </div>
+              {/* Right side - Top Assets List */}
+              <div className="w-48">
+                <div className="bg-muted/30 rounded-lg p-3 h-72">
+                  <div className="flex items-center justify-between mb-2">
+                    <h5 className="text-sm font-medium text-muted-foreground">Top Assets</h5>
+                    <DetailedViewModal
+                      title="Work Orders - Top Assets"
+                      chartComponent={
+                        <div className="h-64">
+                          <VerticalBarChart 
+                            data={workOrderData.slice(0, 10).map(asset => ({
+                              name: asset.name,
+                              value: asset.workOrderCount
+                            }))}
+                            color="hsl(var(--dashboard-medium))"
+                            width={600}
+                            height={240}
+                          />
+                        </div>
+                      }
+                      tableData={workOrderData.slice(0, 10)}
+                      tableColumns={tableColumns}
                     >
-                      {showMoreWorkOrders ? "Show Less" : "Show More"}
-                    </Button>
-                  )}
+                      <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
+                        <Eye className="h-3 w-3 mr-1" />
+                        View More
+                      </Button>
+                    </DetailedViewModal>
+                  </div>
+                  <div className="space-y-2 overflow-y-auto max-h-56">
+                    {workOrderData.slice(0, showMoreWorkOrders ? 10 : 5).map((asset, index) => (
+                      <div key={`wo-${asset.id}`} className="flex items-center justify-between text-sm">
+                        <span className="truncate text-foreground font-medium text-xs">{asset.name}</span>
+                        <span className="font-semibold text-dashboard-medium bg-dashboard-medium/10 px-2 py-1 rounded text-xs">
+                          {asset.workOrderCount}
+                        </span>
+                      </div>
+                    ))}
+                    {workOrderData.length > 5 && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={(e) => { e.stopPropagation(); setShowMoreWorkOrders(!showMoreWorkOrders); }}
+                        className="w-full text-xs"
+                      >
+                        {showMoreWorkOrders ? "Show Less" : "Show More"}
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <Separator orientation="vertical" className="hidden lg:block" />
           
           {/* Frequency Score Panel */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div className="flex items-center space-x-2 pb-2">
               <DollarSign className="h-5 w-5 text-dashboard-high" />
               <h4 className="font-semibold text-base">Frequency Score</h4>
             </div>
-            <div className="h-48 bg-card border rounded-lg p-4">
-              <VerticalBarChart 
-                data={frequencyData.slice(0, 10).map(asset => ({
-                  name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
-                  value: asset.frequencyScore
-                }))}
-                color="hsl(var(--dashboard-high))"
-                width={380}
-                height={180}
-              />
-            </div>
-            <div className="mt-4">
-              <div className="bg-muted/30 rounded-lg p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <h5 className="text-sm font-medium text-muted-foreground">Top Assets</h5>
-                  <DetailedViewModal
-                    title="Frequency Score - Top Assets"
-                    chartComponent={
-                      <div className="h-64">
-                        <VerticalBarChart 
-                          data={frequencyData.slice(0, 10).map(asset => ({
-                            name: asset.name,
-                            value: asset.frequencyScore
-                          }))}
-                          color="hsl(var(--dashboard-high))"
-                          width={600}
-                          height={240}
-                        />
-                      </div>
-                    }
-                    tableData={frequencyData.slice(0, 10)}
-                    tableColumns={tableColumns}
-                  >
-                    <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
-                      <Eye className="h-3 w-3 mr-1" />
-                      View More
-                    </Button>
-                  </DetailedViewModal>
+            <div className="flex gap-4">
+              {/* Left side - Graph */}
+              <div className="flex-1">
+                <div className="h-72 bg-card border rounded-lg p-3">
+                  <VerticalBarChart 
+                    data={frequencyData.slice(0, 10).map(asset => ({
+                      name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
+                      value: asset.frequencyScore
+                    }))}
+                    color="hsl(var(--dashboard-high))"
+                    width={450}
+                    height={280}
+                  />
                 </div>
-                <div className="space-y-2">
-                  {frequencyData.slice(0, showMoreFrequency ? 10 : 5).map((asset, index) => (
-                    <div key={`freq-${asset.id}`} className="flex items-center justify-between text-sm">
-                      <span className="truncate text-foreground font-medium">{asset.name}</span>
-                      <span className="font-semibold text-dashboard-high bg-dashboard-high/10 px-2 py-1 rounded">
-                        {asset.frequencyScore}/year
-                      </span>
-                    </div>
-                  ))}
-                  {frequencyData.length > 5 && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={(e) => { e.stopPropagation(); setShowMoreFrequency(!showMoreFrequency); }}
-                      className="w-full text-xs"
+              </div>
+              {/* Right side - Top Assets List */}
+              <div className="w-48">
+                <div className="bg-muted/30 rounded-lg p-3 h-72">
+                  <div className="flex items-center justify-between mb-2">
+                    <h5 className="text-sm font-medium text-muted-foreground">Top Assets</h5>
+                    <DetailedViewModal
+                      title="Frequency Score - Top Assets"
+                      chartComponent={
+                        <div className="h-64">
+                          <VerticalBarChart 
+                            data={frequencyData.slice(0, 10).map(asset => ({
+                              name: asset.name,
+                              value: asset.frequencyScore
+                            }))}
+                            color="hsl(var(--dashboard-high))"
+                            width={600}
+                            height={240}
+                          />
+                        </div>
+                      }
+                      tableData={frequencyData.slice(0, 10)}
+                      tableColumns={tableColumns}
                     >
-                      {showMoreFrequency ? "Show Less" : "Show More"}
-                    </Button>
-                  )}
+                      <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
+                        <Eye className="h-3 w-3 mr-1" />
+                        View More
+                      </Button>
+                    </DetailedViewModal>
+                  </div>
+                  <div className="space-y-2 overflow-y-auto max-h-56">
+                    {frequencyData.slice(0, showMoreFrequency ? 10 : 5).map((asset, index) => (
+                      <div key={`freq-${asset.id}`} className="flex items-center justify-between text-sm">
+                        <span className="truncate text-foreground font-medium text-xs">{asset.name}</span>
+                        <span className="font-semibold text-dashboard-high bg-dashboard-high/10 px-2 py-1 rounded text-xs">
+                          {asset.frequencyScore}/year
+                        </span>
+                      </div>
+                    ))}
+                    {frequencyData.length > 5 && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={(e) => { e.stopPropagation(); setShowMoreFrequency(!showMoreFrequency); }}
+                        className="w-full text-xs"
+                      >
+                        {showMoreFrequency ? "Show Less" : "Show More"}
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
