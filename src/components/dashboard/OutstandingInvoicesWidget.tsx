@@ -44,8 +44,8 @@ export function OutstandingInvoicesWidget() {
     return invoices.filter(inv => new Date(inv.dateIssued) >= filterDate);
   };
 
-  // Filter invoices by payment status and date
-  const allInvoices = filterByDate(mockInvoices);
+  // Filter invoices by payment status and date - Only get "Received" type invoices
+  const allInvoices = filterByDate(mockInvoices.filter(inv => inv.type === "Received"));
   const outstandingInvoices = allInvoices.filter(inv => inv.paymentStatus === "Outstanding");
   const overdueInvoices = allInvoices.filter(inv => inv.paymentStatus === "Overdue");
   
@@ -129,21 +129,34 @@ export function OutstandingInvoicesWidget() {
                           <TableHead>Status</TableHead>
                         </TableRow>
                       </TableHeader>
-                      <TableBody>
-                        {filteredInvoices.map((invoice) => (
-                          <TableRow key={invoice.id}>
-                            <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
-                            <TableCell>{invoice.contractorTenant}</TableCell>
-                            <TableCell>{formatCurrency(invoice.amount)}</TableCell>
-                            <TableCell>{new Date(invoice.dueDate).toLocaleDateString()}</TableCell>
-                            <TableCell>
-                              <Badge variant={invoice.paymentStatus === "Overdue" ? "destructive" : "outline"}>
-                                {invoice.paymentStatus}
-                              </Badge>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
+                       <TableBody>
+                         {filteredInvoices.length === 0 ? (
+                           <TableRow>
+                             <TableCell colSpan={5} className="text-center py-8">
+                               <div className="text-muted-foreground">
+                                 <div className="text-sm">No outstanding invoices found</div>
+                                 <div className="text-xs mt-1">
+                                   {searchTerm ? `No results for "${searchTerm}"` : "No data available for selected period"}
+                                 </div>
+                               </div>
+                             </TableCell>
+                           </TableRow>
+                         ) : (
+                           filteredInvoices.map((invoice) => (
+                             <TableRow key={invoice.id}>
+                               <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
+                               <TableCell>{invoice.contractorTenant}</TableCell>
+                               <TableCell>{formatCurrency(invoice.amount)}</TableCell>
+                               <TableCell>{new Date(invoice.dueDate).toLocaleDateString()}</TableCell>
+                               <TableCell>
+                                 <Badge variant={invoice.paymentStatus === "Overdue" ? "destructive" : "outline"}>
+                                   {invoice.paymentStatus}
+                                 </Badge>
+                               </TableCell>
+                             </TableRow>
+                           ))
+                         )}
+                       </TableBody>
                     </Table>
                   </div>
                 </div>
@@ -165,7 +178,9 @@ export function OutstandingInvoicesWidget() {
         {totalAmount === 0 ? (
           <div className="text-center py-6">
             <div className="text-2xl font-bold text-green-600 mb-2">£0</div>
-            <p className="text-sm text-muted-foreground">All invoices are up to date</p>
+            <p className="text-sm text-muted-foreground">
+              {allInvoices.length === 0 ? "No invoices found for selected period" : "All invoices are up to date"}
+            </p>
           </div>
         ) : (
           <>
