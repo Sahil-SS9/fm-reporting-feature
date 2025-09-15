@@ -168,7 +168,6 @@ export default function Reporting() {
                         </CardHeader>
                         <CardContent className="pt-0 space-y-2">
                           <Button 
-                            variant="outline" 
                             size="sm" 
                             className="w-full"
                             onClick={() => handleTemplateClick(report)}
@@ -176,6 +175,7 @@ export default function Reporting() {
                             Create Report
                           </Button>
                           <Button 
+                            variant="outline" 
                             size="sm" 
                             className="w-full"
                             onClick={() => handleViewResults({
@@ -209,9 +209,16 @@ export default function Reporting() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Button
+                    variant={!showFavoritesOnly ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setShowFavoritesOnly(false)}
+                  >
+                    View All
+                  </Button>
+                  <Button
                     variant={showFavoritesOnly ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                    onClick={() => setShowFavoritesOnly(true)}
                   >
                     <Star className="h-4 w-4 mr-2" />
                     Favorites Only

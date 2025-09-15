@@ -33,7 +33,7 @@ import {
   ArrowUpDown,
   ChevronLeft,
   ChevronRight,
-  Share2
+  X
 } from "lucide-react";
 import { dataSourceConfig, mockProperties } from "@/data/mockData";
 import { EmailReportSheet } from "./EmailReportSheet";
@@ -295,26 +295,51 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm">
             <Filter className="h-4 w-4 mr-2" />
-            Add Filter
-          </Button>
-          <Button variant="outline" size="sm">
-            <Share2 className="h-4 w-4 mr-2" />
-            Share
+            Filter
           </Button>
         </div>
       </div>
+
+      {/* Filter Pills */}
+      {config.filters && Object.keys(config.filters).length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-sm text-muted-foreground">Active Filters:</span>
+          {Object.entries(config.filters).map(([key, value]) => {
+            if (!value || value === "") return null;
+            const column = columnsConfig.find(col => col.key === key);
+            const displayValue = typeof value === 'string' ? value : String(value);
+            return (
+              <Badge key={key} variant="secondary" className="gap-1">
+                {column?.label}: {displayValue}
+                <Button
+                  variant="ghost" 
+                  size="sm"
+                  className="h-auto p-0 ml-1"
+                  onClick={() => {
+                    const newFilters = { ...config.filters };
+                    delete newFilters[key];
+                    config.filters = newFilters;
+                  }}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </Badge>
+            );
+          })}
+        </div>
+      )}
 
       {/* Results Table */}
       <Card>
         <CardContent className="p-0">
           <div className="overflow-auto">
             <Table>
-              <TableHeader>
-                <TableRow>
+              <TableHeader className="bg-muted/30">
+                <TableRow className="hover:bg-transparent">
                   {columnsConfig.map((column) => (
                     <TableHead 
                       key={column.key}
-                      className="cursor-pointer hover:bg-muted/50"
+                      className="cursor-pointer hover:bg-muted/50 font-semibold text-foreground border-b"
                       onClick={() => handleSort(column.key)}
                     >
                       <div className="flex items-center space-x-1">
@@ -327,9 +352,9 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
               </TableHeader>
               <TableBody>
                 {paginatedData.map((row: any, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={index} className="hover:bg-muted/30 border-b border-muted">
                     {columnsConfig.map((column) => (
-                      <TableCell key={column.key}>
+                      <TableCell key={column.key} className="py-3">
                         {formatCellValue(row[column.key], column)}
                       </TableCell>
                     ))}
@@ -340,33 +365,54 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between p-4 border-t">
+          <div className="flex items-center justify-between p-4 border-t bg-muted/20">
             <div className="text-sm text-muted-foreground">
               Showing {((currentPage - 1) * rowsPerPage) + 1} to {Math.min(currentPage * rowsPerPage, processedData.length)} of {processedData.length} results
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
+                className="px-3"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Previous
               </Button>
               
-              <span className="text-sm">
-                Page {currentPage} of {totalPages}
-              </span>
+              {Array.from({ length: Math.min(7, totalPages) }, (_, i) => {
+                let pageNum;
+                if (totalPages <= 7) {
+                  pageNum = i + 1;
+                } else if (currentPage <= 4) {
+                  pageNum = i + 1;
+                } else if (currentPage >= totalPages - 3) {
+                  pageNum = totalPages - 6 + i;
+                } else {
+                  pageNum = currentPage - 3 + i;
+                }
+                
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={currentPage === pageNum ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(pageNum)}
+                    className="px-3"
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
               
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
+                className="px-3"
               >
-                Next
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>

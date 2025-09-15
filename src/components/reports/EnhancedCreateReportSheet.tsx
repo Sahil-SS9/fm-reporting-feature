@@ -93,7 +93,8 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
   };
 
   return (
-    <div className="space-y-6">
+    <div className="h-full overflow-y-auto">
+      <div className="space-y-6 pb-6">
       {/* Step 1: Basic Details & Property Selection */}
       <Collapsible open={step1Open} onOpenChange={setStep1Open}>
         <CollapsibleTrigger className="flex items-center justify-between w-full p-4 border rounded-lg hover:bg-muted/50">
@@ -337,6 +338,7 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
           Save Report
         </Button>
       </div>
+    </div>
     </div>
   );
 }

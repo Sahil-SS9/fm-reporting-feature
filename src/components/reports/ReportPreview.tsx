@@ -116,7 +116,7 @@ export function ReportPreview({ dataSource, columns, filters, properties }: Repo
         </div>
       </div>
       
-      <div className="border rounded-lg overflow-auto max-h-80">
+      <div className="border rounded-lg overflow-x-auto overflow-y-auto max-h-80">
         <Table>
           <TableHeader>
             <TableRow>
