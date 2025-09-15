@@ -24,11 +24,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { 
   Search,
   ChevronDown,
   ChevronUp,
-  Eye,
+  MoreVertical,
   CheckCircle,
   AlertTriangle
 } from "lucide-react";
@@ -406,12 +412,6 @@ export function PropertyOverviewTab() {
                     </div>
                   </div>
                 </div>
-                <button 
-                  onClick={() => openDetailsModal('workOrders', metrics.property.id)}
-                  className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
-                >
-                  VIE
-                </button>
               </div>
             ))}
           </div>
@@ -435,12 +435,6 @@ export function PropertyOverviewTab() {
                     </div>
                   </div>
                 </div>
-                <button 
-                  onClick={() => openDetailsModal('workOrders', metrics.property.id)}
-                  className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
-                >
-                  VIE
-                </button>
               </div>
             ))}
           </div>
@@ -568,14 +562,31 @@ export function PropertyOverviewTab() {
                     </TableCell>
                     
                     <TableCell className="text-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openDetailsModal('workOrders', metrics.property.id)}
-                        className="h-8 w-8 p-0 hover:bg-blue-100"
-                      >
-                        <Eye className="h-4 w-4 text-blue-600" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 hover:bg-blue-100"
+                          >
+                            <MoreVertical className="h-4 w-4 text-blue-600" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-white border shadow-md">
+                          <DropdownMenuItem onClick={() => openDetailsModal('workOrders', metrics.property.id)}>
+                            Work Order Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => openDetailsModal('preventativeMaintenance', metrics.property.id)}>
+                            Preventative Maintenance Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => openDetailsModal('assets', metrics.property.id)}>
+                            Asset Status Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => openDetailsModal('invoicing', metrics.property.id)}>
+                            Invoicing Details
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 </React.Fragment>
