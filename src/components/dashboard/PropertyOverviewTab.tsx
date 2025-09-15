@@ -27,7 +27,10 @@ import {
 import { 
   Search,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Eye,
+  CheckCircle,
+  AlertTriangle
 } from "lucide-react";
 import { mockProperties, mockWorkOrders, mockAssets, mockInvoices } from "@/data/mockData";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -383,6 +386,67 @@ export function PropertyOverviewTab() {
         </Badge>
       </div>
 
+      {/* Top Performers and Needs Attention */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        {/* Top Performers */}
+        <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            <h3 className="text-lg font-semibold text-green-800">Top Performers</h3>
+          </div>
+          <div className="space-y-3">
+            {topPerformers.map((metrics, index) => (
+              <div key={metrics.property.id} className="flex items-center justify-between bg-white rounded-lg p-3 border border-green-100">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-green-600">#{index + 1}</span>
+                  <div>
+                    <div className="font-medium text-gray-900">{metrics.property.name}</div>
+                    <div className="text-sm text-gray-600">
+                      Operational: {metrics.operationalScore}% • Compliance: {metrics.complianceScore}%
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => openDetailsModal('workOrders', metrics.property.id)}
+                  className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                >
+                  VIE
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Needs Attention */}
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <AlertTriangle className="h-5 w-5 text-red-600" />
+            <h3 className="text-lg font-semibold text-red-800">Needs Attention</h3>
+          </div>
+          <div className="space-y-3">
+            {needsAttention.map((metrics, index) => (
+              <div key={metrics.property.id} className="flex items-center justify-between bg-white rounded-lg p-3 border border-red-100">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-red-600">#{index + 1}</span>
+                  <div>
+                    <div className="font-medium text-gray-900">{metrics.property.name}</div>
+                    <div className="text-sm text-gray-600">
+                      Operational: {metrics.operationalScore}% • Compliance: {metrics.complianceScore}%
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => openDetailsModal('workOrders', metrics.property.id)}
+                  className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
+                >
+                  VIE
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Property Performance Table */}
       <div className="border rounded-lg">
         <Table>
@@ -396,6 +460,7 @@ export function PropertyOverviewTab() {
               <TableHead className="text-center w-36">Invoicing</TableHead>
               <TableHead className="text-center w-32">Compliance</TableHead>
               <TableHead className="text-center w-32">Operational</TableHead>
+              <TableHead className="text-center w-24">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -501,49 +566,16 @@ export function PropertyOverviewTab() {
                         <span className="text-sm font-medium">{metrics.operationalScore}%</span>
                       </div>
                     </TableCell>
-                  </TableRow>
-                  
-                  {/* View Details Row */}
-                  <TableRow>
-                    <TableCell colSpan={8} className="p-0">
-                      <div className="flex bg-muted/20">
-                        <div className="w-64"></div> {/* Property column spacer */}
-                        <div className="w-32"></div> {/* Health Score column spacer */}
-                        <div className="w-40 p-2">
-                          <Button 
-                            onClick={() => openDetailsModal('workOrders', metrics.property.id)}
-                            className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
-                          >
-                            View Work Orders Details
-                          </Button>
-                        </div>
-                        <div className="w-44 p-2">
-                          <Button 
-                            onClick={() => openDetailsModal('preventativeMaintenance', metrics.property.id)}
-                            className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
-                          >
-                            View Maintenance Details
-                          </Button>
-                        </div>
-                        <div className="w-40 p-2">
-                          <Button 
-                            onClick={() => openDetailsModal('assets', metrics.property.id)}
-                            className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
-                          >
-                            View Asset Details
-                          </Button>
-                        </div>
-                        <div className="w-36 p-2">
-                          <Button 
-                            onClick={() => openDetailsModal('invoicing', metrics.property.id)}
-                            className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
-                          >
-                            View Invoice Details
-                          </Button>
-                        </div>
-                        <div className="w-32"></div> {/* Compliance column spacer */}
-                        <div className="w-32"></div> {/* Operational column spacer */}
-                      </div>
+                    
+                    <TableCell className="text-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openDetailsModal('workOrders', metrics.property.id)}
+                        className="h-8 w-8 p-0 hover:bg-blue-100"
+                      >
+                        <Eye className="h-4 w-4 text-blue-600" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 </React.Fragment>
@@ -631,7 +663,7 @@ export function PropertyOverviewTab() {
                 {detailsModal.type === 'assets' && 'Asset Status Overview'}
                 {detailsModal.type === 'invoicing' && 'Invoice Payment Status'}
               </h3>
-              <div className="h-96 w-full">
+              <div className="h-[500px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={getChartData(detailsModal.type, detailsModal.propertyId, detailsModal.filter)} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.2)" />
