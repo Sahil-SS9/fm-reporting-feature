@@ -54,8 +54,8 @@ export function OverdueVsUpcomingRing() {
             </Badge>
           </div>
         ))}
-        <div className="pt-1 border-t border-muted/20">
-          <div className="flex justify-between items-center text-xs text-muted-foreground">
+        <div className="pt-2 mt-2 border-t border-muted/20">
+          <div className="flex justify-center items-center text-xs text-muted-foreground min-h-[1.5rem]">
             <span className="text-warning">↑ +5 this week</span>
           </div>
         </div>
