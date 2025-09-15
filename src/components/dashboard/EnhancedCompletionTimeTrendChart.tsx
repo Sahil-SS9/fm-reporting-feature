@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, TrendingUp } from "lucide-react";
 import { VerticalBarChart } from "@/components/ui/enhanced-charts";
 import { mockWorkOrders, mockProperties } from "@/data/mockData";
-import { LineChart } from '@mui/x-charts';
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 export function EnhancedCompletionTimeTrendChart() {
   // Generate trend data for the last 12 months
@@ -68,22 +68,15 @@ export function EnhancedCompletionTimeTrendChart() {
             <div className="space-y-6">
               <div>
                 <h4 className="text-lg font-semibold mb-4">12-Month Trend</h4>
-                 <div className="h-80">
-                   <LineChart
-                     series={[{
-                       data: trendData.map(item => item.avgTime),
-                       color: 'hsl(var(--primary))',
-                       label: 'Avg Completion Time',
-                     }]}
-                     xAxis={[{
-                       scaleType: 'point',
-                       data: trendData.map(item => item.month),
-                     }]}
-                     width={undefined}
-                     height={320}
-                     margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-                   />
-                 </div>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={trendData.map(item => ({ name: item.month, value: item.avgTime }))}>
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
               <div>
                 <h4 className="text-lg font-semibold mb-4">Property Comparison</h4>
@@ -135,20 +128,13 @@ export function EnhancedCompletionTimeTrendChart() {
       </CardHeader>
       <CardContent>
         <div className="h-64">
-          <LineChart
-            series={[{
-              data: trendData.map(item => item.avgTime),
-              color: 'hsl(var(--primary))',
-              label: 'Avg Completion Time',
-            }]}
-            xAxis={[{
-              scaleType: 'point',
-              data: trendData.map(item => item.month),
-            }]}
-            width={undefined}
-            height={256}
-            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-          />
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={trendData.map(item => ({ name: item.month, value: item.avgTime }))}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </CardContent>
     </Card>

@@ -179,7 +179,7 @@ export function PropertyComparisonChart({ className, onPropertyClick }: Property
           </CardContent>
         </Card>
 
-        {/* Maintenance Performance Comparison */}
+        {/* Maintenance Comparison */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm">Maintenance: On-Time vs Late</CardTitle>
@@ -215,7 +215,7 @@ export function PropertyComparisonChart({ className, onPropertyClick }: Property
           </CardContent>
         </Card>
 
-        {/* Invoice Status Comparison */}
+        {/* Invoice Comparison */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm">Invoices: Paid vs Unpaid</CardTitle>

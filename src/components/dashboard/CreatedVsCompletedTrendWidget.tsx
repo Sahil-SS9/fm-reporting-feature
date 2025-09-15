@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LineChart } from '@mui/x-charts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useState } from "react";
 import { mockWorkOrders } from "@/data/mockData";
 
@@ -75,27 +75,43 @@ export function CreatedVsCompletedTrendWidget() {
       </CardHeader>
       <CardContent>
         <div className="h-[200px]">
-          <LineChart
-            series={[
-              {
-                data: trendData.map(d => d.created),
-                color: 'hsl(var(--primary))',
-                label: 'Created',
-              },
-              {
-                data: trendData.map(d => d.completed),
-                color: 'hsl(var(--dashboard-complete))',
-                label: 'Completed',
-              }
-            ]}
-            xAxis={[{
-              scaleType: 'point',
-              data: trendData.map(d => d.period),
-            }]}
-            width={undefined}
-            height={200}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          />
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={trendData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis 
+                dataKey="period" 
+                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                axisLine={false}
+              />
+              <YAxis 
+                tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                axisLine={false}
+              />
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: "hsl(var(--popover))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "6px"
+                }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="created" 
+                stroke="hsl(var(--primary))" 
+                strokeWidth={2}
+                dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                name="Created"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="completed" 
+                stroke="hsl(var(--dashboard-complete))" 
+                strokeWidth={2}
+                dot={{ fill: "hsl(var(--dashboard-complete))", r: 4 }}
+                name="Completed"
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
         
         {/* Summary Stats */}
