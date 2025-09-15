@@ -50,7 +50,6 @@ export function MaintenanceTypeRing() {
         <div className="pt-1 border-t border-muted/20">
           <div className="flex justify-between items-center text-xs text-muted-foreground">
             <span className="text-primary">↑ +8 inspections</span>
-            <span>Updated 30m ago</span>
           </div>
         </div>
       </div>

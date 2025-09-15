@@ -53,39 +53,40 @@ export function AssetStatusWidget() {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-3">
-        <div className="flex items-center gap-6">
-          <DonutChartWithCenter 
-            data={statusData}
-            size={180}
-            strokeWidth={14}
-            centerContent={
-              <div className="text-center">
-                <div className="text-3xl font-bold">{totalAssets}</div>
-                <div className="text-xs text-muted-foreground">Assets</div>
-              </div>
-            }
-          />
+      <CardContent className="p-4">
+        <div className="space-y-4">
+          <div className="text-center">
+            <DonutChartWithCenter 
+              data={statusData}
+              size={180}
+              strokeWidth={14}
+              centerContent={
+                <div className="text-center">
+                  <div className="text-3xl font-bold">{totalAssets}</div>
+                  <div className="text-xs text-muted-foreground">Assets</div>
+                </div>
+              }
+            />
+          </div>
           
-          <div className="flex-1 space-y-0.5">
+          <div className="space-y-1">
             {statusData.map((status) => (
               <div key={status.name} className="flex items-center justify-between p-1 rounded bg-muted/10">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1.5">
                   <div 
-                    className="w-4 h-4 rounded-full" 
+                    className="w-3 h-3 rounded-full" 
                     style={{ backgroundColor: status.color }}
                   />
-                  <span className="text-sm font-medium">{status.name}</span>
+                  <span className="text-xs font-medium">{status.name}</span>
                 </div>
-                <Badge variant="outline" className="text-xs h-5">
+                <Badge variant="outline" className="text-xs h-4">
                   {status.value}
                 </Badge>
               </div>
             ))}
-            <div className="mt-2 pt-2 border-t border-muted/20">
+            <div className="pt-1 border-t border-muted/20">
               <div className="flex justify-between items-center text-xs text-muted-foreground">
                 <span className="text-success">↑ +3 this week</span>
-                <span>Updated 2 hours ago</span>
               </div>
             </div>
           </div>

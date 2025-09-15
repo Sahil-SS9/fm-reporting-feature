@@ -50,7 +50,6 @@ export function PriorityLevelRing() {
         <div className="pt-1 border-t border-muted/20">
           <div className="flex justify-between items-center text-xs text-muted-foreground">
             <span className="text-destructive">↑ +2 critical</span>
-            <span>Updated 3h ago</span>
           </div>
         </div>
       </div>

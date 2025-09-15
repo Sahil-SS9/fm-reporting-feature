@@ -57,7 +57,6 @@ export function OverdueVsUpcomingRing() {
         <div className="pt-1 border-t border-muted/20">
           <div className="flex justify-between items-center text-xs text-muted-foreground">
             <span className="text-warning">↑ +5 this week</span>
-            <span>Updated 1h ago</span>
           </div>
         </div>
       </div>
