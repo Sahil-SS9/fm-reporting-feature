@@ -9,6 +9,7 @@ import { OutstandingInvoicesWidget } from "@/components/dashboard/OutstandingInv
 import { PropertyPerformanceWidget } from "@/components/dashboard/PropertyPerformanceWidget";
 import { PropertyComparisonChart } from "@/components/dashboard/PropertyComparisonChart";
 import { PropertyOverviewTab } from "@/components/dashboard/PropertyOverviewTab";
+import { ContractorInvoicingWidget } from "@/components/dashboard/ContractorInvoicingWidget";
 import { DocumentExpiryWidget } from "@/components/dashboard/DocumentExpiryWidget";
 import { CasesCreatedClosedWidget } from "@/components/dashboard/CasesCreatedClosedWidget";
 import { WorkOrdersCreatedClosedWidget } from "@/components/dashboard/WorkOrdersCreatedClosedWidget";
@@ -67,12 +68,11 @@ export default function Dashboard() {
 
       {/* Dashboard Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 h-auto">
+        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-7 h-auto">
           <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
           <TabsTrigger value="property" className="text-xs">Property</TabsTrigger>
           <TabsTrigger value="operations" className="text-xs">Operations</TabsTrigger>
           <TabsTrigger value="assets" className="text-xs">Assets</TabsTrigger>
-          <TabsTrigger value="maintenance" className="text-xs">Maintenance</TabsTrigger>
           <TabsTrigger value="financial" className="text-xs">Financial</TabsTrigger>
           <TabsTrigger value="documents" className="text-xs">Documents</TabsTrigger>
           <TabsTrigger value="activity" className="text-xs">Activity</TabsTrigger>
@@ -89,6 +89,15 @@ export default function Dashboard() {
 
         {/* Property Overview Tab */}
         <TabsContent value="property" className="space-y-8">
+          {/* Property Overview */}
+          <PropertyOverviewTab />
+          
+          {/* Property Comparison Chart */}
+          <PropertyComparisonChart />
+        </TabsContent>
+
+        {/* Operations Tab */}
+        <TabsContent value="operations" className="space-y-8">
           {/* Essential Metrics */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
             <h3 className="text-xl font-semibold mb-6 text-foreground">Today's Metrics</h3>
@@ -152,9 +161,6 @@ export default function Dashboard() {
             </div>
           </div>
           
-          {/* Property Overview */}
-          <PropertyOverviewTab />
-          
           {/* Trend Analysis */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
             <h3 className="text-xl font-semibold mb-6">Trend Analysis</h3>
@@ -163,10 +169,7 @@ export default function Dashboard() {
               <CreatedVsCompletedTrendWidget />
             </div>
           </div>
-        </TabsContent>
 
-        {/* Operations Tab */}
-        <TabsContent value="operations" className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <EnhancedWorkOrderPriorityWidget />
             <OnTimeVsOverdueWidget />
@@ -185,12 +188,9 @@ export default function Dashboard() {
           
           {/* High Maintenance Assets */}
           <TopAssetsWidget />
-        </TabsContent>
-
-        {/* Preventive Maintenance Tab */}
-        <TabsContent value="maintenance" className="space-y-6">
+          
+          {/* Asset Maintenance */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <PreventiveMaintenanceWidget />
             <AssetMaintenanceWidget />
           </div>
         </TabsContent>
@@ -222,7 +222,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </div>
-          <PropertyComparisonChart />
+          <ContractorInvoicingWidget />
         </TabsContent>
 
         {/* Documents Tab */}
