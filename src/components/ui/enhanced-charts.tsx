@@ -1,4 +1,4 @@
-import { PieChart, LineChart, BarChart } from '@mui/x-charts';
+import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, BarChart, Bar, CartesianGrid, Tooltip } from "recharts";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
@@ -21,25 +21,31 @@ export function SemiCircularGauge({
   color = "hsl(var(--primary))"
 }: SemiCircularGaugeProps) {
   const data = [
-    { id: 0, value: value, color: color },
-    { id: 1, value: 100 - value, color: "hsl(var(--muted))" }
+    { value: value, fill: color },
+    { value: 100 - value, fill: "hsl(var(--muted))" }
   ];
 
   return (
     <div className={cn("relative", className)} style={{ width: size, height: size / 2 + 20 }}>
-      <PieChart
-        series={[{
-          data,
-          innerRadius: size / 2 - strokeWidth,
-          outerRadius: size / 2,
-          startAngle: 180,
-          endAngle: 0,
-          cx: '50%',
-          cy: '90%',
-        }]}
-        width={size}
-        height={size / 2 + 20}
-      />
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="90%"
+            startAngle={180}
+            endAngle={0}
+            innerRadius={size / 2 - strokeWidth}
+            outerRadius={size / 2}
+            dataKey="value"
+            stroke="none"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.fill} />
+            ))}
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
       <div className="absolute inset-0 flex flex-col items-center justify-end pb-2">
         <div className="text-2xl font-bold" style={{ color }}>{value}%</div>
         {label && <div className="text-xs text-muted-foreground">{label}</div>}
@@ -66,23 +72,31 @@ export function RadialProgress({
   color = "hsl(var(--primary))"
 }: RadialProgressProps) {
   const data = [
-    { id: 0, value: value, color: color },
-    { id: 1, value: 100 - value, color: "hsl(var(--muted))" }
+    { value: value, fill: color },
+    { value: 100 - value, fill: "hsl(var(--muted))" }
   ];
 
   return (
     <div className={cn("relative", className)} style={{ width: size, height: size }}>
-      <PieChart
-        series={[{
-          data,
-          innerRadius: size / 2 - strokeWidth,
-          outerRadius: size / 2,
-          startAngle: 90,
-          endAngle: -270,
-        }]}
-        width={size}
-        height={size}
-      />
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={size / 2 - strokeWidth}
+            outerRadius={size / 2}
+            startAngle={90}
+            endAngle={-270}
+            dataKey="value"
+            stroke="none"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.fill} />
+            ))}
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <div className="text-lg font-bold" style={{ color }}>{value}%</div>
         {label && <div className="text-xs text-muted-foreground text-center">{label}</div>}
@@ -113,24 +127,34 @@ export function MiniTrendChart({
   const trend = currentValue - previousValue;
   const trendPercent = previousValue !== 0 ? ((trend / previousValue) * 100).toFixed(1) : "0.0";
   
-  const chartData = data.map(item => item.value);
-  
   return (
     <div 
       className={cn("group relative cursor-help", className)} 
       style={{ width, height }}
       title={tooltipContent || `Current: ${currentValue}, Trend: ${trend > 0 ? '+' : ''}${trendPercent}%`}
     >
-      <LineChart
-        series={[{
-          data: chartData,
-          color: color,
-          curve: 'monotoneX',
-        }]}
-        width={width}
-        height={height}
-        margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
-      />
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={data}>
+          <Line 
+            type="monotone" 
+            dataKey="value" 
+            stroke={color} 
+            strokeWidth={2}
+            dot={false}
+          />
+          <Tooltip 
+            contentStyle={{
+              backgroundColor: "hsl(var(--popover))",
+              border: "1px solid hsl(var(--border))",
+              borderRadius: "4px",
+              fontSize: "11px",
+              padding: "4px 8px"
+            }}
+            formatter={(value) => [`${value}`, "Value"]}
+            labelFormatter={() => ""}
+          />
+        </LineChart>
+      </ResponsiveContainer>
       {/* Enhanced tooltip overlay */}
       <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-popover border border-border rounded px-2 py-1 text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
         {tooltipContent || `Trend: ${trend > 0 ? '+' : ''}${trendPercent}% vs previous`}
@@ -154,24 +178,31 @@ export function StatusRing({
   className = "",
   centerContent
 }: StatusRingProps) {
-  const data = segments.map((seg, index) => ({
-    id: index,
-    value: seg.value,
-    label: seg.label,
-    color: seg.color,
+  const total = segments.reduce((sum, seg) => sum + seg.value, 0);
+  const data = segments.map(seg => ({
+    ...seg,
+    value: (seg.value / total) * 100
   }));
 
   return (
     <div className={cn("relative", className)} style={{ width: size, height: size }}>
-      <PieChart
-        series={[{
-          data,
-          innerRadius: size / 2 - strokeWidth,
-          outerRadius: size / 2,
-        }]}
-        width={size}
-        height={size}
-      />
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={size / 2 - strokeWidth}
+            outerRadius={size / 2}
+            dataKey="value"
+            stroke="none"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
       {centerContent && (
         <div className="absolute inset-0 flex items-center justify-center">
           {centerContent}
@@ -198,24 +229,27 @@ export function DonutChartWithCenter({
   centerContent
 }: DonutChartWithCenterProps) {
   const total = data.reduce((sum, item) => sum + item.value, 0);
-  const chartData = data.map((item, index) => ({
-    id: index,
-    value: item.value,
-    label: item.name,
-    color: item.color,
-  }));
 
   return (
     <div className={cn("relative", className)} style={{ width: size, height: size }}>
-      <PieChart
-        series={[{
-          data: chartData,
-          innerRadius: size / 2 - strokeWidth,
-          outerRadius: size / 2,
-        }]}
-        width={size}
-        height={size}
-      />
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={size / 2 - strokeWidth}
+            outerRadius={size / 2}
+            dataKey="value"
+            stroke="none"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip formatter={(value) => [value, ""]} />
+        </PieChart>
+      </ResponsiveContainer>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         {centerContent || (
           <>
@@ -244,21 +278,30 @@ export function VerticalBarChart({
   color = "hsl(var(--primary))",
   className = ""
 }: VerticalBarChartProps) {
-  const xAxisData = data.map(item => item.name);
-  const seriesData = data.map(item => item.value);
-
   return (
     <div className={cn("", className)} style={{ width, height }}>
-      <BarChart
-        xAxis={[{ scaleType: 'band', data: xAxisData }]}
-        series={[{
-          data: seriesData,
-          color: color,
-        }]}
-        width={width}
-        height={height}
-        margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
-      />
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+          <XAxis 
+            dataKey="name" 
+            tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+            axisLine={false}
+          />
+          <YAxis 
+            tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+            axisLine={false}
+          />
+          <Tooltip 
+            contentStyle={{
+              backgroundColor: "hsl(var(--popover))",
+              border: "1px solid hsl(var(--border))",
+              borderRadius: "6px"
+            }}
+          />
+          <Bar dataKey="value" fill={color} radius={[2, 2, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 }
