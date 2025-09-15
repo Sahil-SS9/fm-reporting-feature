@@ -233,11 +233,8 @@ export function PropertyComparisonChart({ className, onPropertyClick }: Property
                 height={200}
               />
             </div>
-          </CardContent>
-      </div>
-    </div>
-  );
-}
+           </CardContent>
+        </Card>
       </div>
     </div>
   );
