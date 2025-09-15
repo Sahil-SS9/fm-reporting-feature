@@ -5,128 +5,21 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Calendar, Clock, Mail, MoreHorizontal, Pause, Play, Edit, Trash2, Users } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { mockScheduledReports, mockSavedReports, type ScheduledReport } from "@/data/mockData";
 import { useToast } from "@/hooks/use-toast";
+import { ScheduleReportSheet } from "./ScheduleReportSheet";
 
-interface EditScheduleModalProps {
-  schedule: ScheduledReport;
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (schedule: ScheduledReport) => void;
-}
-
-const EditScheduleModal: React.FC<EditScheduleModalProps> = ({ 
-  schedule, 
-  isOpen, 
-  onClose, 
-  onSave 
-}) => {
-  const [editedSchedule, setEditedSchedule] = useState<ScheduledReport>(schedule);
-
-  const handleSave = () => {
-    onSave(editedSchedule);
-    onClose();
-  };
-
-  const handleRecipientsChange = (value: string) => {
-    const recipients = value.split(',').map(email => email.trim()).filter(Boolean);
-    setEditedSchedule(prev => ({ ...prev, recipients }));
-  };
-
-  const handleCCRecipientsChange = (value: string) => {
-    const ccRecipients = value.split(',').map(email => email.trim()).filter(Boolean);
-    setEditedSchedule(prev => ({ ...prev, ccRecipients }));
-  };
-
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Edit Schedule</DialogTitle>
-        </DialogHeader>
-        
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="frequency">Frequency</Label>
-            <Select
-              value={editedSchedule.frequency}
-              onValueChange={(value: any) => setEditedSchedule(prev => ({ ...prev, frequency: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="daily">Daily</SelectItem>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="monthly">Monthly</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label htmlFor="time">Time</Label>
-            <Input
-              id="time"
-              type="time"
-              value={editedSchedule.time}
-              onChange={(e) => setEditedSchedule(prev => ({ ...prev, time: e.target.value }))}
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="recipients">Recipients (comma separated)</Label>
-            <Input
-              id="recipients"
-              value={editedSchedule.recipients.join(', ')}
-              onChange={(e) => handleRecipientsChange(e.target.value)}
-              placeholder="email1@company.com, email2@company.com"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="cc-recipients">CC Recipients (comma separated)</Label>
-            <Input
-              id="cc-recipients"
-              value={editedSchedule.ccRecipients?.join(', ') || ''}
-              onChange={(e) => handleCCRecipientsChange(e.target.value)}
-              placeholder="manager@company.com"
-            />
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="enabled"
-              checked={editedSchedule.enabled}
-              onCheckedChange={(checked) => 
-                setEditedSchedule(prev => ({ ...prev, enabled: checked }))
-              }
-            />
-            <Label htmlFor="enabled">Schedule enabled</Label>
-          </div>
-
-          <div className="flex gap-2 pt-4">
-            <Button variant="outline" onClick={onClose} className="flex-1">
-              Cancel
-            </Button>
-            <Button onClick={handleSave} className="flex-1">
-              Save Changes
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
 
 export const ScheduleManagement: React.FC = () => {
   const [schedules, setSchedules] = useState<ScheduledReport[]>(mockScheduledReports);
   const [editingSchedule, setEditingSchedule] = useState<ScheduledReport | null>(null);
+  const [showScheduleSheet, setShowScheduleSheet] = useState(false);
   const { toast } = useToast();
 
   const handleToggleStatus = (scheduleId: string) => {
@@ -156,6 +49,7 @@ export const ScheduleManagement: React.FC = () => {
 
   const handleEditSchedule = (schedule: ScheduledReport) => {
     setEditingSchedule(schedule);
+    setShowScheduleSheet(true);
   };
 
   const handleSaveSchedule = (updatedSchedule: ScheduledReport) => {
@@ -167,6 +61,9 @@ export const ScheduleManagement: React.FC = () => {
       title: "Schedule updated",
       description: "The report schedule has been updated successfully."
     });
+    
+    setEditingSchedule(null);
+    setShowScheduleSheet(false);
   };
 
   const getStatusBadge = (status: ScheduledReport['status']) => {
@@ -312,13 +209,29 @@ export const ScheduleManagement: React.FC = () => {
           </div>
         )}
 
-        {editingSchedule && (
-          <EditScheduleModal
-            schedule={editingSchedule}
-            isOpen={!!editingSchedule}
-            onClose={() => setEditingSchedule(null)}
-            onSave={handleSaveSchedule}
-          />
+        {showScheduleSheet && (
+          <Sheet open={showScheduleSheet} onOpenChange={setShowScheduleSheet}>
+            <SheetContent side="right" className="sm:max-w-md overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>
+                  {editingSchedule ? 'Edit Schedule' : 'Schedule Report'}
+                </SheetTitle>
+              </SheetHeader>
+              <ScheduleReportSheet
+                reportConfig={
+                  editingSchedule 
+                    ? mockSavedReports.find(r => r.id === editingSchedule.reportId)
+                    : { name: "New Schedule", id: "temp" }
+                }
+                existingSchedule={editingSchedule}
+                onClose={() => {
+                  setShowScheduleSheet(false);
+                  setEditingSchedule(null);
+                }}
+                onSave={handleSaveSchedule}
+              />
+            </SheetContent>
+          </Sheet>
         )}
       </CardContent>
     </Card>

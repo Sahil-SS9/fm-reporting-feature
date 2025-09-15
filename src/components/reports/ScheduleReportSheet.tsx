@@ -17,28 +17,49 @@ import { Clock, Send, X } from "lucide-react";
 
 interface ScheduleReportSheetProps {
   reportConfig: any;
+  existingSchedule?: any; // For editing existing schedules
   onClose: () => void;
+  onSave?: (schedule: any) => void; // For handling edit saves
 }
 
-export function ScheduleReportSheet({ reportConfig, onClose }: ScheduleReportSheetProps) {
-  const [frequency, setFrequency] = useState("Weekly");
-  const [recipients, setRecipients] = useState("");
-  const [ccRecipients, setCcRecipients] = useState("");
-  const [bccRecipients, setBccRecipients] = useState("");
-  const [subject, setSubject] = useState(`${reportConfig.name}`);
-  const [message, setMessage] = useState(`This is a report about productivity of centres`);
+export function ScheduleReportSheet({ 
+  reportConfig, 
+  existingSchedule,
+  onClose,
+  onSave 
+}: ScheduleReportSheetProps) {
+  const [frequency, setFrequency] = useState(existingSchedule?.frequency || "Weekly");
+  const [recipients, setRecipients] = useState(
+    existingSchedule?.recipients?.join(', ') || ""
+  );
+  const [ccRecipients, setCcRecipients] = useState(
+    existingSchedule?.ccRecipients?.join(', ') || ""
+  );
+  const [bccRecipients, setBccRecipients] = useState(
+    existingSchedule?.bccRecipients?.join(', ') || ""
+  );
+  const [subject, setSubject] = useState(
+    existingSchedule?.subject || `${reportConfig.name}`
+  );
+  const [message, setMessage] = useState(
+    existingSchedule?.message || `This is a report about productivity of centres`
+  );
   const [fromAddress] = useState("Default will appear as from 'Mallcomm'");
-  const [time, setTime] = useState("09:00");
-  const [timezone, setTimezone] = useState("Pacific Time (US and...");
-  const [selectedDays, setSelectedDays] = useState({
-    Monday: true,
-    Tuesday: true,
-    Wednesday: false,
-    Thursday: false,
-    Friday: false,
-    Saturday: false,
-    Sunday: false
-  });
+  const [time, setTime] = useState(existingSchedule?.time || "09:00");
+  const [timezone, setTimezone] = useState(
+    existingSchedule?.timezone || "Pacific Time (US and..."
+  );
+  const [selectedDays, setSelectedDays] = useState<Record<string, boolean>>(
+    existingSchedule?.selectedDays || {
+      Monday: true,
+      Tuesday: true,
+      Wednesday: false,
+      Thursday: false,
+      Friday: false,
+      Saturday: false,
+      Sunday: false
+    }
+  );
 
   const recipientList = recipients.split(',').filter(r => r.trim());
   const ccList = ccRecipients.split(',').filter(r => r.trim());
@@ -66,6 +87,7 @@ export function ScheduleReportSheet({ reportConfig, onClose }: ScheduleReportShe
 
   const handleScheduleReport = () => {
     const scheduleConfig = {
+      id: existingSchedule?.id || `sched-${Date.now()}`,
       reportId: reportConfig.id,
       reportName: reportConfig.name,
       frequency,
@@ -77,17 +99,24 @@ export function ScheduleReportSheet({ reportConfig, onClose }: ScheduleReportShe
       bccRecipients: bccRecipients.split(',').map(r => r.trim()).filter(Boolean),
       subject,
       message,
-      createdAt: new Date().toISOString()
+      createdAt: existingSchedule?.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
-    // Save to localStorage (in real app, this would be an API call)
-    const scheduledReports = JSON.parse(localStorage.getItem('scheduledReports') || '[]');
-    scheduledReports.push(scheduleConfig);
-    localStorage.setItem('scheduledReports', JSON.stringify(scheduledReports));
-
-    console.log("Schedule created:", scheduleConfig);
-    alert("Report scheduled successfully!");
-    onClose();
+    if (existingSchedule && onSave) {
+      // Handle edit mode
+      onSave(scheduleConfig);
+      onClose();
+    } else {
+      // Handle create mode
+      const scheduledReports = JSON.parse(localStorage.getItem('scheduledReports') || '[]');
+      scheduledReports.push(scheduleConfig);
+      localStorage.setItem('scheduledReports', JSON.stringify(scheduledReports));
+      
+      console.log("Schedule created:", scheduleConfig);
+      alert("Report scheduled successfully!");
+      onClose();
+    }
   };
 
   return (
@@ -282,7 +311,7 @@ export function ScheduleReportSheet({ reportConfig, onClose }: ScheduleReportShe
           className="bg-blue-600 hover:bg-blue-700"
         >
           <Send className="h-4 w-4 mr-2" />
-          Create Schedule
+          {existingSchedule ? 'Update Schedule' : 'Create Schedule'}
         </Button>
       </div>
     </div>
