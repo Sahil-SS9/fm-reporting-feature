@@ -355,49 +355,6 @@ export function PropertyOverviewTab() {
         </div>
       </div>
 
-      {/* Top Performers and Needs Attention */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-card rounded-lg p-6 border">
-          <h3 className="text-lg font-semibold text-success mb-4">🏆 Top Performers</h3>
-          <div className="space-y-3">
-            {topPerformers.map((metrics, index) => (
-              <div key={metrics.property.id} className="flex items-center justify-between p-3 bg-success/5 rounded-lg border border-success/20">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-lg bg-success flex items-center justify-center text-white text-xs font-bold">
-                    {index + 1}
-                  </div>
-                  <div>
-                    <div className="font-medium">{metrics.property.name}</div>
-                    <div className="text-sm text-muted-foreground">{metrics.property.location}</div>
-                  </div>
-                </div>
-                <div className="text-success font-bold">{metrics.healthScore}%</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-card rounded-lg p-6 border">
-          <h3 className="text-lg font-semibold text-destructive mb-4">⚠️ Needs Attention</h3>
-          <div className="space-y-3">
-            {needsAttention.map((metrics, index) => (
-              <div key={metrics.property.id} className="flex items-center justify-between p-3 bg-destructive/5 rounded-lg border border-destructive/20">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-lg bg-destructive flex items-center justify-center text-white text-xs font-bold">
-                    !
-                  </div>
-                  <div>
-                    <div className="font-medium">{metrics.property.name}</div>
-                    <div className="text-sm text-muted-foreground">{metrics.property.location}</div>
-                  </div>
-                </div>
-                <div className="text-destructive font-bold">{metrics.healthScore}%</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Search and Filter Controls */}
       <div className="flex items-center gap-4">
         <div className="relative flex-1 max-w-md">
@@ -549,31 +506,43 @@ export function PropertyOverviewTab() {
                   {/* View Details Row */}
                   <TableRow>
                     <TableCell colSpan={8} className="p-0">
-                      <div className="grid grid-cols-4 gap-3 p-4 bg-muted/20">
-                        <Button 
-                          onClick={() => openDetailsModal('workOrders', metrics.property.id)}
-                          className="h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          View Work Orders Details
-                        </Button>
-                        <Button 
-                          onClick={() => openDetailsModal('preventativeMaintenance', metrics.property.id)}
-                          className="h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          View Maintenance Details
-                        </Button>
-                        <Button 
-                          onClick={() => openDetailsModal('assets', metrics.property.id)}
-                          className="h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          View Asset Details
-                        </Button>
-                        <Button 
-                          onClick={() => openDetailsModal('invoicing', metrics.property.id)}
-                          className="h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
-                        >
-                          View Invoice Details
-                        </Button>
+                      <div className="flex bg-muted/20">
+                        <div className="w-64"></div> {/* Property column spacer */}
+                        <div className="w-32"></div> {/* Health Score column spacer */}
+                        <div className="w-40 p-2">
+                          <Button 
+                            onClick={() => openDetailsModal('workOrders', metrics.property.id)}
+                            className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            View Work Orders Details
+                          </Button>
+                        </div>
+                        <div className="w-44 p-2">
+                          <Button 
+                            onClick={() => openDetailsModal('preventativeMaintenance', metrics.property.id)}
+                            className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            View Maintenance Details
+                          </Button>
+                        </div>
+                        <div className="w-40 p-2">
+                          <Button 
+                            onClick={() => openDetailsModal('assets', metrics.property.id)}
+                            className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            View Asset Details
+                          </Button>
+                        </div>
+                        <div className="w-36 p-2">
+                          <Button 
+                            onClick={() => openDetailsModal('invoicing', metrics.property.id)}
+                            className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            View Invoice Details
+                          </Button>
+                        </div>
+                        <div className="w-32"></div> {/* Compliance column spacer */}
+                        <div className="w-32"></div> {/* Operational column spacer */}
                       </div>
                     </TableCell>
                   </TableRow>
