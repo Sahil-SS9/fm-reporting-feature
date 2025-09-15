@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Clock, Filter, TrendingUp, TrendingDown } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { LineChart } from '@mui/x-charts';
 import { useState } from "react";
 import { mockWorkOrders } from "@/data/mockData";
 
@@ -109,43 +109,25 @@ export function CompletionTimeTrendChart({ className }: CompletionTimeTrendChart
         </div>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={trendData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis 
-              dataKey="date" 
-              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-              axisLine={false}
-            />
-            <YAxis 
-              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-              axisLine={false}
-              label={{ value: 'Days', angle: -90, position: 'insideLeft' }}
-            />
-            <Tooltip 
-              contentStyle={{
-                backgroundColor: "hsl(var(--popover))",
-                border: "1px solid hsl(var(--border))",
-                borderRadius: "6px",
-                fontSize: "12px"
-              }}
-              labelFormatter={(label) => `Date: ${label}`}
-              formatter={(value, name) => [
-                `${value} days`, 
-                'Avg Completion'
-              ]}
-            />
-            <Legend />
-            <Line 
-              type="monotone" 
-              dataKey="completionTime" 
-              stroke="hsl(var(--primary))" 
-              strokeWidth={3}
-              dot={{ fill: "hsl(var(--primary))", r: 4 }}
-              name="Completion Time"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <div style={{ width: '100%', height: 300 }}>
+          <LineChart
+            series={[{
+              data: trendData.map(d => d.completionTime),
+              color: 'hsl(var(--primary))',
+              label: 'Completion Time',
+            }]}
+            xAxis={[{
+              scaleType: 'point',
+              data: trendData.map(d => d.date),
+            }]}
+            yAxis={[{
+              label: 'Days'
+            }]}
+            width={undefined}
+            height={300}
+            margin={{ top: 5, right: 30, left: 40, bottom: 40 }}
+          />
+        </div>
       </CardContent>
     </Card>
   );

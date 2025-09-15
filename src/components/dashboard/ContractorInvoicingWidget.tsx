@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart } from '@mui/x-charts';
 import { DollarSign, TrendingUp } from "lucide-react";
 import { DetailedViewModal } from "@/components/ui/detailed-view-modal";
 import { Button } from "@/components/ui/button";
@@ -48,38 +48,20 @@ export function ContractorInvoicingWidget() {
           tableColumns={tableColumns}
           chartComponent={
             <div className="h-96">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={contractorData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis 
-                    dataKey="name" 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    angle={-45}
-                    textAnchor="end"
-                    height={80}
-                  />
-                  <YAxis 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip 
-                    formatter={(value: number) => [`$${value.toLocaleString()}`, 'Total Invoiced']}
-                    labelStyle={{ color: 'hsl(var(--foreground))' }}
-                    contentStyle={{ 
-                      backgroundColor: 'hsl(var(--background))', 
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px'
-                    }}
-                  />
-                  <Bar 
-                    dataKey="invoices" 
-                    fill="hsl(var(--primary))" 
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+              <BarChart
+                series={[{
+                  data: contractorData.map(d => d.invoices),
+                  color: 'hsl(var(--primary))',
+                  label: 'Total Invoiced',
+                }]}
+                xAxis={[{
+                  scaleType: 'band',
+                  data: contractorData.map(d => d.name),
+                }]}
+                width={undefined}
+                height={384}
+                margin={{ top: 20, right: 30, left: 60, bottom: 80 }}
+              />
             </div>
           }
         >
@@ -102,38 +84,20 @@ export function ContractorInvoicingWidget() {
             </div>
             
             <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={contractorData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis 
-                    dataKey="name" 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    angle={-45}
-                    textAnchor="end"
-                    height={80}
-                  />
-                  <YAxis 
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip 
-                    formatter={(value: number) => [`$${value.toLocaleString()}`, 'Invoiced']}
-                    labelStyle={{ color: 'hsl(var(--foreground))' }}
-                    contentStyle={{ 
-                      backgroundColor: 'hsl(var(--background))', 
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px'
-                    }}
-                  />
-                  <Bar 
-                    dataKey="invoices" 
-                    fill="hsl(var(--primary))" 
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+              <BarChart
+                series={[{
+                  data: contractorData.map(d => d.invoices),
+                  color: 'hsl(var(--primary))',
+                  label: 'Invoiced',
+                }]}
+                xAxis={[{
+                  scaleType: 'band',
+                  data: contractorData.map(d => d.name),
+                }]}
+                width={undefined}
+                height={256}
+                margin={{ top: 20, right: 30, left: 60, bottom: 80 }}
+              />
             </div>
           </div>
         </CardContent>

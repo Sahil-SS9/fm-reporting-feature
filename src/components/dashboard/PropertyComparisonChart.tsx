@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building2, ArrowRight, TrendingUp, TrendingDown } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { BarChart } from '@mui/x-charts';
 import { mockProperties, mockWorkOrders, mockInvoices } from "@/data/mockData";
 
 interface PropertyComparisonChartProps {
@@ -149,107 +149,95 @@ export function PropertyComparisonChart({ className, onPropertyClick }: Property
             <CardTitle className="text-sm">Work Orders: Open vs Closed</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={workOrderComparison} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="name" 
-                  tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                  axisLine={false}
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                />
-                <YAxis 
-                  tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                  axisLine={false}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--popover))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "6px",
-                    fontSize: "12px"
-                  }}
-                />
-                <Bar dataKey="open" fill="hsl(var(--warning))" name="Open" radius={[2, 2, 0, 0]} />
-                <Bar dataKey="closed" fill="hsl(var(--success))" name="Closed" radius={[2, 2, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="h-48">
+              <BarChart
+                series={[
+                  {
+                    data: workOrderComparison.map(d => d.open),
+                    color: 'hsl(var(--warning))',
+                    label: 'Open',
+                  },
+                  {
+                    data: workOrderComparison.map(d => d.closed),
+                    color: 'hsl(var(--success))',
+                    label: 'Closed',
+                  }
+                ]}
+                xAxis={[{
+                  scaleType: 'band',
+                  data: workOrderComparison.map(d => d.name),
+                }]}
+                width={undefined}
+                height={200}
+              />
+            </div>
           </CardContent>
         </Card>
 
-        {/* Maintenance Comparison */}
+        {/* Maintenance Performance Comparison */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm">Maintenance: On-Time vs Late</CardTitle>
+          <CardHeader>
+            <CardTitle className="text-lg">Maintenance Performance</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={maintenanceComparison} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="name" 
-                  tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                  axisLine={false}
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                />
-                <YAxis 
-                  tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                  axisLine={false}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--popover))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "6px",
-                    fontSize: "12px"
-                  }}
-                />
-                <Bar dataKey="onTime" fill="hsl(var(--success))" name="On Time" radius={[2, 2, 0, 0]} />
-                <Bar dataKey="late" fill="hsl(var(--destructive))" name="Late/Missed" radius={[2, 2, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="h-48">
+              <BarChart
+                series={[
+                  {
+                    data: maintenanceComparison.map(d => d.onTime),
+                    color: 'hsl(var(--success))',
+                    label: 'On Time',
+                  },
+                  {
+                    data: maintenanceComparison.map(d => d.late),
+                    color: 'hsl(var(--destructive))',
+                    label: 'Late',
+                  }
+                ]}
+                xAxis={[{
+                  scaleType: 'band',
+                  data: maintenanceComparison.map(d => d.name),
+                }]}
+                width={undefined}
+                height={200}
+              />
+            </div>
           </CardContent>
         </Card>
 
-        {/* Invoice Comparison */}
+        {/* Invoice Status Comparison */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm">Invoices: Paid vs Unpaid</CardTitle>
+          <CardHeader>
+            <CardTitle className="text-lg">Invoice Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={invoiceComparison} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="name" 
-                  tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                  axisLine={false}
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                />
-                <YAxis 
-                  tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
-                  axisLine={false}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--popover))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "6px",
-                    fontSize: "12px"
-                  }}
-                />
-                <Bar dataKey="paid" fill="hsl(var(--success))" name="Paid" radius={[2, 2, 0, 0]} />
-                <Bar dataKey="unpaid" fill="hsl(var(--warning))" name="Unpaid" radius={[2, 2, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="h-48">
+              <BarChart
+                series={[
+                  {
+                    data: invoiceComparison.map(d => d.paid),
+                    color: 'hsl(var(--success))',
+                    label: 'Paid',
+                  },
+                  {
+                    data: invoiceComparison.map(d => d.unpaid),
+                    color: 'hsl(var(--warning))',
+                    label: 'Unpaid',
+                  }
+                ]}
+                xAxis={[{
+                  scaleType: 'band',
+                  data: invoiceComparison.map(d => d.name),
+                }]}
+                width={undefined}
+                height={200}
+              />
+            </div>
           </CardContent>
-        </Card>
+      </div>
+    </div>
+  );
+}
       </div>
     </div>
   );
