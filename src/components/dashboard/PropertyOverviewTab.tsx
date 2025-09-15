@@ -355,68 +355,230 @@ export function PropertyOverviewTab() {
         </div>
       </div>
 
-      {/* Top Performers and Needs Attention - New Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Performers */}
-        <div className="bg-green-50 rounded-lg p-6 border border-green-200">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-green-800">Top Performers</h3>
-          </div>
-          <div className="space-y-4">
-            {topPerformers.map((metrics, index) => (
-              <div key={metrics.property.id} className="flex items-center justify-between p-4 bg-white rounded-lg border border-green-100">
-                <div>
-                  <div className="font-medium text-gray-900">{metrics.property.name}</div>
-                  <div className="text-sm text-gray-600 mt-1">Operational Score: {metrics.operationalScore}%</div>
-                  <div className="text-sm text-gray-600">Compliance Score: {metrics.complianceScore}%</div>
-                </div>
-                <Button 
-                  variant="outline" 
-                  className="bg-blue-500 hover:bg-blue-600 text-white border-blue-500 hover:border-blue-600 px-6"
-                  onClick={() => openDetailsModal('workOrders', metrics.property.id)}
-                >
-                  VIE
-                </Button>
-              </div>
-            ))}
-          </div>
+      {/* Search and Filter Controls */}
+      <div className="flex items-center gap-4">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search properties..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
         </div>
-
-        {/* Needs Attention */}
-        <div className="bg-red-50 rounded-lg p-6 border border-red-200">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.996-.833-2.664 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-red-800">Needs Attention</h3>
-          </div>
-          <div className="space-y-4">
-            {needsAttention.map((metrics, index) => (
-              <div key={metrics.property.id} className="flex items-center justify-between p-4 bg-white rounded-lg border border-red-100">
-                <div>
-                  <div className="font-medium text-gray-900">{metrics.property.name}</div>
-                  <div className="text-sm text-gray-600 mt-1">Operational Score: {metrics.operationalScore}%</div>
-                  <div className="text-sm text-gray-600">Compliance Score: {metrics.complianceScore}%</div>
-                </div>
-                <Button 
-                  variant="outline" 
-                  className="bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600 px-6"
-                  onClick={() => openDetailsModal('workOrders', metrics.property.id)}
-                >
-                  VIE
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Select value={propertyTypeFilter} onValueChange={setPropertyTypeFilter}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="All Property Types" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Property Types</SelectItem>
+            <SelectItem value="Office">Office</SelectItem>
+            <SelectItem value="Retail">Retail</SelectItem>
+            <SelectItem value="Warehouse">Warehouse</SelectItem>
+            <SelectItem value="Mixed Use">Mixed Use</SelectItem>
+          </SelectContent>
+        </Select>
+        <Badge variant="outline" className="text-sm">
+          {displayedProperties.length} of {filteredProperties.length} Properties
+        </Badge>
       </div>
+
+      {/* Property Performance Table */}
+      <div className="border rounded-lg">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-64">Property</TableHead>
+              <TableHead className="text-center w-32">Health Score</TableHead>
+              <TableHead className="text-center w-40">Work Orders</TableHead>
+              <TableHead className="text-center w-44">Preventative Maintenance</TableHead>
+              <TableHead className="text-center w-40">Asset Status</TableHead>
+              <TableHead className="text-center w-36">Invoicing</TableHead>
+              <TableHead className="text-center w-32">Compliance</TableHead>
+              <TableHead className="text-center w-32">Operational</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {displayedProperties.map((metrics) => {
+              const { grade, variant } = getHealthScoreGrade(metrics.healthScore);
+              
+              return (
+                <React.Fragment key={metrics.property.id}>
+                  <TableRow className="hover:bg-muted/50">
+                    <TableCell>
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white text-xs font-bold">
+                          {getPropertyInitials(metrics.property.name)}
+                        </div>
+                        <div>
+                          <div className="font-medium">{metrics.property.name}</div>
+                          <div className="text-sm text-muted-foreground">{metrics.property.location}</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center space-x-2">
+                        <Badge variant={variant} className="w-8 h-8 rounded-full flex items-center justify-center p-0">
+                          {grade}
+                        </Badge>
+                        <span className={`text-sm font-bold ${getHealthScoreColor(metrics.healthScore)}`}>
+                          {metrics.healthScore}%
+                        </span>
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="space-y-2">
+                        <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
+                          <span>Open</span>
+                          <span>Overdue</span>
+                          <span>Completed</span>
+                        </div>
+                        <div className="text-sm font-medium grid grid-cols-3 gap-1">
+                          <span>{metrics.workOrders.open}</span>
+                          <span className="text-destructive">{metrics.workOrders.overdue}</span>
+                          <span className="text-success">{metrics.workOrders.completed}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="space-y-2">
+                        <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
+                          <span>Open</span>
+                          <span>Overdue</span>
+                          <span>Completed</span>
+                        </div>
+                        <div className="text-sm font-medium grid grid-cols-3 gap-1">
+                          <span>{metrics.preventativeMaintenance.open}</span>
+                          <span className="text-destructive">{metrics.preventativeMaintenance.overdue}</span>
+                          <span className="text-success">{metrics.preventativeMaintenance.completed}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="space-y-2">
+                        <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
+                          <span>Operational</span>
+                          <span>Repair</span>
+                          <span>Out</span>
+                        </div>
+                        <div className="text-sm font-medium grid grid-cols-3 gap-1">
+                          <span className="text-success">{metrics.assetStatus.operational}</span>
+                          <span className="text-warning">{metrics.assetStatus.pendingRepair}</span>
+                          <span className="text-destructive">{metrics.assetStatus.outOfService}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="space-y-2">
+                        <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
+                          <span>Outstanding</span>
+                          <span>Overdue</span>
+                          <span>Not Due</span>
+                        </div>
+                        <div className="text-sm font-medium grid grid-cols-3 gap-1">
+                          <span>{metrics.invoicing.outstanding}</span>
+                          <span className="text-destructive">{metrics.invoicing.overdue}</span>
+                          <span>{metrics.invoicing.notDue}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="space-y-1">
+                        <Progress value={metrics.complianceScore} className="w-16 h-2 mx-auto" />
+                        <span className="text-sm font-medium">{metrics.complianceScore}%</span>
+                      </div>
+                    </TableCell>
+                    
+                    <TableCell className="text-center">
+                      <div className="space-y-1">
+                        <Progress value={metrics.operationalScore} className="w-16 h-2 mx-auto" />
+                        <span className="text-sm font-medium">{metrics.operationalScore}%</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                  
+                  {/* View Details Row */}
+                  <TableRow>
+                    <TableCell colSpan={8} className="p-0">
+                      <div className="flex bg-muted/20">
+                        <div className="w-64"></div> {/* Property column spacer */}
+                        <div className="w-32"></div> {/* Health Score column spacer */}
+                        <div className="w-40 p-2">
+                          <Button 
+                            onClick={() => openDetailsModal('workOrders', metrics.property.id)}
+                            className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            View Work Orders Details
+                          </Button>
+                        </div>
+                        <div className="w-44 p-2">
+                          <Button 
+                            onClick={() => openDetailsModal('preventativeMaintenance', metrics.property.id)}
+                            className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            View Maintenance Details
+                          </Button>
+                        </div>
+                        <div className="w-40 p-2">
+                          <Button 
+                            onClick={() => openDetailsModal('assets', metrics.property.id)}
+                            className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            View Asset Details
+                          </Button>
+                        </div>
+                        <div className="w-36 p-2">
+                          <Button 
+                            onClick={() => openDetailsModal('invoicing', metrics.property.id)}
+                            className="w-full h-10 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white"
+                          >
+                            View Invoice Details
+                          </Button>
+                        </div>
+                        <div className="w-32"></div> {/* Compliance column spacer */}
+                        <div className="w-32"></div> {/* Operational column spacer */}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </React.Fragment>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Show More Button */}
+      {!showAll && filteredProperties.length > 10 && (
+        <div className="flex justify-center mt-4">
+          <Button 
+            variant="outline" 
+            onClick={() => setShowAll(true)}
+            className="flex items-center gap-2"
+          >
+            Show {filteredProperties.length - 10} More Properties
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
+      {showAll && filteredProperties.length > 10 && (
+        <div className="flex justify-center mt-4">
+          <Button 
+            variant="outline" 
+            onClick={() => setShowAll(false)}
+            className="flex items-center gap-2"
+          >
+            Show Less Properties
+            <ChevronUp className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
 
       {/* Enhanced Details Modal */}
       <Dialog open={detailsModal.isOpen} onOpenChange={(open) => setDetailsModal(prev => ({ ...prev, isOpen: open }))}>
