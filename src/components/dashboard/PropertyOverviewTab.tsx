@@ -392,54 +392,6 @@ export function PropertyOverviewTab() {
         </Badge>
       </div>
 
-      {/* Top Performers and Needs Attention */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {/* Top Performers */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <CheckCircle className="h-5 w-5 text-green-600" />
-            <h3 className="text-lg font-semibold text-green-800">Top Performers</h3>
-          </div>
-          <div className="space-y-3">
-            {topPerformers.map((metrics, index) => (
-              <div key={metrics.property.id} className="flex items-center justify-between bg-white rounded-lg p-3 border border-green-100">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-green-600">#{index + 1}</span>
-                  <div>
-                    <div className="font-medium text-gray-900">{metrics.property.name}</div>
-                    <div className="text-sm text-gray-600">
-                      Operational: {metrics.operationalScore}% • Compliance: {metrics.complianceScore}%
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Needs Attention */}
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <AlertTriangle className="h-5 w-5 text-red-600" />
-            <h3 className="text-lg font-semibold text-red-800">Needs Attention</h3>
-          </div>
-          <div className="space-y-3">
-            {needsAttention.map((metrics, index) => (
-              <div key={metrics.property.id} className="flex items-center justify-between bg-white rounded-lg p-3 border border-red-100">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-red-600">#{index + 1}</span>
-                  <div>
-                    <div className="font-medium text-gray-900">{metrics.property.name}</div>
-                    <div className="text-sm text-gray-600">
-                      Operational: {metrics.operationalScore}% • Compliance: {metrics.complianceScore}%
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Property Performance Table */}
       <div className="border rounded-lg">
@@ -667,14 +619,14 @@ export function PropertyOverviewTab() {
             </div>
 
             {/* Bar Chart */}
-            <div className="bg-card rounded-lg p-8 border">
+            <div className="bg-card rounded-lg p-10 border">
               <h3 className="text-xl font-semibold mb-6">
                 {detailsModal.type === 'workOrders' && 'Work Orders Distribution'}
                 {detailsModal.type === 'preventativeMaintenance' && 'Maintenance Schedule Performance'}
                 {detailsModal.type === 'assets' && 'Asset Status Overview'}
                 {detailsModal.type === 'invoicing' && 'Invoice Payment Status'}
               </h3>
-              <div className="h-[500px] w-full">
+              <div className="h-[700px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={getChartData(detailsModal.type, detailsModal.propertyId, detailsModal.filter)} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.2)" />
