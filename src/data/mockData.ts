@@ -144,6 +144,21 @@ export const mockProperties: Property[] = [
   { id: "3", name: "Industrial Park A", location: "789 Industrial Rd, Birmingham", type: "Warehouse" },
   { id: "4", name: "Metro Business Complex", location: "321 Business Ave, Leeds", type: "Mixed Use" },
   { id: "5", name: "Riverside Office Park", location: "654 River St, Bristol", type: "Office" },
+  { id: "6", name: "Gateway Shopping Mall", location: "987 Commercial Blvd, Edinburgh", type: "Retail" },
+  { id: "7", name: "Tech Hub Central", location: "147 Innovation Dr, Cambridge", type: "Office" },
+  { id: "8", name: "Distribution Center North", location: "258 Logistics Way, Glasgow", type: "Warehouse" },
+  { id: "9", name: "City Square Complex", location: "369 Urban Plaza, Liverpool", type: "Mixed Use" },
+  { id: "10", name: "Harbor View Offices", location: "741 Marina Rd, Southampton", type: "Office" },
+  { id: "11", name: "Royal Crown Mall", location: "852 Regent St, Newcastle", type: "Retail" },
+  { id: "12", name: "Industrial Estate B", location: "963 Factory Lane, Sheffield", type: "Warehouse" },
+  { id: "13", name: "Corporate Plaza West", location: "159 Executive Ave, Cardiff", type: "Office" },
+  { id: "14", name: "Heritage Market Centre", location: "357 Historic Square, York", type: "Mixed Use" },
+  { id: "15", name: "Logistics Hub South", location: "468 Transport Rd, Portsmouth", type: "Warehouse" },
+  { id: "16", name: "Premier Business Park", location: "579 Professional Dr, Nottingham", type: "Office" },
+  { id: "17", name: "Oceanfront Retail Plaza", location: "681 Coastal Ave, Brighton", type: "Retail" },
+  { id: "18", name: "Innovation Quarter", location: "792 Research Blvd, Oxford", type: "Mixed Use" },
+  { id: "19", name: "Storage Facility Central", location: "893 Warehouse St, Coventry", type: "Warehouse" },
+  { id: "20", name: "Executive Tower North", location: "915 Corporate Way, Derby", type: "Office" },
 ];
 
 // Mock Work Orders - Expanded with realistic asset-specific maintenance scenarios
