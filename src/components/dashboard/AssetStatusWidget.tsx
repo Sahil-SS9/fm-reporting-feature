@@ -43,7 +43,7 @@ export function AssetStatusWidget() {
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Settings className="h-4 w-4 text-primary" />
-            <span className="text-base">Asset Status</span>
+            <span className="text-base font-semibold">Asset Status</span>
           </div>
           <div className="flex items-center space-x-2">
             <Badge variant="outline" className="text-xs">
@@ -53,28 +53,26 @@ export function AssetStatusWidget() {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-1">
-        {/* Asset Status Overview with Horizontal Layout */}
-        <div className="flex items-center gap-4">
+      <CardContent className="p-3">
+        <div className="flex items-center gap-6">
           <DonutChartWithCenter 
             data={statusData}
-            size={160}
-            strokeWidth={12}
+            size={180}
+            strokeWidth={14}
             centerContent={
               <div className="text-center">
-                <div className="text-2xl font-bold">{totalAssets}</div>
+                <div className="text-3xl font-bold">{totalAssets}</div>
                 <div className="text-xs text-muted-foreground">Assets</div>
               </div>
             }
           />
           
-          {/* Status Legend with Counts */}
-          <div className="flex-1 grid grid-cols-1 gap-1">
+          <div className="flex-1 space-y-0.5">
             {statusData.map((status) => (
-              <div key={status.name} className="flex items-center justify-between p-1.5 rounded bg-muted/10">
+              <div key={status.name} className="flex items-center justify-between p-1 rounded bg-muted/10">
                 <div className="flex items-center space-x-2">
                   <div 
-                    className="w-3 h-3 rounded-full" 
+                    className="w-4 h-4 rounded-full" 
                     style={{ backgroundColor: status.color }}
                   />
                   <span className="text-sm font-medium">{status.name}</span>
@@ -84,6 +82,12 @@ export function AssetStatusWidget() {
                 </Badge>
               </div>
             ))}
+            <div className="mt-2 pt-2 border-t border-muted/20">
+              <div className="flex justify-between items-center text-xs text-muted-foreground">
+                <span className="text-success">↑ +3 this week</span>
+                <span>Updated 2 hours ago</span>
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>

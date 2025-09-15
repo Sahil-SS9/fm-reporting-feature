@@ -31,7 +31,7 @@ export function AssetMaintenanceWidget() {
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Wrench className="h-4 w-4 text-primary" />
-            <span className="text-base">Asset Maintenance</span>
+            <span className="text-base font-semibold">Asset Maintenance</span>
           </div>
           <div className="flex items-center space-x-2">
             <Badge variant="outline" className="text-xs">
@@ -41,23 +41,19 @@ export function AssetMaintenanceWidget() {
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Overdue vs Upcoming Ring */}
-        <div>
-          <h4 className="text-sm font-medium mb-2 text-muted-foreground">Overdue vs Upcoming</h4>
-          <OverdueVsUpcomingRing />
-        </div>
-        
-        {/* Priority Level Ring */}
-        <div>
-          <h4 className="text-sm font-medium mb-2 text-muted-foreground">Priority Level</h4>
-          <PriorityLevelRing />
-        </div>
-        
-        {/* Maintenance Type Ring */}
-        <div>
-          <h4 className="text-sm font-medium mb-2 text-muted-foreground">Maintenance Type</h4>
-          <MaintenanceTypeRing />
+      <CardContent className="p-4">
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center">
+            <OverdueVsUpcomingRing />
+          </div>
+          
+          <div className="text-center">
+            <PriorityLevelRing />
+          </div>
+          
+          <div className="text-center">
+            <MaintenanceTypeRing />
+          </div>
         </div>
       </CardContent>
     </Card>

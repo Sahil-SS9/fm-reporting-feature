@@ -19,34 +19,40 @@ export function MaintenanceTypeRing() {
   const totalTypes = workOrderCount + inspectionCount + auditCount;
   
   return (
-    <div className="flex items-center gap-3">
+    <div className="space-y-2">
       <DonutChartWithCenter 
         data={typeData}
-        size={160}
-        strokeWidth={12}
+        size={180}
+        strokeWidth={14}
         centerContent={
           <div className="text-center">
-            <div className="text-2xl font-bold">{totalTypes}</div>
+            <div className="text-3xl font-bold">{totalTypes}</div>
             <div className="text-xs text-muted-foreground">Types</div>
           </div>
         }
       />
       
-      <div className="flex-1 space-y-1">
+      <div className="space-y-1">
         {typeData.map((item) => (
-          <div key={item.name} className="flex items-center justify-between p-1.5 rounded bg-muted/10">
-            <div className="flex items-center space-x-2">
+          <div key={item.name} className="flex items-center justify-between p-1 rounded bg-muted/10">
+            <div className="flex items-center space-x-1.5">
               <div 
                 className="w-3 h-3 rounded-full" 
                 style={{ backgroundColor: item.color }}
               />
-              <span className="text-sm font-medium">{item.name}</span>
+              <span className="text-xs font-medium">{item.name}</span>
             </div>
-            <Badge variant="outline" className="text-xs h-5">
+            <Badge variant="outline" className="text-xs h-4">
               {item.value}
             </Badge>
           </div>
         ))}
+        <div className="pt-1 border-t border-muted/20">
+          <div className="flex justify-between items-center text-xs text-muted-foreground">
+            <span className="text-primary">↑ +8 inspections</span>
+            <span>Updated 30m ago</span>
+          </div>
+        </div>
       </div>
     </div>
   );
