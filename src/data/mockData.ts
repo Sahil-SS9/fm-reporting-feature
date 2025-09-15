@@ -607,6 +607,335 @@ export const mockWorkOrders: WorkOrder[] = [
     category: "Plumbing",
     estimatedHours: 3,
     actualHours: 2
+  },
+
+  // Additional Work Orders for comprehensive dashboard data
+  {
+    id: "WO029",
+    title: "Rooftop HVAC Unit 3 - Preventive Maintenance",
+    description: "Quarterly preventive maintenance for energy-efficient unit",
+    status: "Open",
+    priority: "Medium",
+    propertyId: "5",
+    property: "Riverside Office Park",
+    assigneeId: "tech001",
+    createdDate: "2024-12-05",
+    dueDate: "2024-12-10",
+    category: "HVAC",
+    estimatedHours: 6
+  },
+  {
+    id: "WO030",
+    title: "Solar Power System - Panel Cleaning",
+    description: "Monthly solar panel cleaning and inspection",
+    status: "In Progress",
+    priority: "Low",
+    propertyId: "5",
+    property: "Riverside Office Park",
+    assigneeId: "tech002",
+    createdDate: "2024-12-04",
+    dueDate: "2024-12-08",
+    category: "Power",
+    estimatedHours: 4,
+    actualHours: 2
+  },
+  {
+    id: "WO031",
+    title: "Passenger Elevator C - Monthly Safety Test",
+    description: "Routine monthly elevator safety and performance test",
+    status: "Completed",
+    priority: "High",
+    propertyId: "2",
+    property: "Westfield Shopping Centre",
+    assigneeId: "tech003",
+    createdDate: "2024-11-28",
+    dueDate: "2024-12-02",
+    completedDate: "2024-12-01",
+    category: "Elevator",
+    estimatedHours: 3,
+    actualHours: 2
+  },
+  {
+    id: "WO032",
+    title: "Central HVAC Unit 2 - Filter Change",
+    description: "Scheduled air filter replacement for secondary HVAC unit",
+    status: "Completed",
+    priority: "Medium",
+    propertyId: "2",
+    property: "Westfield Shopping Centre",
+    assigneeId: "tech001",
+    createdDate: "2024-11-25",
+    dueDate: "2024-11-28",
+    completedDate: "2024-11-27",
+    category: "HVAC",
+    estimatedHours: 2,
+    actualHours: 1
+  },
+  {
+    id: "WO033",
+    title: "Freight Elevator B - Cable Lubrication",
+    description: "Quarterly cable lubrication and tension check",
+    status: "Open",
+    priority: "Medium",
+    propertyId: "3",
+    property: "Industrial Park A",
+    assigneeId: "tech003",
+    createdDate: "2024-12-03",
+    dueDate: "2024-12-09",
+    category: "Elevator",
+    estimatedHours: 4
+  },
+  {
+    id: "WO034",
+    title: "Emergency Lighting System - Battery Test",
+    description: "Annual emergency lighting battery test and replacement",
+    status: "In Progress",
+    priority: "High",
+    propertyId: "1",
+    property: "Downtown Office Tower",
+    assigneeId: "tech002",
+    createdDate: "2024-12-02",
+    dueDate: "2024-12-06",
+    category: "Electrical",
+    estimatedHours: 8,
+    actualHours: 4
+  },
+  {
+    id: "WO035",
+    title: "Parking Lot Lighting - Bulb Replacement",
+    description: "Replace failed LED bulbs in parking lot area",
+    status: "Completed",
+    priority: "Low",
+    propertyId: "4",
+    property: "Metro Business Complex",
+    assigneeId: "tech002",
+    createdDate: "2024-11-20",
+    dueDate: "2024-11-25",
+    completedDate: "2024-11-23",
+    category: "Electrical",
+    estimatedHours: 3,
+    actualHours: 2
+  },
+  {
+    id: "WO036",
+    title: "Access Control System - Card Reader Repair",
+    description: "Multiple card readers not functioning properly",
+    status: "Open",
+    priority: "High",
+    propertyId: "1",
+    property: "Downtown Office Tower",
+    assigneeId: "tech004",
+    createdDate: "2024-12-04",
+    dueDate: "2024-12-06",
+    category: "Security",
+    estimatedHours: 6
+  },
+  {
+    id: "WO037",
+    title: "Restroom Plumbing - Leak Repair",
+    description: "Water leak in 3rd floor men's restroom",
+    status: "In Progress",
+    priority: "High",
+    propertyId: "2",
+    property: "Westfield Shopping Centre",
+    assigneeId: "tech003",
+    createdDate: "2024-12-03",
+    dueDate: "2024-12-05",
+    category: "Plumbing",
+    estimatedHours: 4,
+    actualHours: 2
+  },
+  {
+    id: "WO038",
+    title: "Roof Membrane Inspection",
+    description: "Quarterly roof membrane inspection and minor repairs",
+    status: "Open",
+    priority: "Medium",
+    propertyId: "3",
+    property: "Industrial Park A",
+    assigneeId: "tech001",
+    createdDate: "2024-12-01",
+    dueDate: "2024-12-08",
+    category: "Structural",
+    estimatedHours: 6
+  },
+  {
+    id: "WO039",
+    title: "Fire Alarm Panel - Software Update",
+    description: "Critical fire alarm system software update",
+    status: "Completed",
+    priority: "Critical",
+    propertyId: "4",
+    property: "Metro Business Complex",
+    assigneeId: "tech004",
+    createdDate: "2024-11-18",
+    dueDate: "2024-11-20",
+    completedDate: "2024-11-19",
+    category: "Safety",
+    estimatedHours: 4,
+    actualHours: 3
+  },
+  {
+    id: "WO040",
+    title: "CCTV System - Camera Malfunction",
+    description: "Several cameras in parking garage not recording",
+    status: "Open",
+    priority: "Medium",
+    propertyId: "5",
+    property: "Riverside Office Park",
+    assigneeId: "tech004",
+    createdDate: "2024-12-02",
+    dueDate: "2024-12-07",
+    category: "Security",
+    estimatedHours: 5
+  },
+  {
+    id: "WO041",
+    title: "Landscaping - Tree Trimming",
+    description: "Trim overgrown trees near building entrance",
+    status: "Overdue",
+    priority: "Low",
+    propertyId: "1",
+    property: "Downtown Office Tower",
+    assigneeId: "tech001",
+    createdDate: "2024-11-15",
+    dueDate: "2024-11-30",
+    category: "Grounds",
+    estimatedHours: 8
+  },
+  {
+    id: "WO042",
+    title: "Loading Dock - Hydraulic System Service",
+    description: "Loading dock lift not operating smoothly",
+    status: "In Progress",
+    priority: "Medium",
+    propertyId: "3",
+    property: "Industrial Park A",
+    assigneeId: "tech002",
+    createdDate: "2024-11-28",
+    dueDate: "2024-12-05",
+    category: "Mechanical",
+    estimatedHours: 6,
+    actualHours: 3
+  },
+  {
+    id: "WO043",
+    title: "Ventilation System - Duct Cleaning",
+    description: "Annual ventilation duct cleaning and sanitization",
+    status: "Completed",
+    priority: "Medium",
+    propertyId: "2",
+    property: "Westfield Shopping Centre",
+    assigneeId: "tech001",
+    createdDate: "2024-10-15",
+    dueDate: "2024-10-25",
+    completedDate: "2024-10-22",
+    category: "HVAC",
+    estimatedHours: 12,
+    actualHours: 10
+  },
+  {
+    id: "WO044",
+    title: "Window Cleaning - Exterior",
+    description: "Quarterly exterior window cleaning service",
+    status: "Completed",
+    priority: "Low",
+    propertyId: "4",
+    property: "Metro Business Complex",
+    assigneeId: "tech003",
+    createdDate: "2024-10-20",
+    dueDate: "2024-10-30",
+    completedDate: "2024-10-28",
+    category: "Cleaning",
+    estimatedHours: 16,
+    actualHours: 14
+  },
+  {
+    id: "WO045",
+    title: "Backup Power System - Monthly Test",
+    description: "Monthly backup power system test and maintenance",
+    status: "Overdue",
+    priority: "High",
+    propertyId: "5",
+    property: "Riverside Office Park",
+    assigneeId: "tech002",
+    createdDate: "2024-11-20",
+    dueDate: "2024-11-25",
+    category: "Power",
+    estimatedHours: 3
+  },
+  {
+    id: "WO046",
+    title: "Elevator Emergency Phone - Repair",
+    description: "Emergency phone in Main Elevator A not functioning",
+    status: "Open",
+    priority: "Critical",
+    propertyId: "1",
+    property: "Downtown Office Tower",
+    assigneeId: "tech003",
+    createdDate: "2024-12-05",
+    dueDate: "2024-12-05",
+    category: "Elevator",
+    estimatedHours: 2
+  },
+  {
+    id: "WO047",
+    title: "Sprinkler System - Valve Inspection",
+    description: "Quarterly sprinkler system valve inspection",
+    status: "Open",
+    priority: "High",
+    propertyId: "6",
+    property: "Gateway Shopping Mall",
+    assigneeId: "tech004",
+    createdDate: "2024-12-04",
+    dueDate: "2024-12-10",
+    category: "Safety",
+    estimatedHours: 5
+  },
+  {
+    id: "WO048",
+    title: "Chilled Water System - Pump Maintenance",
+    description: "Chilled water circulation pump showing vibration issues",
+    status: "In Progress",
+    priority: "High",
+    propertyId: "7",
+    property: "Tech Hub Central",
+    assigneeId: "tech001",
+    createdDate: "2024-12-03",
+    dueDate: "2024-12-08",
+    category: "HVAC",
+    estimatedHours: 8,
+    actualHours: 4
+  },
+  {
+    id: "WO049",
+    title: "Dock Leveler - Hydraulic Leak",
+    description: "Hydraulic fluid leak from dock leveler system",
+    status: "Open",
+    priority: "Medium",
+    propertyId: "8",
+    property: "Distribution Center North",
+    assigneeId: "tech002",
+    createdDate: "2024-12-02",
+    dueDate: "2024-12-09",
+    category: "Mechanical",
+    estimatedHours: 4
+  },
+  {
+    id: "WO050",
+    title: "Common Area Flooring - Repair",
+    description: "Loose tiles in main lobby need attention",
+    status: "Completed",
+    priority: "Medium",
+    propertyId: "9",
+    property: "City Square Complex",
+    assigneeId: "tech001",
+    createdDate: "2024-11-10",
+    dueDate: "2024-11-20",
+    completedDate: "2024-11-18",
+    category: "Maintenance",
+    estimatedHours: 6,
+    actualHours: 5
   }
 ];
 
@@ -1006,10 +1335,347 @@ export const mockInvoices: Invoice[] = [
     paymentStatus: "Outstanding",
     taxRate: 0.00,
     propertyId: "2"
+  },
+  // Additional Outstanding Invoices
+  {
+    id: "INV006",
+    type: "Received",
+    invoiceNumber: "CLEAN-2024-012",
+    description: "Monthly cleaning service - Office floors 1-10",
+    contractorTenant: "CleanTech Solutions",
+    amount: 1850.00,
+    dateIssued: "2024-11-28",
+    dueDate: "2024-12-28",
+    paymentStatus: "Outstanding",
+    taxRate: 0.20,
+    propertyId: "1"
+  },
+  {
+    id: "INV007",
+    type: "Received",
+    invoiceNumber: "MAINT-2024-089",
+    description: "Generator maintenance and fuel system cleaning",
+    contractorTenant: "PowerGen Services",
+    amount: 3750.00,
+    dateIssued: "2024-11-25",
+    dueDate: "2024-12-25",
+    paymentStatus: "Outstanding",
+    taxRate: 0.20,
+    assignedWorkOrderId: "WO018",
+    propertyId: "3"
+  },
+  {
+    id: "INV008",
+    type: "Received",
+    invoiceNumber: "SEC-2024-045",
+    description: "Security system upgrade and monitoring",
+    contractorTenant: "SecureGuard Systems",
+    amount: 2200.00,
+    dateIssued: "2024-11-20",
+    dueDate: "2024-12-20",
+    paymentStatus: "Outstanding",
+    taxRate: 0.20,
+    propertyId: "4"
+  },
+  {
+    id: "INV009",
+    type: "Received",
+    invoiceNumber: "HVAC-2024-067",
+    description: "Emergency compressor repair - Chiller System A",
+    contractorTenant: "HVAC Solutions Ltd",
+    amount: 8900.00,
+    dateIssued: "2024-11-15",
+    dueDate: "2024-12-15",
+    paymentStatus: "Outstanding",
+    taxRate: 0.20,
+    assignedWorkOrderId: "WO013",
+    propertyId: "4"
+  },
+  {
+    id: "INV010",
+    type: "Received",
+    invoiceNumber: "ELEV-2024-023",
+    description: "Elevator door mechanism repair and parts",
+    contractorTenant: "Vertical Solutions Ltd",
+    amount: 4200.00,
+    dateIssued: "2024-11-10",
+    dueDate: "2024-12-10",
+    paymentStatus: "Outstanding",
+    taxRate: 0.20,
+    assignedWorkOrderId: "WO009",
+    propertyId: "1"
+  },
+  {
+    id: "INV011",
+    type: "Received",
+    invoiceNumber: "PLUMB-2024-034",
+    description: "Water system maintenance and filter replacement",
+    contractorTenant: "PlumbPro Services",
+    amount: 1650.00,
+    dateIssued: "2024-11-05",
+    dueDate: "2024-12-05",
+    paymentStatus: "Overdue",
+    taxRate: 0.20,
+    assignedWorkOrderId: "WO028",
+    propertyId: "2"
+  },
+  {
+    id: "INV012",
+    type: "Received",
+    invoiceNumber: "FIRE-2024-018",
+    description: "Fire suppression system inspection and testing",
+    contractorTenant: "FireSafe Pro",
+    amount: 2850.00,
+    dateIssued: "2024-10-28",
+    dueDate: "2024-11-28",
+    paymentStatus: "Overdue",
+    taxRate: 0.20,
+    assignedWorkOrderId: "WO025",
+    propertyId: "3"
+  },
+  {
+    id: "INV013",
+    type: "Received",
+    invoiceNumber: "ELEC-2024-056",
+    description: "LED lighting system maintenance and bulb replacement",
+    contractorTenant: "ElectriCorp",
+    amount: 980.00,
+    dateIssued: "2024-10-20",
+    dueDate: "2024-11-20",
+    paymentStatus: "Overdue",
+    taxRate: 0.20,
+    assignedWorkOrderId: "WO026",
+    propertyId: "5"
+  },
+  {
+    id: "INV014",
+    type: "Received",
+    invoiceNumber: "BOIL-2024-009",
+    description: "Boiler pressure valve replacement and safety inspection",
+    contractorTenant: "HVAC Solutions Ltd",
+    amount: 3400.00,
+    dateIssued: "2024-10-15",
+    dueDate: "2024-11-15",
+    paymentStatus: "Overdue",
+    taxRate: 0.20,
+    assignedWorkOrderId: "WO022",
+    propertyId: "4"
+  },
+  
+  // Additional Issued Invoices (Rent and Service Charges)
+  {
+    id: "INV015",
+    type: "Issued",
+    invoiceNumber: "RENT-2024-012",
+    description: "December rent - Downtown Office Tower Unit 12A",
+    contractorTenant: "Global Finance Corp",
+    amount: 12500.00,
+    dateIssued: "2024-12-01",
+    dueDate: "2024-12-31",
+    paymentStatus: "Outstanding",
+    taxRate: 0.00,
+    propertyId: "1"
+  },
+  {
+    id: "INV016",
+    type: "Issued",
+    invoiceNumber: "RENT-2024-013",
+    description: "December rent - Westfield Shopping Centre Unit 5B",
+    contractorTenant: "Fashion Retail Ltd",
+    amount: 8900.00,
+    dateIssued: "2024-12-01",
+    dueDate: "2024-12-31",
+    paymentStatus: "Outstanding",
+    taxRate: 0.00,
+    propertyId: "2"
+  },
+  {
+    id: "INV017",
+    type: "Issued",
+    invoiceNumber: "SERV-2024-045",
+    description: "Common area maintenance charges - Q4 2024",
+    contractorTenant: "TechCorp Ltd",
+    amount: 3200.00,
+    dateIssued: "2024-11-25",
+    dueDate: "2024-12-25",
+    paymentStatus: "Outstanding",
+    taxRate: 0.20,
+    propertyId: "1"
+  },
+  {
+    id: "INV018",
+    type: "Issued",
+    invoiceNumber: "UTIL-2024-067",
+    description: "Utility recharge - Industrial Park A Warehouse 3",
+    contractorTenant: "LogisticsPro Corp",
+    amount: 2750.00,
+    dateIssued: "2024-11-20",
+    dueDate: "2024-12-20",
+    paymentStatus: "Outstanding",
+    taxRate: 0.00,
+    propertyId: "3"
+  },
+  {
+    id: "INV019",
+    type: "Issued",
+    invoiceNumber: "PARK-2024-089",
+    description: "Parking space rental - Metro Business Complex",
+    contractorTenant: "BusinessPark Associates",
+    amount: 1200.00,
+    dateIssued: "2024-11-15",
+    dueDate: "2024-12-15",
+    paymentStatus: "Outstanding",
+    taxRate: 0.00,
+    propertyId: "4"
+  },
+  {
+    id: "INV020",
+    type: "Issued",
+    invoiceNumber: "RENT-2024-078",
+    description: "November rent - Riverside Office Park Suite 401",
+    contractorTenant: "Creative Agency Ltd",
+    amount: 6500.00,
+    dateIssued: "2024-11-01",
+    dueDate: "2024-11-30",
+    paymentStatus: "Paid",
+    taxRate: 0.00,
+    propertyId: "5"
+  },
+  {
+    id: "INV021",
+    type: "Issued",
+    invoiceNumber: "RENT-2024-079",
+    description: "November rent - Gateway Shopping Mall Unit 15C",
+    contractorTenant: "Electronics Plus",
+    amount: 7800.00,
+    dateIssued: "2024-11-01",
+    dueDate: "2024-11-30",
+    paymentStatus: "Paid",
+    taxRate: 0.00,
+    propertyId: "6"
+  },
+  {
+    id: "INV022",
+    type: "Issued",
+    invoiceNumber: "SERV-2024-033",
+    description: "HVAC service recharge - Tech Hub Central",
+    contractorTenant: "Innovation Tech Ltd",
+    amount: 2100.00,
+    dateIssued: "2024-10-28",
+    dueDate: "2024-11-28",
+    paymentStatus: "Paid",
+    taxRate: 0.20,
+    propertyId: "7"
+  },
+  {
+    id: "INV023",
+    type: "Issued",
+    invoiceNumber: "STOR-2024-056",
+    description: "Storage facility rental - Distribution Center North",
+    contractorTenant: "Shipping Solutions Ltd",
+    amount: 4500.00,
+    dateIssued: "2024-10-20",
+    dueDate: "2024-11-20",
+    paymentStatus: "Paid",
+    taxRate: 0.00,
+    propertyId: "8"
+  },
+  {
+    id: "INV024",
+    type: "Issued",
+    invoiceNumber: "RENT-2024-067",
+    description: "October rent - City Square Complex Office 8B",
+    contractorTenant: "Marketing Masters",
+    amount: 9200.00,
+    dateIssued: "2024-10-01",
+    dueDate: "2024-10-31",
+    paymentStatus: "Paid",
+    taxRate: 0.00,
+    propertyId: "9"
+  },
+  {
+    id: "INV025",
+    type: "Issued",
+    invoiceNumber: "UTIL-2024-045",
+    description: "Utility charges - Harbor View Offices",
+    contractorTenant: "Maritime Solutions Inc",
+    amount: 1800.00,
+    dateIssued: "2024-09-25",
+    dueDate: "2024-10-25",
+    paymentStatus: "Paid",
+    taxRate: 0.00,
+    propertyId: "10"
+  },
+
+  // More recent invoices for better data spread
+  {
+    id: "INV026",
+    type: "Received",
+    invoiceNumber: "LAND-2024-012",
+    description: "Landscaping and grounds maintenance - November",
+    contractorTenant: "GreenSpace Maintenance",
+    amount: 2400.00,
+    dateIssued: "2024-12-02",
+    dueDate: "2025-01-02",
+    paymentStatus: "Outstanding",
+    taxRate: 0.20,
+    propertyId: "5"
+  },
+  {
+    id: "INV027",
+    type: "Received",
+    invoiceNumber: "WASTE-2024-078",
+    description: "Waste management and recycling services",
+    contractorTenant: "EcoWaste Solutions",
+    amount: 1200.00,
+    dateIssued: "2024-12-01",
+    dueDate: "2025-01-01",
+    paymentStatus: "Outstanding",
+    taxRate: 0.20,
+    propertyId: "6"
+  },
+  {
+    id: "INV028",
+    type: "Received",
+    invoiceNumber: "PEST-2024-034",
+    description: "Quarterly pest control treatment",
+    contractorTenant: "BugBusters Pro",
+    amount: 850.00,
+    dateIssued: "2024-11-30",
+    dueDate: "2024-12-30",
+    paymentStatus: "Outstanding",
+    taxRate: 0.20,
+    propertyId: "2"
+  },
+  {
+    id: "INV029",
+    type: "Issued",
+    invoiceNumber: "CONF-2024-023",
+    description: "Conference room rental - December bookings",
+    contractorTenant: "EventCorp Ltd",
+    amount: 3500.00,
+    dateIssued: "2024-12-01",
+    dueDate: "2024-12-31",
+    paymentStatus: "Outstanding",
+    taxRate: 0.20,
+    propertyId: "1"
+  },
+  {
+    id: "INV030",
+    type: "Issued",
+    invoiceNumber: "PARK-2024-095",
+    description: "Additional parking spaces - Premium locations",
+    contractorTenant: "Executive Services Ltd",
+    amount: 2800.00,
+    dateIssued: "2024-11-28",
+    dueDate: "2024-12-28",
+    paymentStatus: "Outstanding",
+    taxRate: 0.00,
+    propertyId: "4"
   }
 ];
 
-// Mock Contractors
+// Mock Contractors - Expanded for detailed dashboard data
 export const mockContractors: Contractor[] = [
   {
     id: "CON001",
@@ -1019,7 +1685,7 @@ export const mockContractors: Contractor[] = [
     phone: "+44 20 1234 5678",
     specialty: "HVAC",
     rating: 4.8,
-    activeProjects: 3,
+    activeProjects: 5,
     totalCompleted: 127
   },
   {
@@ -1030,7 +1696,7 @@ export const mockContractors: Contractor[] = [
     phone: "+44 161 987 6543",
     specialty: "Electrical",
     rating: 4.6,
-    activeProjects: 2,
+    activeProjects: 3,
     totalCompleted: 89
   },
   {
@@ -1041,7 +1707,7 @@ export const mockContractors: Contractor[] = [
     phone: "+44 121 555 0123",
     specialty: "Plumbing",
     rating: 4.9,
-    activeProjects: 1,
+    activeProjects: 2,
     totalCompleted: 156
   },
   {
@@ -1054,10 +1720,98 @@ export const mockContractors: Contractor[] = [
     rating: 4.7,
     activeProjects: 4,
     totalCompleted: 92
+  },
+  {
+    id: "CON005",
+    name: "David Rodriguez",
+    company: "PowerGen Services",
+    email: "d.rodriguez@powergen.com",
+    phone: "+44 141 333 2567",
+    specialty: "Generators & Power",
+    rating: 4.5,
+    activeProjects: 2,
+    totalCompleted: 73
+  },
+  {
+    id: "CON006",
+    name: "Lisa Chen",
+    company: "Vertical Solutions Ltd",
+    email: "l.chen@verticalsolutions.com",
+    phone: "+44 151 888 7654",
+    specialty: "Elevators",
+    rating: 4.9,
+    activeProjects: 6,
+    totalCompleted: 134
+  },
+  {
+    id: "CON007",
+    name: "Robert Taylor",
+    company: "CleanTech Solutions",
+    email: "r.taylor@cleantech.com",
+    phone: "+44 29 2055 4321",
+    specialty: "Cleaning Services",
+    rating: 4.3,
+    activeProjects: 8,
+    totalCompleted: 203
+  },
+  {
+    id: "CON008",
+    name: "Amanda Foster",
+    company: "FireSafe Pro",
+    email: "a.foster@firesafepro.com",
+    phone: "+44 113 777 9988",
+    specialty: "Fire Safety",
+    rating: 4.8,
+    activeProjects: 3,
+    totalCompleted: 67
+  },
+  {
+    id: "CON009",
+    name: "James Mitchell",
+    company: "GreenSpace Maintenance",
+    email: "j.mitchell@greenspace.com",
+    phone: "+44 161 444 5566",
+    specialty: "Landscaping",
+    rating: 4.4,
+    activeProjects: 12,
+    totalCompleted: 189
+  },
+  {
+    id: "CON010",
+    name: "Rachel Green",
+    company: "EcoWaste Solutions",
+    email: "r.green@ecowaste.com",
+    phone: "+44 121 666 7788",
+    specialty: "Waste Management",
+    rating: 4.6,
+    activeProjects: 15,
+    totalCompleted: 245
+  },
+  {
+    id: "CON011",
+    name: "Thomas Anderson",
+    company: "BugBusters Pro",
+    email: "t.anderson@bugbusters.com",
+    phone: "+44 20 3333 1122",
+    specialty: "Pest Control",
+    rating: 4.7,
+    activeProjects: 7,
+    totalCompleted: 156
+  },
+  {
+    id: "CON012",
+    name: "Sophie Williams",
+    company: "Smart Building Tech",
+    email: "s.williams@smartbuilding.com",
+    phone: "+44 161 222 3344",
+    specialty: "Building Automation",
+    rating: 4.9,
+    activeProjects: 4,
+    totalCompleted: 78
   }
 ];
 
-// Mock Documents
+// Mock Documents - Expanded for comprehensive dashboard data
 export const mockDocuments: Document[] = [
   {
     id: "DOC001",
@@ -1065,7 +1819,7 @@ export const mockDocuments: Document[] = [
     type: "Certificate",
     propertyId: "1",
     modified: "2023-06-15",
-    expires: "2024-06-15"
+    expires: "2025-01-15"  // Expiring soon
   },
   {
     id: "DOC002",
@@ -1080,7 +1834,7 @@ export const mockDocuments: Document[] = [
     type: "Policy",
     propertyId: "2",
     modified: "2024-01-01",
-    expires: "2024-12-31"
+    expires: "2024-12-31"  // Expiring very soon
   },
   {
     id: "DOC004",
@@ -1088,7 +1842,7 @@ export const mockDocuments: Document[] = [
     type: "Report",
     propertyId: "1",
     modified: "2024-01-10",
-    expires: "2024-04-10"
+    expires: "2025-01-10"  // Expiring soon
   },
   {
     id: "DOC005",
@@ -1096,7 +1850,126 @@ export const mockDocuments: Document[] = [
     type: "Certificate",
     propertyId: "3",
     modified: "2023-08-15",
-    expires: "2024-02-15"
+    expires: "2025-02-15"
+  },
+  {
+    id: "DOC006",
+    name: "Gas Safety Certificate",
+    type: "Certificate",
+    propertyId: "4",
+    modified: "2024-02-10",
+    expires: "2025-02-10"
+  },
+  {
+    id: "DOC007",
+    name: "Asbestos Management Plan",
+    type: "Plan",
+    propertyId: "1",
+    modified: "2023-11-05",
+    expires: "2024-12-20"  // Expiring very soon
+  },
+  {
+    id: "DOC008",
+    name: "Water Quality Report",
+    type: "Report",
+    propertyId: "2",
+    modified: "2024-08-20",
+    expires: "2025-08-20"
+  },
+  {
+    id: "DOC009",
+    name: "Emergency Evacuation Plan",
+    type: "Plan",
+    propertyId: "3",
+    modified: "2024-01-15",
+    expires: "2025-01-20"  // Expiring soon
+  },
+  {
+    id: "DOC010",
+    name: "Security System Certificate",
+    type: "Certificate",
+    propertyId: "4",
+    modified: "2024-06-10",
+    expires: "2025-06-10"
+  },
+  {
+    id: "DOC011",
+    name: "Energy Performance Certificate",
+    type: "Certificate",
+    propertyId: "5",
+    modified: "2023-09-12",
+    expires: "2025-01-25"  // Expiring soon
+  },
+  {
+    id: "DOC012",
+    name: "Boiler Safety Inspection",
+    type: "Report",
+    propertyId: "4",
+    modified: "2024-03-08",
+    expires: "2025-03-08"
+  },
+  {
+    id: "DOC013",
+    name: "Lift Maintenance Contract",
+    type: "Contract",
+    propertyId: "1",
+    modified: "2024-05-15",
+    expires: "2025-05-15"
+  },
+  {
+    id: "DOC014",
+    name: "Fire Alarm Test Certificate",
+    type: "Certificate",
+    propertyId: "6",
+    modified: "2024-07-22",
+    expires: "2025-01-22"  // Expiring soon
+  },
+  {
+    id: "DOC015",
+    name: "CCTV Data Protection Policy",
+    type: "Policy",
+    propertyId: "7",
+    modified: "2024-04-18",
+    expires: "2025-04-18"
+  },
+  {
+    id: "DOC016",
+    name: "Waste Management License",
+    type: "License",
+    propertyId: "8",
+    modified: "2023-12-01",
+    expires: "2024-12-30"  // Expiring very soon
+  },
+  {
+    id: "DOC017",
+    name: "Public Liability Insurance",
+    type: "Policy",
+    propertyId: "9",
+    modified: "2024-02-14",
+    expires: "2025-02-14"
+  },
+  {
+    id: "DOC018",
+    name: "Generator Service Manual",
+    type: "Manual",
+    propertyId: "3",
+    modified: "2024-06-30"
+  },
+  {
+    id: "DOC019",
+    name: "Building Control Certificate",
+    type: "Certificate",
+    propertyId: "10",
+    modified: "2023-10-25",
+    expires: "2025-01-30"  // Expiring soon
+  },
+  {
+    id: "DOC020",
+    name: "Legionella Risk Assessment",
+    type: "Assessment",
+    propertyId: "11",
+    modified: "2024-08-15",
+    expires: "2025-08-15"
   }
 ];
 
