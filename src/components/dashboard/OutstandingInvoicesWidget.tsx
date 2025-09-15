@@ -1,17 +1,33 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CreditCard, AlertCircle, TrendingUp, ArrowRight } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { CreditCard, AlertCircle, TrendingUp, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { mockInvoices } from "@/data/mockData";
+import { mockInvoices, mockProperties } from "@/data/mockData";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export function OutstandingInvoicesWidget() {
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  
   // Filter invoices by payment status
   const outstandingInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Outstanding");
   const overdueInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Overdue");
   const paidInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Paid");
+  
+  // Combined outstanding and overdue for table display
+  const allOutstandingInvoices = [...overdueInvoices, ...outstandingInvoices];
+  
+  // Filter invoices based on search term
+  const filteredInvoices = allOutstandingInvoices.filter(invoice =>
+    invoice.contractorTenant.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    invoice.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    mockProperties.find(p => p.id === invoice.propertyId)?.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   
   // Calculate totals
   const outstandingAmount = outstandingInvoices.reduce((sum, inv) => sum + inv.amount, 0);
@@ -49,15 +65,72 @@ export function OutstandingInvoicesWidget() {
             <span>Outstanding Invoices</span>
           </div>
           <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost" 
-              size="sm"
-              onClick={(e) => { e.stopPropagation(); handleClick(); }}
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-xs"
-            >
-              <ArrowRight className="h-3 w-3 mr-1" />
-              View Details
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="ghost" 
+                  size="sm"
+                  onClick={(e) => e.stopPropagation()}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                >
+                  <Eye className="h-3 w-3 mr-1" />
+                  View Details
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Outstanding Invoices Details</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Input
+                    placeholder="Search by property, invoice number, or contractor..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="max-w-md"
+                  />
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Property</TableHead>
+                          <TableHead>Invoice Number</TableHead>
+                          <TableHead>Contractor</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Due Date</TableHead>
+                          <TableHead>Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredInvoices.map((invoice) => {
+                          const property = mockProperties.find(p => p.id === invoice.propertyId);
+                          return (
+                            <TableRow key={invoice.id}>
+                              <TableCell>{property?.name || "Unknown Property"}</TableCell>
+                              <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
+                              <TableCell>{invoice.contractorTenant}</TableCell>
+                              <TableCell>{formatCurrency(invoice.amount)}</TableCell>
+                              <TableCell>{new Date(invoice.dueDate).toLocaleDateString()}</TableCell>
+                              <TableCell>
+                                <Badge variant={invoice.paymentStatus === "Overdue" ? "destructive" : "outline"}>
+                                  {invoice.paymentStatus}
+                                </Badge>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                        {filteredInvoices.length === 0 && (
+                          <TableRow>
+                            <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                              No outstanding invoices found matching your search.
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
             {totalAmount > 0 ? (
               <Badge variant={overdueAmount > 0 ? "destructive" : "outline"} className="text-xs">
                 {outstandingInvoices.length + overdueInvoices.length} Outstanding
@@ -67,7 +140,7 @@ export function OutstandingInvoicesWidget() {
                 All Settled
               </Badge>
             )}
-            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+            
           </div>
         </CardTitle>
       </CardHeader>

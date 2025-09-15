@@ -6,9 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { mockAssets, mockWorkOrders } from "@/data/mockData";
 import { VerticalBarChart } from "@/components/ui/enhanced-charts";
 import { DetailedViewModal } from "@/components/ui/detailed-view-modal";
+import { useState } from "react";
 
 export function TopAssetsWidget() {
   const navigate = useNavigate();
+  const [showMoreCritical, setShowMoreCritical] = useState(false);
+  const [showMoreWorkOrders, setShowMoreWorkOrders] = useState(false);
+  const [showMoreFrequency, setShowMoreFrequency] = useState(false);
   
   // Calculate comprehensive asset metrics
   const assetMetrics = mockAssets.map(asset => {
@@ -47,7 +51,7 @@ export function TopAssetsWidget() {
       criticalIssues,
       frequencyScore
     };
-  }).sort((a, b) => b.workOrderCount - a.workOrderCount).slice(0, 5);
+  }).sort((a, b) => b.workOrderCount - a.workOrderCount).slice(0, 10);
 
   const handleClick = () => {
     navigate('/assets', { 
@@ -154,20 +158,45 @@ export function TopAssetsWidget() {
             </div>
             <div className="h-48 bg-card border rounded-lg p-4">
               <VerticalBarChart 
-                data={assetMetrics.map(asset => ({
+                data={criticalData.slice(0, 10).map(asset => ({
                   name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
                   value: asset.criticalIssues
                 }))}
                 color="hsl(var(--destructive))"
-                width={280}
+                width={380}
                 height={180}
               />
             </div>
             <div className="mt-4">
               <div className="bg-muted/30 rounded-lg p-3">
-                <h5 className="text-sm font-medium mb-2 text-muted-foreground">Top Assets</h5>
+                <div className="flex items-center justify-between mb-2">
+                  <h5 className="text-sm font-medium text-muted-foreground">Top Assets</h5>
+                  <DetailedViewModal
+                    title="Critical Issues - Top Assets"
+                    chartComponent={
+                      <div className="h-64">
+                        <VerticalBarChart 
+                          data={criticalData.slice(0, 10).map(asset => ({
+                            name: asset.name,
+                            value: asset.criticalIssues
+                          }))}
+                          color="hsl(var(--destructive))"
+                          width={600}
+                          height={240}
+                        />
+                      </div>
+                    }
+                    tableData={criticalData.slice(0, 10)}
+                    tableColumns={tableColumns}
+                  >
+                    <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
+                      <Eye className="h-3 w-3 mr-1" />
+                      View More
+                    </Button>
+                  </DetailedViewModal>
+                </div>
                 <div className="space-y-2">
-                  {assetMetrics.slice(0, 3).map((asset, index) => (
+                  {criticalData.slice(0, showMoreCritical ? 10 : 5).map((asset, index) => (
                     <div key={`critical-${asset.id}`} className="flex items-center justify-between text-sm">
                       <span className="truncate text-foreground font-medium">{asset.name}</span>
                       <span className="font-semibold text-destructive bg-destructive/10 px-2 py-1 rounded">
@@ -175,6 +204,16 @@ export function TopAssetsWidget() {
                       </span>
                     </div>
                   ))}
+                  {criticalData.length > 5 && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={(e) => { e.stopPropagation(); setShowMoreCritical(!showMoreCritical); }}
+                      className="w-full text-xs"
+                    >
+                      {showMoreCritical ? "Show Less" : "Show More"}
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -190,20 +229,45 @@ export function TopAssetsWidget() {
             </div>
             <div className="h-48 bg-card border rounded-lg p-4">
               <VerticalBarChart 
-                data={assetMetrics.map(asset => ({
+                data={workOrderData.slice(0, 10).map(asset => ({
                   name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
                   value: asset.workOrderCount
                 }))}
                 color="hsl(var(--dashboard-medium))"
-                width={280}
+                width={380}
                 height={180}
               />
             </div>
             <div className="mt-4">
               <div className="bg-muted/30 rounded-lg p-3">
-                <h5 className="text-sm font-medium mb-2 text-muted-foreground">Top Assets</h5>
+                <div className="flex items-center justify-between mb-2">
+                  <h5 className="text-sm font-medium text-muted-foreground">Top Assets</h5>
+                  <DetailedViewModal
+                    title="Work Orders - Top Assets"
+                    chartComponent={
+                      <div className="h-64">
+                        <VerticalBarChart 
+                          data={workOrderData.slice(0, 10).map(asset => ({
+                            name: asset.name,
+                            value: asset.workOrderCount
+                          }))}
+                          color="hsl(var(--dashboard-medium))"
+                          width={600}
+                          height={240}
+                        />
+                      </div>
+                    }
+                    tableData={workOrderData.slice(0, 10)}
+                    tableColumns={tableColumns}
+                  >
+                    <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
+                      <Eye className="h-3 w-3 mr-1" />
+                      View More
+                    </Button>
+                  </DetailedViewModal>
+                </div>
                 <div className="space-y-2">
-                  {assetMetrics.slice(0, 3).map((asset, index) => (
+                  {workOrderData.slice(0, showMoreWorkOrders ? 10 : 5).map((asset, index) => (
                     <div key={`wo-${asset.id}`} className="flex items-center justify-between text-sm">
                       <span className="truncate text-foreground font-medium">{asset.name}</span>
                       <span className="font-semibold text-dashboard-medium bg-dashboard-medium/10 px-2 py-1 rounded">
@@ -211,6 +275,16 @@ export function TopAssetsWidget() {
                       </span>
                     </div>
                   ))}
+                  {workOrderData.length > 5 && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={(e) => { e.stopPropagation(); setShowMoreWorkOrders(!showMoreWorkOrders); }}
+                      className="w-full text-xs"
+                    >
+                      {showMoreWorkOrders ? "Show Less" : "Show More"}
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -226,20 +300,45 @@ export function TopAssetsWidget() {
             </div>
             <div className="h-48 bg-card border rounded-lg p-4">
               <VerticalBarChart 
-                data={assetMetrics.map(asset => ({
+                data={frequencyData.slice(0, 10).map(asset => ({
                   name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
                   value: asset.frequencyScore
                 }))}
                 color="hsl(var(--dashboard-high))"
-                width={280}
+                width={380}
                 height={180}
               />
             </div>
             <div className="mt-4">
               <div className="bg-muted/30 rounded-lg p-3">
-                <h5 className="text-sm font-medium mb-2 text-muted-foreground">Top Assets</h5>
+                <div className="flex items-center justify-between mb-2">
+                  <h5 className="text-sm font-medium text-muted-foreground">Top Assets</h5>
+                  <DetailedViewModal
+                    title="Frequency Score - Top Assets"
+                    chartComponent={
+                      <div className="h-64">
+                        <VerticalBarChart 
+                          data={frequencyData.slice(0, 10).map(asset => ({
+                            name: asset.name,
+                            value: asset.frequencyScore
+                          }))}
+                          color="hsl(var(--dashboard-high))"
+                          width={600}
+                          height={240}
+                        />
+                      </div>
+                    }
+                    tableData={frequencyData.slice(0, 10)}
+                    tableColumns={tableColumns}
+                  >
+                    <Button variant="ghost" size="sm" onClick={(e) => e.stopPropagation()}>
+                      <Eye className="h-3 w-3 mr-1" />
+                      View More
+                    </Button>
+                  </DetailedViewModal>
+                </div>
                 <div className="space-y-2">
-                  {assetMetrics.slice(0, 3).map((asset, index) => (
+                  {frequencyData.slice(0, showMoreFrequency ? 10 : 5).map((asset, index) => (
                     <div key={`freq-${asset.id}`} className="flex items-center justify-between text-sm">
                       <span className="truncate text-foreground font-medium">{asset.name}</span>
                       <span className="font-semibold text-dashboard-high bg-dashboard-high/10 px-2 py-1 rounded">
@@ -247,6 +346,16 @@ export function TopAssetsWidget() {
                       </span>
                     </div>
                   ))}
+                  {frequencyData.length > 5 && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={(e) => { e.stopPropagation(); setShowMoreFrequency(!showMoreFrequency); }}
+                      className="w-full text-xs"
+                    >
+                      {showMoreFrequency ? "Show Less" : "Show More"}
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
