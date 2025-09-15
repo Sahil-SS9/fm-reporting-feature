@@ -27,7 +27,7 @@ export function MaintenanceTypeRing() {
         centerContent={
           <div className="text-center">
             <div className="text-3xl font-bold">{totalTypes}</div>
-            <div className="text-xs text-muted-foreground">Types</div>
+            <div className="text-xs text-muted-foreground">Maintenance Types</div>
           </div>
         }
       />

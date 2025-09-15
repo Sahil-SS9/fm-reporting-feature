@@ -34,7 +34,7 @@ export function OverdueVsUpcomingRing() {
         centerContent={
           <div className="text-center">
             <div className="text-3xl font-bold">{totalMaintenance}</div>
-            <div className="text-xs text-muted-foreground">Total</div>
+            <div className="text-xs text-muted-foreground">Scheduled Items</div>
           </div>
         }
       />

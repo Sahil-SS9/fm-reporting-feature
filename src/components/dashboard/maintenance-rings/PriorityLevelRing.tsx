@@ -27,7 +27,7 @@ export function PriorityLevelRing() {
         centerContent={
           <div className="text-center">
             <div className="text-3xl font-bold">{totalPriority}</div>
-            <div className="text-xs text-muted-foreground">Priority</div>
+            <div className="text-xs text-muted-foreground">Asset Priorities</div>
           </div>
         }
       />

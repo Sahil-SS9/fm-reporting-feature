@@ -86,20 +86,22 @@ export function TopAssetsWidget() {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3" style={{ minHeight: '300px' }}>
           
           {/* Critical Issues Panel */}
           <div className="space-y-2">
-            <div className="h-44 bg-card border rounded-lg p-2">
-              <VerticalBarChart 
-                data={criticalData.slice(0, 10).map(asset => ({
-                  name: asset.name.length > 6 ? asset.name.substring(0, 6) + '...' : asset.name,
-                  value: asset.criticalIssues
-                }))}
-                color="hsl(var(--destructive))"
-                width={300}
-                height={180}
-              />
+            <div className="h-80 bg-card border rounded-lg p-4" style={{ minHeight: '180px' }}>
+              <div className="flex justify-center mt-4 mb-5">
+                <VerticalBarChart 
+                  data={criticalData.slice(0, 10).map(asset => ({
+                    name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
+                    value: asset.criticalIssues
+                  }))}
+                  color="hsl(var(--destructive))"
+                  width={600}
+                  height={360}
+                />
+              </div>
             </div>
             <div className="bg-muted/30 rounded-lg p-2">
               <div className="flex items-center justify-between mb-2">
@@ -129,8 +131,8 @@ export function TopAssetsWidget() {
                             value: asset.criticalIssues
                           }))}
                           color="hsl(var(--destructive))"
-                          width={600}
-                          height={320}
+                          width={800}
+                          height={400}
                         />
                       </div>
                     </div>
@@ -148,16 +150,18 @@ export function TopAssetsWidget() {
           
           {/* Work Order Count Panel */}
           <div className="space-y-2">
-            <div className="h-44 bg-card border rounded-lg p-2">
-              <VerticalBarChart 
-                data={workOrderData.slice(0, 10).map(asset => ({
-                  name: asset.name.length > 6 ? asset.name.substring(0, 6) + '...' : asset.name,
-                  value: asset.workOrderCount
-                }))}
-                color="hsl(var(--dashboard-medium))"
-                width={300}
-                height={180}
-              />
+            <div className="h-80 bg-card border rounded-lg p-4" style={{ minHeight: '180px' }}>
+              <div className="flex justify-center mt-4 mb-5">
+                <VerticalBarChart 
+                  data={workOrderData.slice(0, 10).map(asset => ({
+                    name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
+                    value: asset.workOrderCount
+                  }))}
+                  color="hsl(var(--dashboard-medium))"
+                  width={600}
+                  height={360}
+                />
+              </div>
             </div>
             <div className="bg-muted/30 rounded-lg p-2">
               <div className="flex items-center justify-between mb-2">
@@ -187,8 +191,8 @@ export function TopAssetsWidget() {
                             value: asset.workOrderCount
                           }))}
                           color="hsl(var(--dashboard-medium))"
-                          width={600}
-                          height={320}
+                          width={800}
+                          height={400}
                         />
                       </div>
                     </div>
@@ -206,16 +210,18 @@ export function TopAssetsWidget() {
           
           {/* Frequency Score Panel */}
           <div className="space-y-2">
-            <div className="h-44 bg-card border rounded-lg p-2">
-              <VerticalBarChart 
-                data={frequencyData.slice(0, 10).map(asset => ({
-                  name: asset.name.length > 6 ? asset.name.substring(0, 6) + '...' : asset.name,
-                  value: asset.frequencyScore
-                }))}
-                color="hsl(var(--dashboard-high))"
-                width={300}
-                height={180}
-              />
+            <div className="h-80 bg-card border rounded-lg p-4" style={{ minHeight: '180px' }}>
+              <div className="flex justify-center mt-4 mb-5">
+                <VerticalBarChart 
+                  data={frequencyData.slice(0, 10).map(asset => ({
+                    name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
+                    value: asset.frequencyScore
+                  }))}
+                  color="hsl(var(--dashboard-high))"
+                  width={600}
+                  height={360}
+                />
+              </div>
             </div>
             <div className="bg-muted/30 rounded-lg p-2">
               <div className="flex items-center justify-between mb-2">
@@ -245,8 +251,8 @@ export function TopAssetsWidget() {
                             value: asset.frequencyScore
                           }))}
                           color="hsl(var(--dashboard-high))"
-                          width={600}
-                          height={320}
+                          width={800}
+                          height={400}
                         />
                       </div>
                     </div>
