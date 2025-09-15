@@ -71,176 +71,186 @@ export const EmailHistory: React.FC = () => {
     return <Badge variant={variants[status]}>{status}</Badge>;
   };
 
-  const getTypeBadge = (type: EmailHistoryType['type']) => {
-    const variants = {
-      scheduled: "outline" as const,
-      manual: "secondary" as const
-    };
-    return <Badge variant={variants[type]}>{type}</Badge>;
-  };
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Mail className="h-5 w-5" />
-          Email History
-        </CardTitle>
-        <div className="flex flex-wrap gap-4 mt-4">
-          <div className="flex-1 min-w-[200px]">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search reports, recipients..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+    <div className="space-y-6">
+      {/* Search and Filters Section */}
+      <div className="flex flex-wrap gap-4">
+        <div className="flex-1 min-w-[200px]">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search reports, recipients..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
           </div>
-          
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <CalendarIcon className="h-4 w-4" />
-                {dateRange?.from && dateRange?.to 
-                  ? `${format(dateRange.from, 'MMM dd')} - ${format(dateRange.to, 'MMM dd')}`
-                  : "Date Range"
-                }
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="range"
-                selected={dateRange}
-                onSelect={setDateRange}
-                numberOfMonths={2}
-              />
-            </PopoverContent>
-          </Popover>
-
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="sent">Sent</SelectItem>
-              <SelectItem value="failed">Failed</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="scheduled">Scheduled</SelectItem>
-              <SelectItem value="manual">Manual</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {(dateRange?.from || dateRange?.to || statusFilter !== "all" || typeFilter !== "all") && (
-            <Button
-              variant="ghost"
-            onClick={() => {
-                setDateRange(undefined);
-                setStatusFilter("all");
-                setTypeFilter("all");
-              }}
-              className="gap-2"
-            >
-              <Filter className="h-4 w-4" />
-              Clear Filters
-            </Button>
-          )}
         </div>
-      </CardHeader>
+        
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="gap-2">
+              <CalendarIcon className="h-4 w-4" />
+              {dateRange?.from && dateRange?.to 
+                ? `${format(dateRange.from, 'MMM dd')} - ${format(dateRange.to, 'MMM dd')}`
+                : "Date Range"
+              }
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="range"
+              selected={dateRange}
+              onSelect={setDateRange}
+              numberOfMonths={2}
+            />
+          </PopoverContent>
+        </Popover>
 
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Report</TableHead>
-              <TableHead>Recipients</TableHead>
-              <TableHead>Sent Date</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Size</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredHistory.map((email) => (
-              <TableRow key={email.id} className="cursor-pointer hover:bg-muted/50">
-                <TableCell>
-                  <div>
-                    <div className="font-medium">{email.reportName}</div>
-                    <div className="text-sm text-muted-foreground truncate max-w-[200px]">
-                      {email.subject}
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="space-y-1">
-                    <div className="text-sm">
-                      {email.recipients.slice(0, 2).join(", ")}
-                      {email.recipients.length > 2 && ` +${email.recipients.length - 2} more`}
-                    </div>
-                    {email.ccRecipients && email.ccRecipients.length > 0 && (
-                      <div className="text-xs text-muted-foreground">
-                        CC: {email.ccRecipients.slice(0, 1).join(", ")}
-                        {email.ccRecipients.length > 1 && ` +${email.ccRecipients.length - 1} more`}
-                      </div>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <div>
-                      <div className="text-sm">{format(parseISO(email.sentDate), 'MMM dd, yyyy')}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {format(parseISO(email.sentDate), 'HH:mm')}
-                      </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>{getTypeBadge(email.type)}</TableCell>
-                <TableCell>{getStatusBadge(email.status)}</TableCell>
-                <TableCell className="text-sm text-muted-foreground">
-                  {email.attachmentSize}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRedownload(email)}
-                    className="gap-2"
-                  >
-                    <Download className="h-4 w-4" />
-                    Download
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-32">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="sent">Sent</SelectItem>
+            <SelectItem value="failed">Failed</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+          </SelectContent>
+        </Select>
 
-        {filteredHistory.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
-            <Mail className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <div className="text-lg font-medium mb-2">No email history found</div>
-            <div className="text-sm">
-              {searchTerm || dateRange?.from || statusFilter !== "all" || typeFilter !== "all"
-                ? "Try adjusting your filters to see more results."
-                : "No reports have been emailed yet."}
+        <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <SelectTrigger className="w-32">
+            <SelectValue placeholder="Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Types</SelectItem>
+            <SelectItem value="scheduled">Scheduled</SelectItem>
+            <SelectItem value="manual">Manual</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {(dateRange?.from || dateRange?.to || statusFilter !== "all" || typeFilter !== "all") && (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setDateRange(undefined);
+              setStatusFilter("all");
+              setTypeFilter("all");
+            }}
+            className="gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            Clear Filters
+          </Button>
+        )}
+      </div>
+
+      {/* Table Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Mail className="h-5 w-5" />
+            Email History
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <div className="border rounded-lg">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b">
+                  <TableHead className="border-r text-center font-semibold">Report</TableHead>
+                  <TableHead className="border-r text-center font-semibold">Recipients</TableHead>
+                  <TableHead className="border-r text-center font-semibold">Sent Date</TableHead>
+                  <TableHead className="border-r text-center font-semibold">Type</TableHead>
+                  <TableHead className="border-r text-center font-semibold">Status</TableHead>
+                  <TableHead className="border-r text-center font-semibold">Size</TableHead>
+                  <TableHead className="text-center font-semibold">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredHistory.map((email, index) => (
+                  <TableRow key={email.id} className={`hover:bg-muted/50 ${index % 2 === 0 ? 'bg-muted/20' : ''}`}>
+                    <TableCell className="border-r text-center">
+                      <div>
+                        <div className="font-medium">{email.reportName}</div>
+                        <div className="text-sm text-muted-foreground truncate max-w-[200px]">
+                          {email.subject}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="border-r text-center">
+                      <div className="space-y-1">
+                        <div className="text-sm">
+                          {email.recipients.slice(0, 2).join(", ")}
+                          {email.recipients.length > 2 && ` +${email.recipients.length - 2} more`}
+                        </div>
+                        {email.ccRecipients && email.ccRecipients.length > 0 && (
+                          <div className="text-xs text-muted-foreground">
+                            CC: {email.ccRecipients.slice(0, 1).join(", ")}
+                            {email.ccRecipients.length > 1 && ` +${email.ccRecipients.length - 1} more`}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="border-r text-center">
+                      <div className="text-sm">
+                        {format(parseISO(email.sentDate), 'MMM dd, yyyy HH:mm')}
+                      </div>
+                    </TableCell>
+                    <TableCell className="border-r text-center">
+                      <span className="text-sm capitalize">{email.type}</span>
+                    </TableCell>
+                    <TableCell className="border-r text-center">{getStatusBadge(email.status)}</TableCell>
+                    <TableCell className="border-r text-center text-sm text-muted-foreground">
+                      {email.attachmentSize}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRedownload(email)}
+                        className="gap-2"
+                      >
+                        <Download className="h-4 w-4" />
+                        Download
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-center mt-4">
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" disabled>
+                Previous
+              </Button>
+              <Button variant="default" size="sm">1</Button>
+              <Button variant="outline" size="sm">2</Button>
+              <Button variant="outline" size="sm">3</Button>
+              <Button variant="outline" size="sm">
+                Next
+              </Button>
             </div>
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {filteredHistory.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              <Mail className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <div className="text-lg font-medium mb-2">No email history found</div>
+              <div className="text-sm">
+                {searchTerm || dateRange?.from || statusFilter !== "all" || typeFilter !== "all"
+                  ? "Try adjusting your filters to see more results."
+                  : "No reports have been emailed yet."}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };

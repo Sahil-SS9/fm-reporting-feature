@@ -91,10 +91,6 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onView(report)}>
-                  <Eye className="mr-2 h-4 w-4" />
-                  View Report
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onEdit(report)}>
                   <Edit className="mr-2 h-4 w-4" />
                   Edit
@@ -107,13 +103,13 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
                   <Mail className="mr-2 h-4 w-4" />
                   Email
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onDownload(report)}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onSchedule(report)}>
                   <Calendar className="mr-2 h-4 w-4" />
                   Schedule
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onDownload(report)}>
+                  <Download className="mr-2 h-4 w-4" />
+                  Download
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => onDelete(report)}
