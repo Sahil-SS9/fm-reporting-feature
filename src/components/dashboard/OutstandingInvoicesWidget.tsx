@@ -1,53 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CreditCard, AlertCircle, TrendingUp, Eye, Search } from "lucide-react";
+import { CreditCard, AlertCircle, TrendingUp, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { mockInvoices } from "@/data/mockData";
 import { cn } from "@/lib/utils";
-import { useState, useMemo } from "react";
 
 export function OutstandingInvoicesWidget() {
-  const [dateFilter, setDateFilter] = useState("last30days");
-  const [searchTerm, setSearchTerm] = useState("");
-  // Date filtering function
-  const filterByDate = (invoices: any[]) => {
-    const now = new Date();
-    const filterDate = new Date();
-    
-    switch (dateFilter) {
-      case "last7days":
-        filterDate.setDate(now.getDate() - 7);
-        break;
-      case "last30days":
-        filterDate.setDate(now.getDate() - 30);
-        break;
-      case "thismonth":
-        filterDate.setDate(1);
-        break;
-      case "lastmonth":
-        filterDate.setMonth(now.getMonth() - 1, 1);
-        break;
-      case "last3months":
-        filterDate.setMonth(now.getMonth() - 3);
-        break;
-      case "last6months":
-        filterDate.setMonth(now.getMonth() - 6);
-        break;
-      default:
-        filterDate.setDate(now.getDate() - 30);
-    }
-    
-    return invoices.filter(inv => new Date(inv.dateIssued) >= filterDate);
-  };
-
-  // Filter invoices by payment status and date - Only get "Received" type invoices
-  const allInvoices = filterByDate(mockInvoices.filter(inv => inv.type === "Received"));
-  const outstandingInvoices = allInvoices.filter(inv => inv.paymentStatus === "Outstanding");
-  const overdueInvoices = allInvoices.filter(inv => inv.paymentStatus === "Overdue");
+  const navigate = useNavigate();
+  // Filter invoices by payment status
+  const outstandingInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Outstanding");
+  const overdueInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Overdue");
+  const paidInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Paid");
   
   // Calculate totals
   const outstandingAmount = outstandingInvoices.reduce((sum, inv) => sum + inv.amount, 0);
@@ -64,19 +28,20 @@ export function OutstandingInvoicesWidget() {
     }).format(amount);
   };
   
-  // Search and filter for modal
-  const filteredInvoices = useMemo(() => {
-    const allOutstanding = [...overdueInvoices, ...outstandingInvoices];
-    if (!searchTerm) return allOutstanding;
-    
-    return allOutstanding.filter(invoice => 
-      invoice.contractorTenant.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      invoice.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [overdueInvoices, outstandingInvoices, searchTerm]);
+  const handleClick = () => {
+    navigate('/reporting', { 
+      state: { 
+        reportType: 'invoices',
+        filter: { paymentStatus: ['Outstanding', 'Overdue'] }
+      }
+    });
+  };
   
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card 
+      className="hover:shadow-lg transition-shadow cursor-pointer group" 
+      onClick={handleClick}
+    >
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -84,84 +49,15 @@ export function OutstandingInvoicesWidget() {
             <span>Outstanding Invoices</span>
           </div>
           <div className="flex items-center space-x-2">
-            <Select value={dateFilter} onValueChange={setDateFilter}>
-              <SelectTrigger className="w-32 h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="last7days">Last 7 days</SelectItem>
-                <SelectItem value="last30days">Last 30 days</SelectItem>
-                <SelectItem value="thismonth">This Month</SelectItem>
-                <SelectItem value="lastmonth">Last Month</SelectItem>
-                <SelectItem value="last3months">Last 3 months</SelectItem>
-                <SelectItem value="last6months">Last 6 months</SelectItem>
-              </SelectContent>
-            </Select>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-xs">
-                  <Eye className="h-3 w-3 mr-1" />
-                  View Details
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl">
-                <DialogHeader>
-                  <DialogTitle>Outstanding Invoices Details</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                    <Input
-                      placeholder="Search invoices..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-9"
-                    />
-                  </div>
-                  <div className="border rounded-lg">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Invoice Number</TableHead>
-                          <TableHead>Contractor</TableHead>
-                          <TableHead>Amount</TableHead>
-                          <TableHead>Due Date</TableHead>
-                          <TableHead>Status</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                       <TableBody>
-                         {filteredInvoices.length === 0 ? (
-                           <TableRow>
-                             <TableCell colSpan={5} className="text-center py-8">
-                               <div className="text-muted-foreground">
-                                 <div className="text-sm">No outstanding invoices found</div>
-                                 <div className="text-xs mt-1">
-                                   {searchTerm ? `No results for "${searchTerm}"` : "No data available for selected period"}
-                                 </div>
-                               </div>
-                             </TableCell>
-                           </TableRow>
-                         ) : (
-                           filteredInvoices.map((invoice) => (
-                             <TableRow key={invoice.id}>
-                               <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
-                               <TableCell>{invoice.contractorTenant}</TableCell>
-                               <TableCell>{formatCurrency(invoice.amount)}</TableCell>
-                               <TableCell>{new Date(invoice.dueDate).toLocaleDateString()}</TableCell>
-                               <TableCell>
-                                 <Badge variant={invoice.paymentStatus === "Overdue" ? "destructive" : "outline"}>
-                                   {invoice.paymentStatus}
-                                 </Badge>
-                               </TableCell>
-                             </TableRow>
-                           ))
-                         )}
-                       </TableBody>
-                    </Table>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button
+              variant="ghost" 
+              size="sm"
+              onClick={(e) => { e.stopPropagation(); handleClick(); }}
+              className="opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+            >
+              <ArrowRight className="h-3 w-3 mr-1" />
+              View Details
+            </Button>
             {totalAmount > 0 ? (
               <Badge variant={overdueAmount > 0 ? "destructive" : "outline"} className="text-xs">
                 {outstandingInvoices.length + overdueInvoices.length} Outstanding
@@ -171,6 +67,7 @@ export function OutstandingInvoicesWidget() {
                 All Settled
               </Badge>
             )}
+            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
         </CardTitle>
       </CardHeader>
@@ -178,9 +75,7 @@ export function OutstandingInvoicesWidget() {
         {totalAmount === 0 ? (
           <div className="text-center py-6">
             <div className="text-2xl font-bold text-green-600 mb-2">£0</div>
-            <p className="text-sm text-muted-foreground">
-              {allInvoices.length === 0 ? "No invoices found for selected period" : "All invoices are up to date"}
-            </p>
+            <p className="text-sm text-muted-foreground">All invoices are up to date</p>
           </div>
         ) : (
           <>
