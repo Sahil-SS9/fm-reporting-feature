@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Clock, Filter, TrendingUp, TrendingDown } from "lucide-react";
+import { Clock, TrendingUp, TrendingDown } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { useState } from "react";
 import { mockWorkOrders } from "@/data/mockData";
@@ -59,31 +59,6 @@ export function CompletionTimeTrendChart({ className }: CompletionTimeTrendChart
             <span>Completion Time Trends</span>
           </CardTitle>
           <div className="flex items-center space-x-2">
-            <Badge variant={isImproving ? "default" : "destructive"} className="text-xs">
-              {isImproving ? "Improving" : "Declining"}
-            </Badge>
-          </div>
-        </div>
-        <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center space-x-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold">{averageTime.toFixed(1)}</div>
-              <div className="text-sm text-muted-foreground">Avg Days</div>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center space-x-1">
-                {isImproving ? (
-                  <TrendingDown className="h-4 w-4 text-success" />
-                ) : (
-                  <TrendingUp className="h-4 w-4 text-destructive" />
-                )}
-                <div className="text-lg font-bold">{Math.abs(trend).toFixed(1)}</div>
-              </div>
-              <div className="text-sm text-muted-foreground">Change</div>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Filter className="h-4 w-4 text-muted-foreground" />
             <Select value={timeRange} onValueChange={setTimeRange}>
               <SelectTrigger className="w-24">
                 <SelectValue />
@@ -106,6 +81,28 @@ export function CompletionTimeTrendChart({ className }: CompletionTimeTrendChart
               </SelectContent>
             </Select>
           </div>
+        </div>
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex items-center space-x-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold">{averageTime.toFixed(1)}</div>
+              <div className="text-sm text-muted-foreground">Avg Days</div>
+            </div>
+            <div className="text-center">
+              <div className="flex items-center space-x-1">
+                {isImproving ? (
+                  <TrendingDown className="h-4 w-4 text-success" />
+                ) : (
+                  <TrendingUp className="h-4 w-4 text-destructive" />
+                )}
+                <div className="text-lg font-bold">{Math.abs(trend).toFixed(1)}</div>
+              </div>
+              <div className="text-sm text-muted-foreground">Change</div>
+            </div>
+          </div>
+          <Badge variant={isImproving ? "default" : "destructive"} className="text-xs">
+            {isImproving ? "Improving" : "Declining"}
+          </Badge>
         </div>
       </CardHeader>
       <CardContent>
