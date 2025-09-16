@@ -26,7 +26,7 @@ import { WorkOrderPriorityWidget } from "@/components/dashboard/WorkOrderPriorit
 import { EnhancedWorkOrderPriorityWidget } from "@/components/dashboard/EnhancedWorkOrderPriorityWidget";
 import { OnTimeVsOverdueWidget } from "@/components/dashboard/OnTimeVsOverdueWidget";
 import { SchedulingWidget } from "@/components/dashboard/SchedulingWidget";
-import { PerformanceSummaryWidget } from "@/components/dashboard/PerformanceSummaryWidget";
+import { getPerformanceMetrics } from "@/components/dashboard/PerformanceSummaryWidget";
 import { DonutChartWithCenter } from "@/components/ui/enhanced-charts";
 import {
   Activity,
@@ -56,6 +56,7 @@ const recentActivities = [
 
 export default function Dashboard() {
   const kpiMetrics = calculateKPIMetrics(mockWorkOrders);
+  const performanceMetrics = getPerformanceMetrics();
   
   return (
     <div className="p-6 space-y-6">
@@ -138,10 +139,16 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Work Order Priority and On Time Performance */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <EnhancedWorkOrderPriorityWidget />
+            <OnTimeVsOverdueWidget />
+          </div>
+
           {/* Performance Insights */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
             <h3 className="text-xl font-semibold mb-6 text-foreground">Performance Insights</h3>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <EnhancedEssentialMetricsCard
                 title="Avg Completion Time"
                 value={`${kpiMetrics.avgCompletionTime}`}
@@ -157,7 +164,22 @@ export default function Dashboard() {
                 variant={kpiMetrics.closureRate >= 80 ? "success" : "warning"}
                 description="Work orders completed"
               />
-              <PerformanceSummaryWidget />
+              <EnhancedEssentialMetricsCard
+                title="Avg Response Time"
+                value={`${performanceMetrics.avgResponseTime}`}
+                subValue="hours"
+                icon={Target}
+                variant={performanceMetrics.avgResponseTime <= 2 ? "success" : performanceMetrics.avgResponseTime <= 4 ? "warning" : "critical"}
+                description="Time to initial response"
+              />
+              <EnhancedEssentialMetricsCard
+                title="Resolution Time"
+                value={`${performanceMetrics.avgCompletionTime}`}
+                subValue="days"
+                icon={Activity}
+                variant={performanceMetrics.avgCompletionTime <= 3 ? "success" : performanceMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
+                description="Time to resolve issues"
+              />
             </div>
           </div>
           
@@ -170,10 +192,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <EnhancedWorkOrderPriorityWidget />
-            <OnTimeVsOverdueWidget />
-          </div>
           <SchedulingWidget />
         </TabsContent>
 
