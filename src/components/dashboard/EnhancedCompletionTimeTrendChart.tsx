@@ -1,141 +1,144 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DetailedViewModal } from "@/components/ui/detailed-view-modal";
-import { Button } from "@/components/ui/button";
-import { Eye, TrendingUp } from "lucide-react";
-import { VerticalBarChart } from "@/components/ui/enhanced-charts";
-import { mockWorkOrders, mockProperties } from "@/data/mockData";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Clock, TrendingUp, TrendingDown } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { useState } from "react";
+import { mockWorkOrders } from "@/data/mockData";
 
 export function EnhancedCompletionTimeTrendChart() {
-  // Generate trend data for the last 12 months
-  const generateTrendData = () => {
-    const months = [];
-    const currentDate = new Date();
+  const [timeRange, setTimeRange] = useState("30");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+
+  // Generate comprehensive trend data
+  const generateTrendData = (days: number, priority: string) => {
+    const data = [];
+    const today = new Date();
     
-    for (let i = 11; i >= 0; i--) {
-      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
-      const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
       
-      // Calculate average completion time for each month (simulated)
-      const avgTime = Math.floor(Math.random() * 10) + 3; // 3-13 days
+      // Filter work orders by priority if specified
+      let filteredOrders = mockWorkOrders.filter(wo => wo.status === "Completed");
+      if (priority !== "all") {
+        filteredOrders = filteredOrders.filter(wo => wo.priority === priority);
+      }
       
-      months.push({
-        month: monthName,
-        avgTime: avgTime,
-        completedOrders: Math.floor(Math.random() * 20) + 10
+      // Mock completion times with realistic variation
+      const baseTime = priority === "High" ? 2.8 : priority === "Medium" ? 4.2 : priority === "Low" ? 8.5 : 5.2;
+      const variation = (Math.random() - 0.5) * 2;
+      const completionTime = Math.max(0.5, baseTime + variation);
+      
+      data.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        fullDate: date,
+        completionTime: parseFloat(completionTime.toFixed(1)),
+        workOrderCount: Math.floor(Math.random() * 8) + 2
       });
     }
     
-    return months;
+    return data;
   };
 
-  const trendData = generateTrendData();
-  
-  // Generate detailed breakdown by property
-  const propertyBreakdown = mockProperties.map(property => {
-    const propertyOrders = mockWorkOrders.filter(wo => wo.propertyId === property.id && wo.status === "Completed");
-    const avgCompletionTime = propertyOrders.length > 0 
-      ? Math.floor(Math.random() * 15) + 2 // Simulated 2-17 days
-      : 0;
-    
-    return {
-      property: property.name,
-      avgCompletionTime: avgCompletionTime,
-      completedOrders: propertyOrders.length,
-      onTimePercentage: Math.floor(Math.random() * 40) + 60, // 60-100%
-      category: property.type || "Mixed Use"
-    };
-  });
-
-  const tableColumns = [
-    { key: 'property', label: 'Property' },
-    { key: 'avgCompletionTime', label: 'Avg Completion Time', format: (value: number) => `${value} days` },
-    { key: 'completedOrders', label: 'Completed Orders' },
-    { key: 'onTimePercentage', label: 'On-Time %', format: (value: number) => `${value}%` },
-    { key: 'category', label: 'Category' }
-  ];
+  const trendData = generateTrendData(parseInt(timeRange), priorityFilter);
+  const averageTime = trendData.reduce((sum, d) => sum + d.completionTime, 0) / trendData.length;
+  const trend = trendData.length >= 2 ? trendData[trendData.length - 1].completionTime - trendData[0].completionTime : 0;
+  const isImproving = trend <= 0;
 
   return (
     <Card className="hover:shadow-lg transition-shadow">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center space-x-2">
-          <TrendingUp className="h-5 w-5 text-primary" />
-          <span>Completion Time Trend</span>
-        </CardTitle>
-        <DetailedViewModal
-          title="Completion Time Trend Analysis"
-          chartComponent={
-            <div className="space-y-6">
-              <div>
-                <h4 className="text-lg font-semibold mb-4">12-Month Trend</h4>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={trendData.map(item => ({ name: item.month, value: item.avgTime }))}>
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold mb-4">Property Comparison</h4>
-                <div className="h-80">
-                  <VerticalBarChart 
-                    data={propertyBreakdown.map(item => ({
-                      name: item.property.substring(0, 15) + "...",
-                      value: item.avgCompletionTime
-                    }))}
-                    color="hsl(var(--dashboard-medium))"
-                    width={1000}
-                    height={300}
-                  />
-                </div>
-              </div>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center space-x-2">
+            <Clock className="h-5 w-5" />
+            <span>Completion Time Trends</span>
+          </CardTitle>
+          <div className="flex items-center space-x-2">
+            <Select value={timeRange} onValueChange={setTimeRange}>
+              <SelectTrigger className="w-24">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="30">30d</SelectItem>
+                <SelectItem value="60">60d</SelectItem>
+                <SelectItem value="90">90d</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Priority</SelectItem>
+                <SelectItem value="High">High Only</SelectItem>
+                <SelectItem value="Medium">Medium Only</SelectItem>
+                <SelectItem value="Low">Low Only</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex items-center space-x-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold">{averageTime.toFixed(1)}</div>
+              <div className="text-sm text-muted-foreground">Avg Days</div>
             </div>
-          }
-          tableData={[
-            // Monthly trend data
-            ...trendData.map(item => ({
-              type: "Monthly Trend",
-              period: item.month,
-              avgCompletionTime: item.avgTime,
-              completedOrders: item.completedOrders,
-              trend: "Monthly Average"
-            })),
-            // Property breakdown data  
-            ...propertyBreakdown.map(item => ({
-              type: "Property Breakdown",
-              period: item.property,
-              avgCompletionTime: item.avgCompletionTime,
-              completedOrders: item.completedOrders,
-              trend: `${item.onTimePercentage}% On-Time`
-            }))
-          ]}
-          tableColumns={[
-            { key: 'type', label: 'Type' },
-            { key: 'period', label: 'Period/Property' },
-            { key: 'avgCompletionTime', label: 'Avg Time', format: (value: number) => `${value} days` },
-            { key: 'completedOrders', label: 'Completed' },
-            { key: 'trend', label: 'Performance' }
-          ]}
-        >
-          <Button variant="ghost" size="sm">
-            <Eye className="h-4 w-4 mr-2" />
-            View Details
-          </Button>
-        </DetailedViewModal>
+            <div className="text-center">
+              <div className="flex items-center space-x-1">
+                {isImproving ? (
+                  <TrendingDown className="h-4 w-4 text-success" />
+                ) : (
+                  <TrendingUp className="h-4 w-4 text-destructive" />
+                )}
+                <div className="text-lg font-bold">{Math.abs(trend).toFixed(1)}</div>
+              </div>
+              <div className="text-sm text-muted-foreground">Change</div>
+            </div>
+          </div>
+          <Badge variant={isImproving ? "default" : "destructive"} className="text-xs">
+            {isImproving ? "Improving" : "Declining"}
+          </Badge>
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={trendData.map(item => ({ name: item.month, value: item.avgTime }))}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={trendData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <XAxis 
+              dataKey="date" 
+              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+              axisLine={false}
+            />
+            <YAxis 
+              tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+              axisLine={false}
+              label={{ value: 'Days', angle: -90, position: 'insideLeft' }}
+            />
+            <Tooltip 
+              contentStyle={{
+                backgroundColor: "hsl(var(--popover))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "6px",
+                fontSize: "12px"
+              }}
+              labelFormatter={(label) => `Date: ${label}`}
+              formatter={(value, name) => [
+                `${value} days`, 
+                'Avg Completion'
+              ]}
+            />
+            <Legend />
+            <Line 
+              type="monotone" 
+              dataKey="completionTime" 
+              stroke="hsl(var(--primary))" 
+              strokeWidth={3}
+              dot={{ fill: "hsl(var(--primary))", r: 4 }}
+              name="Completion Time"
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   );
