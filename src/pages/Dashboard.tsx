@@ -100,13 +100,43 @@ export default function Dashboard() {
       {/* Dashboard Tabs */}
       <Tabs defaultValue="overview" className="space-y-6" onValueChange={setCurrentTab}>
         <div className="flex items-center justify-between">
-          <TabsList className="grid grid-cols-4 lg:grid-cols-6 h-auto">
-            <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
-            <TabsTrigger value="property" className="text-xs">Property</TabsTrigger>
-            <TabsTrigger value="operations" className="text-xs">Operations</TabsTrigger>
-            <TabsTrigger value="assets" className="text-xs">Assets</TabsTrigger>
-            <TabsTrigger value="financial" className="text-xs">Financial</TabsTrigger>
-            <TabsTrigger value="documents" className="text-xs">Documents</TabsTrigger>
+          <TabsList className="inline-flex h-12 items-center justify-start gap-2 bg-transparent p-0 border-b border-border rounded-none w-full">
+            <TabsTrigger 
+              value="overview" 
+              className="relative px-6 py-3 text-sm font-medium transition-all duration-200 bg-transparent border-b-2 border-transparent rounded-none data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:shadow-none hover:text-primary/80 min-w-[100px]"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger 
+              value="property" 
+              className="relative px-6 py-3 text-sm font-medium transition-all duration-200 bg-transparent border-b-2 border-transparent rounded-none data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:shadow-none hover:text-primary/80 min-w-[100px]"
+            >
+              Property
+            </TabsTrigger>
+            <TabsTrigger 
+              value="operations" 
+              className="relative px-6 py-3 text-sm font-medium transition-all duration-200 bg-transparent border-b-2 border-transparent rounded-none data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:shadow-none hover:text-primary/80 min-w-[100px]"
+            >
+              Operations
+            </TabsTrigger>
+            <TabsTrigger 
+              value="assets" 
+              className="relative px-6 py-3 text-sm font-medium transition-all duration-200 bg-transparent border-b-2 border-transparent rounded-none data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:shadow-none hover:text-primary/80 min-w-[100px]"
+            >
+              Assets
+            </TabsTrigger>
+            <TabsTrigger 
+              value="financial" 
+              className="relative px-6 py-3 text-sm font-medium transition-all duration-200 bg-transparent border-b-2 border-transparent rounded-none data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:shadow-none hover:text-primary/80 min-w-[100px]"
+            >
+              Financial
+            </TabsTrigger>
+            <TabsTrigger 
+              value="documents" 
+              className="relative px-6 py-3 text-sm font-medium transition-all duration-200 bg-transparent border-b-2 border-transparent rounded-none data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:shadow-none hover:text-primary/80 min-w-[100px]"
+            >
+              Documents
+            </TabsTrigger>
           </TabsList>
           
           {/* Property Filter Dropdown */}
