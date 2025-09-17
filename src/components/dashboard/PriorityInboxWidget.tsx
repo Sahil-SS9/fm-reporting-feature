@@ -70,21 +70,21 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Morning Briefing Summary */}
-        <div className="p-3 bg-dashboard-critical/5 rounded-lg border border-dashboard-critical/10">
-          <div className="flex items-center justify-between mb-2">
+        <div className="p-6 bg-dashboard-critical/5 rounded-lg border border-dashboard-critical/10">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
-              <AlertTriangle className="h-4 w-4 text-dashboard-critical" />
-              <span className="text-sm font-medium">Morning Briefing</span>
+              <AlertTriangle className="h-5 w-5 text-dashboard-critical" />
+              <span className="text-base font-semibold">Morning Briefing</span>
             </div>
-            <span className="text-xs text-muted-foreground">Today</span>
+            <span className="text-sm text-muted-foreground">Today</span>
           </div>
-          <div className="text-sm text-foreground space-y-2">
-            <p>
+          <div className="text-base text-foreground space-y-4">
+            <p className="font-medium">
               You have {priorityItems.filter(item => item.category === "CRITICAL").length} critical items which needs immediate attention.
             </p>
             
             {/* Bullet point summary by module */}
-            <div className="space-y-1 ml-2">
+            <div className="space-y-3 ml-4">
               {(() => {
                 const criticalItems = priorityItems.filter(item => item.category === "CRITICAL");
                 const moduleGroups = criticalItems.reduce((acc, item) => {
@@ -99,13 +99,13 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
                 }, {} as Record<string, Record<string, number>>);
 
                 return Object.entries(moduleGroups).map(([module, statuses]) => (
-                  <div key={module} className="flex items-center space-x-1 text-xs">
-                    <span>•</span>
+                  <div key={module} className="flex items-center space-x-2 text-sm">
+                    <span className="text-dashboard-critical font-bold">•</span>
                     <span>
                       {Object.entries(statuses).map(([status, count], index) => (
                         <span key={status}>
                           {index > 0 && ", "}
-                          {count} {status.toLowerCase()}
+                          <span className="font-medium">{count} {status.toLowerCase()}</span>
                         </span>
                       ))} for {module}
                     </span>
