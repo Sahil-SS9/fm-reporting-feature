@@ -45,7 +45,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { calculateKPIMetrics } from "@/lib/kpi-calculations";
-import { mockWorkOrders, mockProperties } from "@/data/mockData";
+import { mockWorkOrders, mockProperties, mockAssets, mockInvoices } from "@/data/mockData";
 import { useState, createContext, useContext } from "react";
 
 // Create context for current tab and selected property
@@ -79,22 +79,64 @@ const recentActivities = [
 ];
 
 export default function Dashboard() {
+  // Filter work orders and other data based on selected property
+  const getFilteredWorkOrders = (selectedProperty: string) => {
+    return selectedProperty === "all" 
+      ? mockWorkOrders 
+      : mockWorkOrders.filter(wo => wo.propertyId === selectedProperty);
+  };
+
+  const getFilteredAssets = (selectedProperty: string) => {
+    return selectedProperty === "all" 
+      ? mockAssets 
+      : mockAssets.filter(asset => asset.propertyId === selectedProperty);
+  };
+
+  const getFilteredInvoices = (selectedProperty: string) => {
+    return selectedProperty === "all" 
+      ? mockInvoices 
+      : mockInvoices.filter(invoice => invoice.propertyId === selectedProperty);
+  };
+
   const kpiMetrics = calculateKPIMetrics(mockWorkOrders);
   const performanceMetrics = getPerformanceMetrics();
   
-  // Pass current tab and property filter to layout
+  // Pass current tab and property filter to layout  
   const [currentTab, setCurrentTab] = useState("overview");
   const [selectedProperty, setSelectedProperty] = useState("all");
+
+  // Get filtered data based on selected property
+  const filteredWorkOrders = getFilteredWorkOrders(selectedProperty);
+  const filteredAssets = getFilteredAssets(selectedProperty);  
+  const filteredInvoices = getFilteredInvoices(selectedProperty);
+  const filteredKpiMetrics = calculateKPIMetrics(filteredWorkOrders);
   
   return (
     <DashboardContext.Provider value={{ currentTab, setCurrentTab, selectedProperty, setSelectedProperty }}>
     <div className="p-6 space-y-6">
       {/* Page Header */}
       <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-6">
-        <h1 className="text-3xl font-bold text-foreground">Command Centre</h1>
-        <p className="text-muted-foreground mt-2">
-          Critical insights and actionable items for facilities management
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Command Centre</h1>
+            <p className="text-muted-foreground mt-2">
+              Critical insights and actionable items for facilities management
+              {selectedProperty !== "all" && (
+                <span className="ml-2 text-primary font-medium">
+                  - {mockProperties.find(p => p.id === selectedProperty)?.name}
+                </span>
+              )}
+            </p>
+          </div>
+          {selectedProperty !== "all" && (
+            <div className="text-right">
+              <div className="text-sm text-muted-foreground">Filtered by Property</div>
+              <div className="text-lg font-semibold text-primary">
+                {mockProperties.find(p => p.id === selectedProperty)?.name}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Dashboard Tabs */}
@@ -145,34 +187,38 @@ export default function Dashboard() {
             </TabsTrigger>
           </TabsList>
           
-          {/* Property Filter Dropdown */}
-          <div className="relative">
-            <Select 
-              value={selectedProperty} 
-              onValueChange={setSelectedProperty}
-              disabled={currentTab === "property"}
-            >
-              <SelectTrigger className={`w-48 ${currentTab === "property" ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="All Properties" />
-              </SelectTrigger>
-              <SelectContent className="bg-background border shadow-lg z-50">
-                <SelectItem value="all">All Properties</SelectItem>
-                {mockProperties.map((property) => (
-                  <SelectItem key={property.id} value={property.id}>
-                    {property.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Property Filter Dropdown - Only show when not on property tab */}
+          {currentTab !== "property" && (
+            <div className="relative">
+              <Select 
+                value={selectedProperty} 
+                onValueChange={setSelectedProperty}
+              >
+                <SelectTrigger className="w-48">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="All Properties" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border shadow-lg z-50">
+                  <SelectItem value="all">All Properties</SelectItem>
+                  {mockProperties.map((property) => (
+                    <SelectItem key={property.id} value={property.id}>
+                      {property.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
 
         {/* Overview Tab - Priority Inbox */}
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="lg:col-span-2">
-              <PriorityInboxWidget />
+              <PriorityInboxWidget 
+                selectedProperty={selectedProperty}
+                filteredWorkOrders={filteredWorkOrders}
+              />
             </div>
           </div>
         </TabsContent>
@@ -194,33 +240,33 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <EnhancedEssentialMetricsCard
                 title="Due Today"
-                value={kpiMetrics.dueToday}
+                value={filteredKpiMetrics.dueToday}
                 icon={Clock}
-                variant={kpiMetrics.dueToday > 5 ? "warning" : "default"}
+                variant={filteredKpiMetrics.dueToday > 5 ? "warning" : "default"}
                 description="Work orders due today"
               />
               <EnhancedEssentialMetricsCard
                 title="Overdue Items"
-                value={kpiMetrics.overdue}
+                value={filteredKpiMetrics.overdue}
                 icon={AlertTriangle}
-                variant={kpiMetrics.overdue > 0 ? "critical" : "success"}
+                variant={filteredKpiMetrics.overdue > 0 ? "critical" : "success"}
                 description="Past due work orders"
               />
               <EnhancedEssentialMetricsCard
                 title="Critical Issues"
-                value={kpiMetrics.critical}
+                value={filteredKpiMetrics.critical}
                 icon={AlertTriangle}
-                variant={kpiMetrics.critical > 0 ? "critical" : "success"}
+                variant={filteredKpiMetrics.critical > 0 ? "critical" : "success"}
                 description="High priority items"
               />
               <EnhancedEssentialMetricsCard
                 title="On-Time Rate"
-                value={`${kpiMetrics.onTimeRate}%`}
+                value={`${filteredKpiMetrics.onTimeRate}%`}
                 icon={Target}
-                variant={kpiMetrics.onTimeRate >= 80 ? "success" : kpiMetrics.onTimeRate >= 60 ? "warning" : "critical"}
+                variant={filteredKpiMetrics.onTimeRate >= 80 ? "success" : filteredKpiMetrics.onTimeRate >= 60 ? "warning" : "critical"}
                 change={{
-                  value: `${kpiMetrics.weeklyTrend > 0 ? '+' : ''}${kpiMetrics.weeklyTrend}%`,
-                  type: kpiMetrics.weeklyTrend > 0 ? "positive" : kpiMetrics.weeklyTrend < 0 ? "negative" : "neutral",
+                  value: `${filteredKpiMetrics.weeklyTrend > 0 ? '+' : ''}${filteredKpiMetrics.weeklyTrend}%`,
+                  type: filteredKpiMetrics.weeklyTrend > 0 ? "positive" : filteredKpiMetrics.weeklyTrend < 0 ? "negative" : "neutral",
                   label: "vs last week"
                 }}
                 description="Completed on time"
@@ -230,7 +276,10 @@ export default function Dashboard() {
 
           {/* Work Order Priority and On Time Performance */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <EnhancedWorkOrderPriorityWidget />
+            <EnhancedWorkOrderPriorityWidget 
+              selectedProperty={selectedProperty}
+              filteredWorkOrders={filteredWorkOrders}
+            />
             <OnTimeVsOverdueWidget />
           </div>
 
@@ -240,17 +289,17 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <EnhancedEssentialMetricsCard
                 title="Avg Completion Time"
-                value={`${kpiMetrics.avgCompletionTime}`}
+                value={`${filteredKpiMetrics.avgCompletionTime}`}
                 subValue="days"
                 icon={TrendingUp}
-                variant={kpiMetrics.avgCompletionTime <= 3 ? "success" : kpiMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
+                variant={filteredKpiMetrics.avgCompletionTime <= 3 ? "success" : filteredKpiMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
                 description="Average time to complete"
               />
               <EnhancedEssentialMetricsCard
                 title="Closure Rate" 
-                value={`${kpiMetrics.closureRate}%`}
+                value={`${filteredKpiMetrics.closureRate}%`}
                 icon={CheckCircle}
-                variant={kpiMetrics.closureRate >= 80 ? "success" : "warning"}
+                variant={filteredKpiMetrics.closureRate >= 80 ? "success" : "warning"}
                 description="Work orders completed"
               />
               <EnhancedEssentialMetricsCard

@@ -5,13 +5,18 @@ import { Eye, AlertTriangle } from "lucide-react";
 import { DonutChartWithCenter, VerticalBarChart } from "@/components/ui/enhanced-charts";
 import { mockWorkOrders, mockProperties } from "@/data/mockData";
 
-export function EnhancedWorkOrderPriorityWidget() {
+interface EnhancedWorkOrderPriorityWidgetProps {
+  selectedProperty?: string;
+  filteredWorkOrders?: typeof mockWorkOrders;
+}
+
+export function EnhancedWorkOrderPriorityWidget({ selectedProperty = "all", filteredWorkOrders = mockWorkOrders }: EnhancedWorkOrderPriorityWidgetProps) {
   // Calculate priority distribution
   const priorityDistribution = {
-    Critical: mockWorkOrders.filter(wo => wo.priority === "Critical").length,
-    High: mockWorkOrders.filter(wo => wo.priority === "High").length,
-    Medium: mockWorkOrders.filter(wo => wo.priority === "Medium").length,
-    Low: mockWorkOrders.filter(wo => wo.priority === "Low").length
+    Critical: filteredWorkOrders.filter(wo => wo.priority === "Critical").length,
+    High: filteredWorkOrders.filter(wo => wo.priority === "High").length,
+    Medium: filteredWorkOrders.filter(wo => wo.priority === "Medium").length,
+    Low: filteredWorkOrders.filter(wo => wo.priority === "Low").length
   };
 
   const donutData = [
@@ -23,7 +28,7 @@ export function EnhancedWorkOrderPriorityWidget() {
 
   // Generate detailed breakdown by property and priority
   const detailedBreakdown = mockProperties.flatMap(property => {
-    const propertyOrders = mockWorkOrders.filter(wo => wo.propertyId === property.id);
+    const propertyOrders = filteredWorkOrders.filter(wo => wo.propertyId === property.id);
     
     return ["Critical", "High", "Medium", "Low"].map(priority => {
       const priorityOrders = propertyOrders.filter(wo => wo.priority === priority);
@@ -41,7 +46,7 @@ export function EnhancedWorkOrderPriorityWidget() {
 
   // Property-wise priority chart data
   const propertyPriorityData = mockProperties.map(property => {
-    const criticalCount = mockWorkOrders.filter(wo => wo.propertyId === property.id && wo.priority === "Critical").length;
+    const criticalCount = filteredWorkOrders.filter(wo => wo.propertyId === property.id && wo.priority === "Critical").length;
     return {
       name: property.name.substring(0, 12) + "...",
       value: criticalCount
@@ -77,7 +82,7 @@ export function EnhancedWorkOrderPriorityWidget() {
                     size={350}
                     centerContent={
                       <div className="text-center">
-                        <div className="text-2xl font-bold">{mockWorkOrders.length}</div>
+                        <div className="text-2xl font-bold">{filteredWorkOrders.length}</div>
                         <div className="text-sm text-muted-foreground">Total Orders</div>
                       </div>
                     }
@@ -113,7 +118,7 @@ export function EnhancedWorkOrderPriorityWidget() {
             size={280}
             centerContent={
               <div className="text-center">
-                <div className="text-2xl font-bold">{mockWorkOrders.length}</div>
+                <div className="text-2xl font-bold">{filteredWorkOrders.length}</div>
                 <div className="text-sm text-muted-foreground">Total</div>
               </div>
             }

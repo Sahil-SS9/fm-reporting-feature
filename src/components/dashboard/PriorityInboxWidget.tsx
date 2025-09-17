@@ -14,10 +14,15 @@ import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
 import { calculateUrgencyScore, getPriorityInboxItems } from "@/lib/kpi-calculations";
 
-export function PriorityInboxWidget() {
+interface PriorityInboxWidgetProps {
+  selectedProperty?: string;
+  filteredWorkOrders?: typeof mockWorkOrders;
+}
+
+export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrders = mockWorkOrders }: PriorityInboxWidgetProps) {
   const navigate = useNavigate();
   
-  const priorityItems = getPriorityInboxItems(mockWorkOrders);
+  const priorityItems = getPriorityInboxItems(filteredWorkOrders);
   const topCritical = priorityItems.slice(0, 5);
   
   const handleItemClick = (itemId: string) => {
