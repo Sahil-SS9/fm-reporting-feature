@@ -2,7 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useState } from "react";
-import { mockWorkOrders } from "@/data/mockData";
+
+interface CreatedVsCompletedTrendWidgetProps {
+  filteredWorkOrders?: any[];
+}
 
 const generateTrendData = (period: string) => {
   const now = new Date();
@@ -52,7 +55,7 @@ const generateTrendData = (period: string) => {
   return data;
 };
 
-export function CreatedVsCompletedTrendWidget() {
+export function CreatedVsCompletedTrendWidget({ filteredWorkOrders = [] }: CreatedVsCompletedTrendWidgetProps) {
   const [period, setPeriod] = useState("weekly");
   const trendData = generateTrendData(period);
   

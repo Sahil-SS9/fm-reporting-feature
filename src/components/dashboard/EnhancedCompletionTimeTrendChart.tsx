@@ -4,9 +4,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Clock, TrendingUp, TrendingDown } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { useState } from "react";
-import { mockWorkOrders } from "@/data/mockData";
 
-export function EnhancedCompletionTimeTrendChart() {
+interface EnhancedCompletionTimeTrendChartProps {
+  filteredWorkOrders?: any[];
+}
+
+export function EnhancedCompletionTimeTrendChart({ filteredWorkOrders = [] }: EnhancedCompletionTimeTrendChartProps) {
   const [timeRange, setTimeRange] = useState("30");
   const [priorityFilter, setPriorityFilter] = useState("all");
 
@@ -20,7 +23,7 @@ export function EnhancedCompletionTimeTrendChart() {
       date.setDate(date.getDate() - i);
       
       // Filter work orders by priority if specified
-      let filteredOrders = mockWorkOrders.filter(wo => wo.status === "Completed");
+      let filteredOrders = filteredWorkOrders.filter(wo => wo.status === "Completed");
       if (priority !== "all") {
         filteredOrders = filteredOrders.filter(wo => wo.priority === priority);
       }

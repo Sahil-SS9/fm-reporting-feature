@@ -10,20 +10,24 @@ import { mockInvoices, mockProperties } from "@/data/mockData";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
-export function OutstandingInvoicesWidget() {
+interface OutstandingInvoicesWidgetProps {
+  filteredInvoices?: any[];
+}
+
+export function OutstandingInvoicesWidget({ filteredInvoices = [] }: OutstandingInvoicesWidgetProps) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   
-  // Filter invoices by payment status
-  const outstandingInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Outstanding");
-  const overdueInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Overdue");
-  const paidInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Paid");
+  // Filter invoices from props instead of mock data
+  const outstandingInvoices = filteredInvoices.filter(inv => inv.paymentStatus === "Outstanding");
+  const overdueInvoices = filteredInvoices.filter(inv => inv.paymentStatus === "Overdue");
+  const paidInvoices = filteredInvoices.filter(inv => inv.paymentStatus === "Paid");
   
   // Combined outstanding and overdue for table display
   const allOutstandingInvoices = [...overdueInvoices, ...outstandingInvoices];
   
-  // Filter invoices based on search term
-  const filteredInvoices = allOutstandingInvoices.filter(invoice =>
+  // Filter invoices based on search term  
+  const searchFilteredInvoices = allOutstandingInvoices.filter(invoice =>
     invoice.contractorTenant.toLowerCase().includes(searchTerm.toLowerCase()) ||
     invoice.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
     mockProperties.find(p => p.id === invoice.propertyId)?.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -101,7 +105,7 @@ export function OutstandingInvoicesWidget() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filteredInvoices.map((invoice) => {
+                        {searchFilteredInvoices.map((invoice) => {
                           const property = mockProperties.find(p => p.id === invoice.propertyId);
                           return (
                             <TableRow key={invoice.id}>
@@ -118,7 +122,7 @@ export function OutstandingInvoicesWidget() {
                             </TableRow>
                           );
                         })}
-                        {filteredInvoices.length === 0 && (
+                        {searchFilteredInvoices.length === 0 && (
                           <TableRow>
                             <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                               No outstanding invoices found matching your search.

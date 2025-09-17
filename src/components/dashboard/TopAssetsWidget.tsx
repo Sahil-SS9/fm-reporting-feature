@@ -2,18 +2,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, ArrowRight, DollarSign, Wrench } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { mockAssets, mockWorkOrders } from "@/data/mockData";
 import { VerticalBarChart } from "@/components/ui/enhanced-charts";
 import { DetailedViewModal } from "@/components/ui/detailed-view-modal";
 import { useState } from "react";
 
-export function TopAssetsWidget() {
+interface TopAssetsWidgetProps {
+  filteredAssets?: any[];
+  filteredWorkOrders?: any[];
+}
+
+export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }: TopAssetsWidgetProps) {
   const navigate = useNavigate();
   
   // Calculate comprehensive asset metrics
-  const assetMetrics = mockAssets.map(asset => {
+  const assetMetrics = filteredAssets.map(asset => {
     // Better filtering logic - match by asset type and work order category/title
-    const workOrders = mockWorkOrders.filter(wo => {
+    const workOrders = filteredWorkOrders.filter(wo => {
       const titleLower = wo.title.toLowerCase();
       const assetNameLower = asset.name.toLowerCase();
       const assetTypeLower = (asset.type || '').toLowerCase();

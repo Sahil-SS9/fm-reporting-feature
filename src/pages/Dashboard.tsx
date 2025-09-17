@@ -280,7 +280,7 @@ export default function Dashboard() {
               selectedProperty={selectedProperty}
               filteredWorkOrders={filteredWorkOrders}
             />
-            <OnTimeVsOverdueWidget />
+            <OnTimeVsOverdueWidget filteredWorkOrders={filteredWorkOrders} />
           </div>
 
           {/* Performance Insights */}
@@ -325,12 +325,12 @@ export default function Dashboard() {
           <div className="bg-card rounded-lg p-6 shadow-sm">
             <h3 className="text-xl font-semibold mb-6">Trend Analysis</h3>
             <div className="space-y-6">
-              <EnhancedCompletionTimeTrendChart />
-              <CreatedVsCompletedTrendWidget />
+              <EnhancedCompletionTimeTrendChart filteredWorkOrders={filteredWorkOrders} />
+              <CreatedVsCompletedTrendWidget filteredWorkOrders={filteredWorkOrders} />
             </div>
           </div>
 
-          <SchedulingWidget />
+          <SchedulingWidget filteredWorkOrders={filteredWorkOrders} />
         </TabsContent>
 
         {/* Assets Tab */}
@@ -338,10 +338,10 @@ export default function Dashboard() {
           {/* Core Asset Widgets - Asset Status and Asset Maintenance take majority width, Warranty Expiry compact */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             <div className="lg:col-span-2">
-              <AssetStatusWidget />
+              <AssetStatusWidget filteredAssets={filteredAssets} />
             </div>
             <div className="lg:col-span-2">
-              <AssetMaintenanceWidget />
+              <AssetMaintenanceWidget filteredAssets={filteredAssets} />
             </div>
             <div className="lg:col-span-1">
               <WarrantyExpiryWidget />
@@ -349,7 +349,7 @@ export default function Dashboard() {
           </div>
           
           {/* High Maintenance Assets */}
-          <TopAssetsWidget />
+          <TopAssetsWidget filteredAssets={filteredAssets} filteredWorkOrders={filteredWorkOrders} />
           
           {/* Preventive Maintenance - Full Width Bottom Section */}
           <div className="w-full">
@@ -361,8 +361,8 @@ export default function Dashboard() {
         {/* Financial Performance Tab */}
         <TabsContent value="financial" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <OutstandingInvoicesWidget />
-            <IssuedInvoicesWidget />
+            <OutstandingInvoicesWidget filteredInvoices={filteredInvoices} />
+            <IssuedInvoicesWidget filteredInvoices={filteredInvoices} />
           </div>
           <ContractorInvoicingWidget />
         </TabsContent>

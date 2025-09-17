@@ -7,11 +7,15 @@ import { OverdueVsUpcomingRing } from "./maintenance-rings/OverdueVsUpcomingRing
 import { PriorityLevelRing } from "./maintenance-rings/PriorityLevelRing";
 import { MaintenanceTypeRing } from "./maintenance-rings/MaintenanceTypeRing";
 
-export function AssetMaintenanceWidget() {
+interface AssetMaintenanceWidgetProps {
+  filteredAssets?: any[];
+}
+
+export function AssetMaintenanceWidget({ filteredAssets = [] }: AssetMaintenanceWidgetProps) {
   const navigate = useNavigate();
   
-  // Calculate total maintenance items for badge
-  const assetsWithMaintenance = mockAssets.filter(asset => asset.nextInspection);
+  // Calculate total maintenance items for badge from filtered assets
+  const assetsWithMaintenance = filteredAssets.filter(asset => asset.nextInspection);
   const totalMaintenance = assetsWithMaintenance.length;
   
   const handleClick = () => {

@@ -2,10 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SemiCircularGauge } from "@/components/ui/enhanced-charts";
 import { Clock, CheckCircle, AlertCircle } from "lucide-react";
-import { mockWorkOrders } from "@/data/mockData";
 
-export function OnTimeVsOverdueWidget() {
-  const completedOrders = mockWorkOrders.filter(wo => wo.status === "Completed" && wo.completedDate);
+interface OnTimeVsOverdueWidgetProps {
+  filteredWorkOrders?: any[];
+}
+
+export function OnTimeVsOverdueWidget({ filteredWorkOrders = [] }: OnTimeVsOverdueWidgetProps) {
+  const completedOrders = filteredWorkOrders.filter(wo => wo.status === "Completed" && wo.completedDate);
   
   // Mock calculation for on-time vs overdue
   const onTimeCount = Math.floor(completedOrders.length * 0.742); // Based on reference showing 74.2%

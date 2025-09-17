@@ -5,15 +5,19 @@ import { useNavigate } from "react-router-dom";
 import { mockAssets } from "@/data/mockData";
 import { DonutChartWithCenter } from "@/components/ui/enhanced-charts";
 
-export function AssetStatusWidget() {
+interface AssetStatusWidgetProps {
+  filteredAssets?: any[];
+}
+
+export function AssetStatusWidget({ filteredAssets = [] }: AssetStatusWidgetProps) {
   const navigate = useNavigate();
   
-  // Enhanced asset status breakdown
+  // Enhanced asset status breakdown from filtered assets
   const assetStatusBreakdown = {
-    operational: mockAssets.filter(asset => asset.status === "Operational").length,
-    pendingRepair: mockAssets.filter(asset => asset.status === "Pending Repair").length,
-    outOfService: mockAssets.filter(asset => asset.status === "Out of Service").length,
-    missing: mockAssets.filter(asset => asset.status === "Missing").length
+    operational: filteredAssets.filter(asset => asset.status === "Operational").length,
+    pendingRepair: filteredAssets.filter(asset => asset.status === "Pending Repair").length,
+    outOfService: filteredAssets.filter(asset => asset.status === "Out of Service").length,
+    missing: filteredAssets.filter(asset => asset.status === "Missing").length
   };
   
   const statusData = [
@@ -23,7 +27,7 @@ export function AssetStatusWidget() {
     { name: "Missing", value: assetStatusBreakdown.missing, color: "hsl(var(--muted-foreground))" }
   ].filter(status => status.value > 0);
   
-  const totalAssets = mockAssets.length;
+  const totalAssets = filteredAssets.length;
   const healthScore = Math.round((assetStatusBreakdown.operational / totalAssets) * 100);
   
   const handleClick = () => {

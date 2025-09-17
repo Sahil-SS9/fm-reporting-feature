@@ -9,18 +9,22 @@ import { useNavigate } from "react-router-dom";
 import { mockInvoices, mockProperties } from "@/data/mockData";
 import { useState } from "react";
 
-export function IssuedInvoicesWidget() {
+interface IssuedInvoicesWidgetProps {
+  filteredInvoices?: any[];
+}
+
+export function IssuedInvoicesWidget({ filteredInvoices = [] }: IssuedInvoicesWidgetProps) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   
-  // Filter invoices by payment status
-  const paidInvoices = mockInvoices.filter(inv => inv.paymentStatus === "Paid");
-  const issuedInvoices = mockInvoices.filter(inv => 
+  // Filter invoices from props instead of mock data  
+  const paidInvoices = filteredInvoices.filter(inv => inv.paymentStatus === "Paid");
+  const issuedInvoices = filteredInvoices.filter(inv => 
     inv.paymentStatus === "Paid" || inv.paymentStatus === "Outstanding" || inv.paymentStatus === "Overdue"
   );
   
   // Filter invoices based on search term
-  const filteredInvoices = issuedInvoices.filter(invoice =>
+  const searchFilteredInvoices = issuedInvoices.filter(invoice =>
     invoice.contractorTenant.toLowerCase().includes(searchTerm.toLowerCase()) ||
     invoice.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
     mockProperties.find(p => p.id === invoice.propertyId)?.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -97,7 +101,7 @@ export function IssuedInvoicesWidget() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filteredInvoices.map((invoice) => {
+                        {searchFilteredInvoices.map((invoice) => {
                           const property = mockProperties.find(p => p.id === invoice.propertyId);
                           return (
                             <TableRow key={invoice.id}>
@@ -114,7 +118,7 @@ export function IssuedInvoicesWidget() {
                             </TableRow>
                           );
                         })}
-                        {filteredInvoices.length === 0 && (
+                        {searchFilteredInvoices.length === 0 && (
                           <TableRow>
                             <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                               No issued invoices found matching your search.

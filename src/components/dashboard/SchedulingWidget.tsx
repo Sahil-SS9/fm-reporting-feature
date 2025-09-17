@@ -3,11 +3,44 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Calendar, AlertCircle, CheckCircle, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export function SchedulingWidget() {
+interface SchedulingWidgetProps {
+  filteredWorkOrders?: any[];
+}
+
+export function SchedulingWidget({ filteredWorkOrders = [] }: SchedulingWidgetProps) {
   const navigate = useNavigate();
   
-  // Mock scheduled tasks data
-  const scheduledTasks = [
+  // Generate scheduled tasks from filtered work orders
+  const today = new Date();
+  const upcomingWorkOrders = filteredWorkOrders
+    .filter(wo => wo.status === "In Progress" || wo.status === "Open")
+    .map(wo => {
+      const dueDate = new Date(wo.dueDate);
+      const diffTime = dueDate.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      let due = "";
+      if (diffDays === 0) due = "Today";
+      else if (diffDays === 1) due = "Tomorrow";
+      else if (diffDays > 1) due = `${diffDays} days`;
+      else due = "Overdue";
+      
+      return {
+        id: wo.id,
+        type: wo.category || "Work Order",
+        title: wo.title,
+        due,
+        priority: wo.priority,
+        status: diffDays < 0 ? "Overdue" : diffDays === 0 ? "Due" : "Scheduled"
+      };
+    })
+    .sort((a, b) => {
+      const priorityOrder = { "Critical": 0, "High": 1, "Medium": 2, "Low": 3 };
+      return (priorityOrder[a.priority as keyof typeof priorityOrder] || 3) - (priorityOrder[b.priority as keyof typeof priorityOrder] || 3);
+    })
+    .slice(0, 4);
+  
+  const scheduledTasks = upcomingWorkOrders.length > 0 ? upcomingWorkOrders : [
     { id: 1, type: "Preventative Maintenance", title: "HVAC Quarterly Service", due: "Today", priority: "High", status: "Due" },
     { id: 2, type: "Compliance Audit", title: "Fire Safety Inspection", due: "Tomorrow", priority: "Critical", status: "Scheduled" },
     { id: 3, type: "Inspection", title: "Elevator Annual Check", due: "2 days", priority: "Medium", status: "Scheduled" },
