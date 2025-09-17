@@ -34,19 +34,31 @@ import {
   Clock,
   CheckCircle,
   TrendingUp,
-  Target
+  Target,
+  Filter
 } from "lucide-react";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { calculateKPIMetrics } from "@/lib/kpi-calculations";
 import { mockWorkOrders, mockProperties } from "@/data/mockData";
 import { useState, createContext, useContext } from "react";
 
-// Create context for current tab
+// Create context for current tab and selected property
 const DashboardContext = createContext<{
   currentTab: string;
   setCurrentTab: (tab: string) => void;
+  selectedProperty: string;
+  setSelectedProperty: (property: string) => void;
 }>({
   currentTab: "overview",
   setCurrentTab: () => {},
+  selectedProperty: "all",
+  setSelectedProperty: () => {},
 });
 
 export const useDashboardContext = () => useContext(DashboardContext);
@@ -70,11 +82,12 @@ export default function Dashboard() {
   const kpiMetrics = calculateKPIMetrics(mockWorkOrders);
   const performanceMetrics = getPerformanceMetrics();
   
-  // Pass current tab to layout
+  // Pass current tab and property filter to layout
   const [currentTab, setCurrentTab] = useState("overview");
+  const [selectedProperty, setSelectedProperty] = useState("all");
   
   return (
-    <DashboardContext.Provider value={{ currentTab, setCurrentTab }}>
+    <DashboardContext.Provider value={{ currentTab, setCurrentTab, selectedProperty, setSelectedProperty }}>
     <div className="p-6 space-y-6">
       {/* Page Header */}
       <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-6">
@@ -86,14 +99,38 @@ export default function Dashboard() {
 
       {/* Dashboard Tabs */}
       <Tabs defaultValue="overview" className="space-y-6" onValueChange={setCurrentTab}>
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6 h-auto">
-          <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
-          <TabsTrigger value="property" className="text-xs">Property</TabsTrigger>
-          <TabsTrigger value="operations" className="text-xs">Operations</TabsTrigger>
-          <TabsTrigger value="assets" className="text-xs">Assets</TabsTrigger>
-          <TabsTrigger value="financial" className="text-xs">Financial</TabsTrigger>
-          <TabsTrigger value="documents" className="text-xs">Documents</TabsTrigger>
-        </TabsList>
+        <div className="flex items-center justify-between">
+          <TabsList className="grid grid-cols-4 lg:grid-cols-6 h-auto">
+            <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
+            <TabsTrigger value="property" className="text-xs">Property</TabsTrigger>
+            <TabsTrigger value="operations" className="text-xs">Operations</TabsTrigger>
+            <TabsTrigger value="assets" className="text-xs">Assets</TabsTrigger>
+            <TabsTrigger value="financial" className="text-xs">Financial</TabsTrigger>
+            <TabsTrigger value="documents" className="text-xs">Documents</TabsTrigger>
+          </TabsList>
+          
+          {/* Property Filter Dropdown */}
+          <div className="relative">
+            <Select 
+              value={selectedProperty} 
+              onValueChange={setSelectedProperty}
+              disabled={currentTab === "property"}
+            >
+              <SelectTrigger className={`w-48 ${currentTab === "property" ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="All Properties" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border shadow-lg z-50">
+                <SelectItem value="all">All Properties</SelectItem>
+                {mockProperties.map((property) => (
+                  <SelectItem key={property.id} value={property.id}>
+                    {property.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
 
         {/* Overview Tab - Priority Inbox */}
         <TabsContent value="overview" className="space-y-6">

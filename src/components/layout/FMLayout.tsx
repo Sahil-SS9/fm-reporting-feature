@@ -1,6 +1,6 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { FMSidebar } from "./FMSidebar";
-import { Bell, Settings, User, Search, Filter } from "lucide-react";
+import { Bell, Settings, User, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,33 +10,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { mockProperties } from "@/data/mockData";
 import { useDashboardContext } from "@/pages/Dashboard";
-import { useState } from "react";
 
 interface FMLayoutProps {
   children: React.ReactNode;
 }
 
 export function FMLayout({ children }: FMLayoutProps) {
-  const [selectedProperty, setSelectedProperty] = useState("all");
-  
   // Try to get dashboard context, but don't break if not available
   let currentTab = "overview";
-  let isPropertyTab = false;
   
   try {
     const dashboardContext = useDashboardContext();
     currentTab = dashboardContext.currentTab;
-    isPropertyTab = currentTab === "property";
   } catch {
     // Context not available, use defaults
   }
@@ -61,28 +48,6 @@ export function FMLayout({ children }: FMLayoutProps) {
             </div>
 
             <div className="flex items-center space-x-3">
-              {/* Property Filter Dropdown */}
-              <div className="relative">
-                <Select 
-                  value={selectedProperty} 
-                  onValueChange={setSelectedProperty}
-                  disabled={isPropertyTab}
-                >
-                  <SelectTrigger className={`w-48 ${isPropertyTab ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                    <Filter className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="All Properties" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background border shadow-lg">
-                    <SelectItem value="all">All Properties</SelectItem>
-                    {mockProperties.map((property) => (
-                      <SelectItem key={property.id} value={property.id}>
-                        {property.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-4 w-4" />
                 <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">

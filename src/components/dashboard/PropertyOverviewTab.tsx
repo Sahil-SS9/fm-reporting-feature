@@ -42,6 +42,7 @@ import {
   ArrowDown
 } from "lucide-react";
 import { mockProperties, mockWorkOrders, mockAssets, mockInvoices } from "@/data/mockData";
+import { useDashboardContext } from "@/pages/Dashboard";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface PropertyMetrics {
@@ -100,6 +101,15 @@ export function PropertyOverviewTab() {
   const [searchTerm, setSearchTerm] = useState("");
   const [propertyTypeFilter, setPropertyTypeFilter] = useState("all");
   const [showAll, setShowAll] = useState(false);
+  
+  // Get selected property from context
+  let selectedProperty = "all";
+  try {
+    const { selectedProperty: contextSelectedProperty } = useDashboardContext();
+    selectedProperty = contextSelectedProperty;
+  } catch {
+    // Context not available, use default
+  }
   const [sortField, setSortField] = useState<SortField | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [detailsModal, setDetailsModal] = useState<{
@@ -115,7 +125,7 @@ export function PropertyOverviewTab() {
   });
 
   // Calculate comprehensive metrics for each property
-  const propertyMetrics: PropertyMetrics[] = mockProperties.map(property => {
+  const allPropertyMetrics: PropertyMetrics[] = mockProperties.map(property => {
     const propertyWorkOrders = mockWorkOrders.filter(wo => wo.propertyId === property.id);
     const propertyAssets = mockAssets.filter(asset => asset.propertyId === property.id);
     const propertyInvoices = mockInvoices.filter(invoice => invoice.propertyId === property.id);
@@ -190,8 +200,13 @@ export function PropertyOverviewTab() {
     };
   });
 
+  // Apply property filter from context first
+  const propertyFilteredMetrics = selectedProperty === "all" 
+    ? allPropertyMetrics 
+    : allPropertyMetrics.filter(metric => metric.property.id === selectedProperty);
+
   // Filter properties based on search and type
-  const filteredProperties = propertyMetrics.filter(({ property }) => {
+  const filteredProperties = propertyFilteredMetrics.filter(({ property }) => {
     const matchesSearch = property.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          property.location.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = propertyTypeFilter === "all" || property.type === propertyTypeFilter;
