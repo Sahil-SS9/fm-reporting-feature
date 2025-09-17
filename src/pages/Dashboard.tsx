@@ -10,7 +10,6 @@ import { IssuedInvoicesWidget } from "@/components/dashboard/IssuedInvoicesWidge
 import { PropertyPerformanceWidget } from "@/components/dashboard/PropertyPerformanceWidget";
 import { PropertyComparisonChart } from "@/components/dashboard/PropertyComparisonChart";
 import { PropertyOverviewTab } from "@/components/dashboard/PropertyOverviewTab";
-import { PropertyOverviewWithRings } from "@/components/dashboard/PropertyOverviewWithRings";
 import { ContractorInvoicingWidget } from "@/components/dashboard/ContractorInvoicingWidget";
 import { DocumentExpiryWidget } from "@/components/dashboard/DocumentExpiryWidget";
 import { CasesCreatedClosedWidget } from "@/components/dashboard/CasesCreatedClosedWidget";
@@ -93,9 +92,6 @@ export default function Dashboard() {
         <TabsContent value="property" className="space-y-8">
           {/* Property Overview */}
           <PropertyOverviewTab />
-          
-          {/* Property Overview with Rings */}
-          <PropertyOverviewWithRings />
           
           {/* Property Comparison Chart */}
           <PropertyComparisonChart />
