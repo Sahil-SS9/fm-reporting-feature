@@ -7,7 +7,7 @@ export interface PriorityItem {
   dueDate: string;
   priority: string;
   status: string;
-  urgencyScore: number;
+  category: "CRITICAL" | "URGENT" | "DUE_SOON";
   isPropertyImpacting: boolean;
   type: "work_order" | "asset" | "inspection";
 }
@@ -22,32 +22,28 @@ export interface KPIMetrics {
   closureRate: number;
 }
 
-// Urgency scoring algorithm
-export function calculateUrgencyScore(item: any): number {
-  let score = 0;
+// Simple priority categorization
+export function categorizePriorityItem(item: any): "CRITICAL" | "URGENT" | "DUE_SOON" {
   const today = new Date();
   const dueDate = new Date(item.dueDate);
   const daysDiff = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-
-  // Priority scoring
-  if (item.priority === "Critical") score += 4;
-  else if (item.priority === "High") score += 3;
-  else if (item.priority === "Medium") score += 2;
-  else score += 1;
-
-  // Due date urgency
-  if (daysDiff < 0) score += 6; // Overdue
-  else if (daysDiff === 0) score += 5; // Due today
-  else if (daysDiff === 1) score += 3; // Due tomorrow
-  else if (daysDiff <= 3) score += 2; // Due within 3 days
-
-  // Property impact multiplier
-  if (item.isPropertyImpacting) score += 2;
-
-  // Status penalty for stalled items
-  if (item.status === "On Hold") score += 1;
-
-  return Math.min(score, 10);
+  
+  // CRITICAL: Critical priority items, overdue items, or property-impacting emergencies
+  if (item.priority === "Critical" || 
+      daysDiff < 0 || 
+      (item.category === "Emergency" && item.isPropertyImpacting)) {
+    return "CRITICAL";
+  }
+  
+  // URGENT: High priority items, due today/tomorrow, or on hold items
+  if (item.priority === "High" || 
+      daysDiff <= 1 || 
+      item.status === "On Hold") {
+    return "URGENT";
+  }
+  
+  // DUE_SOON: Everything else that's due within a week
+  return "DUE_SOON";
 }
 
 export function getPriorityInboxItems(workOrders: any[]): PriorityItem[] {
@@ -60,13 +56,20 @@ export function getPriorityInboxItems(workOrders: any[]): PriorityItem[] {
     dueDate: formatDueDate(wo.dueDate),
     priority: wo.priority,
     status: wo.status,
-    urgencyScore: calculateUrgencyScore(wo),
+    category: categorizePriorityItem(wo),
     isPropertyImpacting: wo.category === "Emergency" || wo.priority === "Critical",
     type: "work_order"
   }));
 
-  // Sort by urgency score (highest first)
-  return priorityItems.sort((a, b) => b.urgencyScore - a.urgencyScore);
+  // Sort by category priority, then by due date
+  const categoryOrder = { "CRITICAL": 0, "URGENT": 1, "DUE_SOON": 2 };
+  return priorityItems.sort((a, b) => {
+    if (categoryOrder[a.category] !== categoryOrder[b.category]) {
+      return categoryOrder[a.category] - categoryOrder[b.category];
+    }
+    // Within same category, sort by due date (overdue/today first)
+    return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+  });
 }
 
 export function calculateKPIMetrics(workOrders: any[]): KPIMetrics {

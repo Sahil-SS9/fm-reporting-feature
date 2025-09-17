@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
-import { calculateUrgencyScore, getPriorityInboxItems } from "@/lib/kpi-calculations";
+import { getPriorityInboxItems } from "@/lib/kpi-calculations";
 
 interface PriorityInboxWidgetProps {
   selectedProperty?: string;
@@ -44,10 +44,10 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
     });
   };
 
-  const getUrgencyBadge = (score: number) => {
-    if (score >= 9) return { variant: "destructive" as const, label: "CRITICAL", icon: AlertTriangle };
-    if (score >= 7) return { variant: "secondary" as const, label: "HIGH", icon: Clock };
-    return { variant: "outline" as const, label: "MEDIUM", icon: CheckCircle2 };
+  const getCategoryBadge = (category: "CRITICAL" | "URGENT" | "DUE_SOON") => {
+    if (category === "CRITICAL") return { variant: "destructive" as const, label: "CRITICAL", icon: AlertTriangle };
+    if (category === "URGENT") return { variant: "secondary" as const, label: "URGENT", icon: Clock };
+    return { variant: "outline" as const, label: "DUE SOON", icon: CheckCircle2 };
   };
 
   return (
@@ -72,7 +72,7 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
             <span className="text-xs text-muted-foreground">Today</span>
           </div>
           <p className="text-sm text-foreground">
-            {topCritical.filter(item => item.urgencyScore >= 9).length} critical items need immediate attention.
+            {topCritical.filter(item => item.category === "CRITICAL").length} critical items need immediate attention.
             {topCritical.filter(item => item.isPropertyImpacting).length > 0 && 
               ` ${topCritical.filter(item => item.isPropertyImpacting).length} items affecting tenant operations.`
             }
@@ -82,8 +82,8 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
         {/* Priority Items List */}
         <div className="space-y-3">
           {topCritical.map((item) => {
-            const urgencyBadge = getUrgencyBadge(item.urgencyScore);
-            const UrgencyIcon = urgencyBadge.icon;
+            const categoryBadge = getCategoryBadge(item.category);
+            const CategoryIcon = categoryBadge.icon;
             
             return (
               <div 
@@ -94,7 +94,7 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
                 <div className="flex items-start justify-between space-x-3">
                   <div className="flex-1 min-w-0 space-y-1">
                     <div className="flex items-center space-x-2">
-                      <UrgencyIcon className="h-4 w-4 text-dashboard-critical flex-shrink-0" />
+                      <CategoryIcon className="h-4 w-4 text-dashboard-critical flex-shrink-0" />
                       <span className="text-sm font-medium truncate">{item.title}</span>
                       <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
@@ -117,13 +117,10 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
                     </div>
                   </div>
                   
-                  <div className="flex flex-col items-end space-y-1">
-                    <Badge variant={urgencyBadge.variant} className="text-xs">
-                      {urgencyBadge.label}
+                  <div className="flex items-center">
+                    <Badge variant={categoryBadge.variant} className="text-xs">
+                      {categoryBadge.label}
                     </Badge>
-                    <div className="text-xs text-muted-foreground">
-                      Score: {item.urgencyScore}
-                    </div>
                   </div>
                 </div>
 
