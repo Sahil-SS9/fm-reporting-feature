@@ -36,7 +36,10 @@ import {
   ChevronUp,
   MoreVertical,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from "lucide-react";
 import { mockProperties, mockWorkOrders, mockAssets, mockInvoices } from "@/data/mockData";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -90,10 +93,15 @@ function getHealthScoreColor(score: number) {
   return "text-destructive";
 }
 
+type SortField = 'property' | 'healthScore' | 'compliance' | 'operational';
+type SortDirection = 'asc' | 'desc' | null;
+
 export function PropertyOverviewTab() {
   const [searchTerm, setSearchTerm] = useState("");
   const [propertyTypeFilter, setPropertyTypeFilter] = useState("all");
   const [showAll, setShowAll] = useState(false);
+  const [sortField, setSortField] = useState<SortField | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [detailsModal, setDetailsModal] = useState<{
     isOpen: boolean;
     type: string;
@@ -190,8 +198,69 @@ export function PropertyOverviewTab() {
     return matchesSearch && matchesType;
   });
 
-  // Sort by health score and limit to top 10 unless showing all
-  const sortedProperties = filteredProperties.sort((a, b) => b.healthScore - a.healthScore);
+  // Handle sorting
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortField(null);
+        setSortDirection(null);
+      } else {
+        setSortDirection('asc');
+      }
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) return <ArrowUpDown className="h-4 w-4" />;
+    if (sortDirection === 'asc') return <ArrowUp className="h-4 w-4" />;
+    if (sortDirection === 'desc') return <ArrowDown className="h-4 w-4" />;
+    return <ArrowUpDown className="h-4 w-4" />;
+  };
+
+  // Sort properties based on selected field and direction
+  let sortedProperties = [...filteredProperties];
+  if (sortField && sortDirection) {
+    sortedProperties.sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+      
+      switch (sortField) {
+        case 'property':
+          aValue = a.property.name.toLowerCase();
+          bValue = b.property.name.toLowerCase();
+          break;
+        case 'healthScore':
+          aValue = a.healthScore;
+          bValue = b.healthScore;
+          break;
+        case 'compliance':
+          aValue = a.complianceScore;
+          bValue = b.complianceScore;
+          break;
+        case 'operational':
+          aValue = a.operationalScore;
+          bValue = b.operationalScore;
+          break;
+        default:
+          return 0;
+      }
+      
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      } else {
+        return sortDirection === 'asc' ? (aValue as number) - (bValue as number) : (bValue as number) - (aValue as number);
+      }
+    });
+  } else {
+    // Default sort by health score descending
+    sortedProperties.sort((a, b) => b.healthScore - a.healthScore);
+  }
+  
   const displayedProperties = showAll ? sortedProperties : sortedProperties.slice(0, 10);
 
   const getChartData = (type: string, propertyId: string, filter: string) => {
@@ -398,14 +467,58 @@ export function PropertyOverviewTab() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-64">Property</TableHead>
-              <TableHead className="text-center w-32">Health Score</TableHead>
+              <TableHead className="w-64">
+                <Button
+                  variant="ghost"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort('property')}
+                >
+                  <span className="flex items-center gap-2">
+                    Property
+                    {getSortIcon('property')}
+                  </span>
+                </Button>
+              </TableHead>
+              <TableHead className="text-center w-32">
+                <Button
+                  variant="ghost"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort('healthScore')}
+                >
+                  <span className="flex items-center gap-2">
+                    Health Score
+                    {getSortIcon('healthScore')}
+                  </span>
+                </Button>
+              </TableHead>
               <TableHead className="text-center w-40">Work Orders</TableHead>
               <TableHead className="text-center w-44">Preventative Maintenance</TableHead>
               <TableHead className="text-center w-40">Asset Status</TableHead>
               <TableHead className="text-center w-36">Invoicing</TableHead>
-              <TableHead className="text-center w-32">Compliance</TableHead>
-              <TableHead className="text-center w-32">Operational</TableHead>
+              <TableHead className="text-center w-32">
+                <Button
+                  variant="ghost"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort('compliance')}
+                >
+                  <span className="flex items-center gap-2">
+                    Compliance
+                    {getSortIcon('compliance')}
+                  </span>
+                </Button>
+              </TableHead>
+              <TableHead className="text-center w-32">
+                <Button
+                  variant="ghost"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort('operational')}
+                >
+                  <span className="flex items-center gap-2">
+                    Operational
+                    {getSortIcon('operational')}
+                  </span>
+                </Button>
+              </TableHead>
               <TableHead className="text-center w-24">Actions</TableHead>
             </TableRow>
           </TableHeader>

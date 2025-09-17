@@ -38,6 +38,18 @@ import {
 } from "lucide-react";
 import { calculateKPIMetrics } from "@/lib/kpi-calculations";
 import { mockWorkOrders, mockProperties } from "@/data/mockData";
+import { useState, createContext, useContext } from "react";
+
+// Create context for current tab
+const DashboardContext = createContext<{
+  currentTab: string;
+  setCurrentTab: (tab: string) => void;
+}>({
+  currentTab: "overview",
+  setCurrentTab: () => {},
+});
+
+export const useDashboardContext = () => useContext(DashboardContext);
 
 const statusData = [
   { name: "Open", value: 45, color: "hsl(var(--primary))" },
@@ -58,7 +70,11 @@ export default function Dashboard() {
   const kpiMetrics = calculateKPIMetrics(mockWorkOrders);
   const performanceMetrics = getPerformanceMetrics();
   
+  // Pass current tab to layout
+  const [currentTab, setCurrentTab] = useState("overview");
+  
   return (
+    <DashboardContext.Provider value={{ currentTab, setCurrentTab }}>
     <div className="p-6 space-y-6">
       {/* Page Header */}
       <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-6">
@@ -69,7 +85,7 @@ export default function Dashboard() {
       </div>
 
       {/* Dashboard Tabs */}
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs defaultValue="overview" className="space-y-6" onValueChange={setCurrentTab}>
         <TabsList className="grid w-full grid-cols-4 lg:grid-cols-6 h-auto">
           <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
           <TabsTrigger value="property" className="text-xs">Property</TabsTrigger>
@@ -236,5 +252,6 @@ export default function Dashboard() {
 
       </Tabs>
     </div>
+    </DashboardContext.Provider>
   );
 }
