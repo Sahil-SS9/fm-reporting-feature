@@ -5,14 +5,20 @@ import {
   AlertTriangle, 
   Clock, 
   MapPin, 
-  ArrowRight, 
-  CheckCircle2,
-  Users,
-  Wrench
+  Eye,
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  Wrench,
+  DollarSign,
+  Building,
+  CheckCircle2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
 import { getPriorityInboxItems } from "@/lib/kpi-calculations";
+import { useState } from "react";
 
 interface PriorityInboxWidgetProps {
   selectedProperty?: string;
@@ -21,33 +27,34 @@ interface PriorityInboxWidgetProps {
 
 export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrders = mockWorkOrders }: PriorityInboxWidgetProps) {
   const navigate = useNavigate();
+  const [showAll, setShowAll] = useState(false);
   
   const priorityItems = getPriorityInboxItems(filteredWorkOrders);
-  const topCritical = priorityItems.slice(0, 5);
+  const displayItems = showAll ? priorityItems : priorityItems.slice(0, 5);
   
-  const handleItemClick = (itemId: string) => {
-    navigate('/cases', { 
-      state: { 
-        filter: { workOrderId: itemId }
-      }
-    });
+  const handleViewItem = (item: any) => {
+    navigate(item.routePath);
   };
 
-  const handleViewAll = () => {
-    navigate('/cases', { 
-      state: { 
-        filter: { 
-          priority: ['Critical', 'High'],
-          status: ['Open', 'In Progress', 'On Hold']
-        }
-      }
-    });
+  const toggleShowAll = () => {
+    setShowAll(!showAll);
   };
 
   const getCategoryBadge = (category: "CRITICAL" | "URGENT" | "DUE_SOON") => {
     if (category === "CRITICAL") return { variant: "destructive" as const, label: "CRITICAL", icon: AlertTriangle };
     if (category === "URGENT") return { variant: "secondary" as const, label: "URGENT", icon: Clock };
-    return { variant: "outline" as const, label: "DUE SOON", icon: CheckCircle2 };
+    return { variant: "outline" as const, label: "DUE SOON", icon: Calendar };
+  };
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case "work_order": return Wrench;
+      case "asset": return Building;
+      case "invoice": return DollarSign;
+      case "document": return FileText;
+      case "inspection": return CheckCircle2;
+      default: return FileText;
+    }
   };
 
   return (
@@ -72,82 +79,99 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
             <span className="text-xs text-muted-foreground">Today</span>
           </div>
           <p className="text-sm text-foreground">
-            {topCritical.filter(item => item.category === "CRITICAL").length} critical items need immediate attention.
-            {topCritical.filter(item => item.isPropertyImpacting).length > 0 && 
-              ` ${topCritical.filter(item => item.isPropertyImpacting).length} items affecting tenant operations.`
+            {priorityItems.filter(item => item.category === "CRITICAL").length} critical items need immediate attention.
+            {priorityItems.filter(item => item.isPropertyImpacting).length > 0 && 
+              ` ${priorityItems.filter(item => item.isPropertyImpacting).length} items affecting tenant operations.`
             }
           </p>
         </div>
 
         {/* Priority Items List */}
         <div className="space-y-3">
-          {topCritical.map((item) => {
+          {displayItems.map((item) => {
             const categoryBadge = getCategoryBadge(item.category);
-            const CategoryIcon = categoryBadge.icon;
+            const TypeIcon = getTypeIcon(item.type);
             
             return (
               <div 
                 key={item.id}
-                className="p-3 border rounded-lg hover:bg-accent/50 cursor-pointer transition-colors group"
-                onClick={() => handleItemClick(item.id)}
+                className="p-3 border rounded-lg hover:bg-accent/50 transition-colors group"
               >
                 <div className="flex items-start justify-between space-x-3">
-                  <div className="flex-1 min-w-0 space-y-1">
+                  <div className="flex-1 min-w-0 space-y-2">
+                    {/* Title with type icon */}
                     <div className="flex items-center space-x-2">
-                      <CategoryIcon className="h-4 w-4 text-dashboard-critical flex-shrink-0" />
+                      <TypeIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <span className="text-sm font-medium truncate">{item.title}</span>
-                      <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     
+                    {/* Subtext with property, module, and label */}
                     <div className="flex items-center space-x-4 text-xs text-muted-foreground">
                       <div className="flex items-center space-x-1">
                         <MapPin className="h-3 w-3" />
                         <span>{item.property}</span>
                       </div>
                       <div className="flex items-center space-x-1">
+                        <span>•</span>
+                        <span>{item.module}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <span>•</span>
+                        <span className="font-medium">{item.label}</span>
+                      </div>
+                    </div>
+
+                    {/* Due date and single View action */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                         <Clock className="h-3 w-3" />
                         <span>Due {item.dueDate}</span>
                       </div>
-                      {item.isPropertyImpacting && (
-                        <div className="flex items-center space-x-1">
-                          <Users className="h-3 w-3" />
-                          <span>Tenant Impact</span>
-                        </div>
-                      )}
+                      
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="h-7 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => handleViewItem(item)}
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        View
+                      </Button>
                     </div>
                   </div>
                   
-                  <div className="flex items-center">
+                  {/* Category badge */}
+                  <div className="flex items-start">
                     <Badge variant={categoryBadge.variant} className="text-xs">
                       {categoryBadge.label}
                     </Badge>
                   </div>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="flex items-center space-x-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button size="sm" variant="outline" className="h-6 text-xs">
-                    <Wrench className="h-3 w-3 mr-1" />
-                    Assign
-                  </Button>
-                  <Button size="sm" variant="outline" className="h-6 text-xs">
-                    <CheckCircle2 className="h-3 w-3 mr-1" />
-                    Update
-                  </Button>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* View All Button */}
-        <Button 
-          variant="outline" 
-          className="w-full"
-          onClick={handleViewAll}
-        >
-          View All Priority Items ({priorityItems.length})
-        </Button>
+        {/* Expand/Collapse Button */}
+        {priorityItems.length > 5 && (
+          <Button 
+            variant="outline" 
+            className="w-full"
+            onClick={toggleShowAll}
+          >
+            {showAll ? (
+              <>
+                <ChevronUp className="h-4 w-4 mr-2" />
+                Show Less
+              </>
+            ) : (
+              <>
+                <ChevronDown className="h-4 w-4 mr-2" />
+                View All Priority Items ({priorityItems.length - 5} more)
+              </>
+            )}
+          </Button>
+        )}
       </CardContent>
     </Card>
   );

@@ -9,7 +9,10 @@ export interface PriorityItem {
   status: string;
   category: "CRITICAL" | "URGENT" | "DUE_SOON";
   isPropertyImpacting: boolean;
-  type: "work_order" | "asset" | "inspection";
+  type: "work_order" | "asset" | "invoice" | "document" | "inspection";
+  module: string;
+  label: string;
+  routePath: string;
 }
 
 export interface KPIMetrics {
@@ -49,17 +52,83 @@ export function categorizePriorityItem(item: any): "CRITICAL" | "URGENT" | "DUE_
 export function getPriorityInboxItems(workOrders: any[]): PriorityItem[] {
   const activeWorkOrders = workOrders.filter(wo => wo.status !== "Completed");
   
-  const priorityItems: PriorityItem[] = activeWorkOrders.map(wo => ({
-    id: wo.id,
-    title: wo.title,
-    property: wo.property || "Unknown Property",
-    dueDate: formatDueDate(wo.dueDate),
-    priority: wo.priority,
-    status: wo.status,
-    category: categorizePriorityItem(wo),
-    isPropertyImpacting: wo.category === "Emergency" || wo.priority === "Critical",
-    type: "work_order"
-  }));
+  const priorityItems: PriorityItem[] = [];
+
+  // Add work orders
+  activeWorkOrders.forEach(wo => {
+    priorityItems.push({
+      id: wo.id,
+      title: wo.title,
+      property: wo.property || "Unknown Property",
+      dueDate: formatDueDate(wo.dueDate),
+      priority: wo.priority,
+      status: wo.status,
+      category: categorizePriorityItem(wo),
+      isPropertyImpacting: wo.category === "Emergency" || wo.priority === "Critical",
+      type: "work_order",
+      module: "Cases & Work Orders",
+      label: wo.priority,
+      routePath: `/cases/${wo.id}`
+    });
+  });
+
+  // Add some mock assets with maintenance due (simulate different item types)
+  const urgentAssets = [
+    {
+      id: "asset-1",
+      title: "HVAC System - Unit 12A",
+      property: "Sunset Tower",
+      dueDate: "2024-01-15",
+      priority: "Critical",
+      status: "Maintenance Due",
+      category: "Emergency",
+      type: "asset",
+      module: "Asset & Maintenance",
+      label: "Overdue",
+      routePath: "/assets/asset-1"
+    },
+    {
+      id: "invoice-1", 
+      title: "Contractor Invoice #INV-2024-001",
+      property: "Harbor View",
+      dueDate: "2024-01-18",
+      priority: "High",
+      status: "Outstanding",
+      type: "invoice",
+      module: "Invoices",
+      label: "Outstanding",
+      routePath: "/invoices/invoice-1"
+    },
+    {
+      id: "doc-1",
+      title: "Fire Safety Certificate",
+      property: "Metro Plaza",
+      dueDate: "2024-01-20",
+      priority: "Critical",
+      status: "Expired",
+      type: "document",
+      module: "Document Library",
+      label: "Expired",
+      routePath: "/documents/doc-1"
+    }
+  ];
+
+  urgentAssets.forEach(item => {
+    priorityItems.push({
+      id: item.id,
+      title: item.title,
+      property: item.property,
+      dueDate: formatDueDate(item.dueDate),
+      priority: item.priority,
+      status: item.status,
+      category: categorizePriorityItem(item),
+      isPropertyImpacting: item.priority === "Critical",
+      type: item.type as any,
+      module: item.module,
+      label: item.label,
+      routePath: item.routePath
+    });
+  });
 
   // Sort by category priority, then by due date
   const categoryOrder = { "CRITICAL": 0, "URGENT": 1, "DUE_SOON": 2 };
