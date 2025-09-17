@@ -98,7 +98,13 @@ export default function Dashboard() {
       </div>
 
       {/* Dashboard Tabs */}
-      <Tabs defaultValue="overview" className="space-y-6" onValueChange={setCurrentTab}>
+      <Tabs defaultValue="overview" className="space-y-6" onValueChange={(value) => {
+        setCurrentTab(value);
+        // Reset property filter to "all" when switching to property tab
+        if (value === "property") {
+          setSelectedProperty("all");
+        }
+      }}>
         <div className="flex items-center justify-between">
           <TabsList className="inline-flex h-12 items-center justify-start gap-2 bg-transparent p-0 border-b border-border rounded-none w-full">
             <TabsTrigger 
