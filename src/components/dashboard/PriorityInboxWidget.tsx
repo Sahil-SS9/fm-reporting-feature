@@ -78,12 +78,42 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
             </div>
             <span className="text-xs text-muted-foreground">Today</span>
           </div>
-          <p className="text-sm text-foreground">
-            {priorityItems.filter(item => item.category === "CRITICAL").length} critical items need immediate attention.
-            {priorityItems.filter(item => item.isPropertyImpacting).length > 0 && 
-              ` ${priorityItems.filter(item => item.isPropertyImpacting).length} items affecting tenant operations.`
-            }
-          </p>
+          <div className="text-sm text-foreground space-y-2">
+            <p>
+              You have {priorityItems.filter(item => item.category === "CRITICAL").length} critical items which needs immediate attention.
+            </p>
+            
+            {/* Bullet point summary by module */}
+            <div className="space-y-1 ml-2">
+              {(() => {
+                const criticalItems = priorityItems.filter(item => item.category === "CRITICAL");
+                const moduleGroups = criticalItems.reduce((acc, item) => {
+                  if (!acc[item.module]) {
+                    acc[item.module] = {};
+                  }
+                  if (!acc[item.module][item.label]) {
+                    acc[item.module][item.label] = 0;
+                  }
+                  acc[item.module][item.label]++;
+                  return acc;
+                }, {} as Record<string, Record<string, number>>);
+
+                return Object.entries(moduleGroups).map(([module, statuses]) => (
+                  <div key={module} className="flex items-center space-x-1 text-xs">
+                    <span>•</span>
+                    <span>
+                      {Object.entries(statuses).map(([status, count], index) => (
+                        <span key={status}>
+                          {index > 0 && ", "}
+                          {count} {status.toLowerCase()}
+                        </span>
+                      ))} for {module}
+                    </span>
+                  </div>
+                ));
+              })()}
+            </div>
+          </div>
         </div>
 
         {/* Priority Items List */}
