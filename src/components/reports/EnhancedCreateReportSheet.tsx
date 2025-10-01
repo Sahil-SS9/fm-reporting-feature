@@ -61,6 +61,26 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
   const availableColumns = getAvailableColumns();
   const selectedColumnsCount = selectedColumns.length;
 
+  // Validation logic for each step
+  const isStep1Valid = reportName.trim() !== "" && selectedProperties.length > 0;
+  const isStep2Valid = selectedDataSource !== "";
+  const isStep3Valid = selectedColumns.length > 0;
+  const isStep4Valid = true; // Filters are optional
+  const isAllStepsValid = isStep1Valid && isStep2Valid && isStep3Valid && isStep4Valid;
+
+  const handleNextStep = (currentStep: number) => {
+    if (currentStep === 1 && isStep1Valid) {
+      setStep1Open(false);
+      setStep2Open(true);
+    } else if (currentStep === 2 && isStep2Valid) {
+      setStep2Open(false);
+      setStep3Open(true);
+    } else if (currentStep === 3 && isStep3Valid) {
+      setStep3Open(false);
+      setStep4Open(true);
+    }
+  };
+
   const handlePropertyChange = (propertyId: string, checked: boolean) => {
     if (checked) {
       setSelectedProperties(prev => [...prev, propertyId]);
@@ -177,6 +197,15 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
                   </div>
                 )}
               </div>
+
+              <div className="flex justify-end pt-4 border-t">
+                <Button 
+                  onClick={() => handleNextStep(1)}
+                  disabled={!isStep1Valid}
+                >
+                  Next
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </CollapsibleContent>
@@ -277,6 +306,15 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
                   </div>
                 </>
               )}
+
+              <div className="flex justify-end pt-4 border-t">
+                <Button 
+                  onClick={() => handleNextStep(2)}
+                  disabled={!isStep2Valid}
+                >
+                  Next
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </CollapsibleContent>
@@ -323,6 +361,15 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
                       )}
                     </div>
                   ))}
+                </div>
+
+                <div className="flex justify-end pt-4 border-t">
+                  <Button 
+                    onClick={() => handleNextStep(3)}
+                    disabled={!isStep3Valid}
+                  >
+                    Next
+                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -411,7 +458,7 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
         </Button>
         <Button 
           onClick={handleSave}
-          disabled={!reportName || !selectedDataSource || selectedColumns.length === 0 || selectedProperties.length === 0}
+          disabled={!isAllStepsValid}
         >
           Save Report
         </Button>
