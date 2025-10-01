@@ -97,6 +97,15 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
     }
   };
 
+  const handleSelectAllColumns = () => {
+    const allColumnKeys = availableColumns.map(col => col.key);
+    setSelectedColumns(allColumnKeys);
+  };
+
+  const handleClearAllColumns = () => {
+    setSelectedColumns([]);
+  };
+
   const handleFilterChange = (filterKey: string, value: any) => {
     setFilters(prev => ({
       ...prev,
@@ -332,8 +341,26 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <Label>Available Columns</Label>
-                  <div className="text-sm text-muted-foreground">
-                    {selectedColumnsCount} of {availableColumns.length} selected
+                  <div className="flex items-center gap-2">
+                    <div className="text-sm text-muted-foreground">
+                      {selectedColumnsCount} of {availableColumns.length} selected
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleSelectAllColumns}
+                      disabled={selectedColumnsCount === availableColumns.length}
+                    >
+                      Select All
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleClearAllColumns}
+                      disabled={selectedColumnsCount === 0}
+                    >
+                      Clear All
+                    </Button>
                   </div>
                 </div>
                 
