@@ -15,9 +15,10 @@ interface ReportPreviewProps {
   columns: string[];
   filters: Record<string, any>;
   properties: string[];
+  reportType?: "Activity" | "Performance";
 }
 
-export function ReportPreview({ dataSource, columns, filters, properties }: ReportPreviewProps) {
+export function ReportPreview({ dataSource, columns, filters, properties, reportType = "Activity" }: ReportPreviewProps) {
   const previewData = useMemo(() => {
     if (!dataSource || !dataSourceConfig[dataSource as keyof typeof dataSourceConfig]) {
       return [];
@@ -50,10 +51,10 @@ export function ReportPreview({ dataSource, columns, filters, properties }: Repo
     if (!dataSource || !dataSourceConfig[dataSource as keyof typeof dataSourceConfig]) {
       return [];
     }
-    return dataSourceConfig[dataSource as keyof typeof dataSourceConfig].columns.filter(col => 
-      columns.includes(col.key)
-    );
-  }, [dataSource, columns]);
+    const dsConfig = dataSourceConfig[dataSource as keyof typeof dataSourceConfig] as any;
+    const allColumns = reportType === "Activity" ? dsConfig.activityColumns : dsConfig.performanceColumns;
+    return allColumns?.filter((col: any) => columns.includes(col.key)) || [];
+  }, [dataSource, columns, reportType]);
 
   const getPropertyName = (propertyId: string) => {
     const property = mockProperties.find(p => p.id === propertyId);

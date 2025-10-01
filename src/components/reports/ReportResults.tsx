@@ -101,9 +101,12 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
       });
     }
 
-    const columns = dataSourceConfig[config.dataSource as keyof typeof dataSourceConfig].columns.filter(col => 
-      config.columns.includes(col.key)
-    );
+    const columns = (() => {
+      const dsConfig = dataSourceConfig[config.dataSource as keyof typeof dataSourceConfig] as any;
+      const reportType = config.reportType || "Activity";
+      const allColumns = reportType === "Activity" ? dsConfig.activityColumns : dsConfig.performanceColumns;
+      return allColumns?.filter((col: any) => config.columns.includes(col.key)) || [];
+    })();
 
     return { processedData: data, columnsConfig: columns };
   }, [config, searchTerm, sortColumn, sortDirection]);

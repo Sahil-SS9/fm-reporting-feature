@@ -1123,93 +1123,138 @@ export interface ColumnConfig {
   label: string;
   type: "text" | "select" | "date" | "number";
   options?: string[];
+  reportType?: "Activity" | "Performance" | "Both"; // Column availability per report type
 }
 
-// Data source configurations
+// Data source configurations with report type support
 export const dataSourceConfig = {
   "Work Orders": {
     label: "Work Orders",
     data: mockWorkOrders,
-    columns: [
-      { key: "id", label: "Work Order ID", type: "text" },
-      { key: "title", label: "Title", type: "text" },
-      { key: "status", label: "Status", type: "select", options: ["Open", "In Progress", "Completed", "Overdue"] },
-      { key: "priority", label: "Priority", type: "select", options: ["Low", "Medium", "High", "Critical"] },
-      { key: "propertyId", label: "Property", type: "text" },
-      { key: "assigneeId", label: "Assignee", type: "text" },
-      { key: "createdDate", label: "Created Date", type: "date" },
-      { key: "dueDate", label: "Due Date", type: "date" },
-      { key: "completedDate", label: "Completed Date", type: "date" },
-      { key: "category", label: "Category", type: "text" },
-      { key: "estimatedHours", label: "Estimated Hours", type: "number" },
-      { key: "actualHours", label: "Actual Hours", type: "number" }
+    activityColumns: [
+      { key: "id", label: "Work Order ID", type: "text", reportType: "Activity" },
+      { key: "title", label: "Title", type: "text", reportType: "Activity" },
+      { key: "description", label: "Description", type: "text", reportType: "Activity" },
+      { key: "status", label: "Status", type: "select", options: ["Open", "In Progress", "Completed", "Overdue"], reportType: "Activity" },
+      { key: "priority", label: "Priority", type: "select", options: ["Low", "Medium", "High", "Critical"], reportType: "Activity" },
+      { key: "createdDate", label: "Created Date/Time", type: "date", reportType: "Activity" },
+      { key: "dueDate", label: "Due Date", type: "date", reportType: "Activity" },
+      { key: "completedDate", label: "Completed Date", type: "date", reportType: "Activity" },
+      { key: "lastUpdated", label: "Last Updated Date/Time", type: "date", reportType: "Activity" }
+    ],
+    performanceColumns: [
+      { key: "openTicketsCount", label: "Open Tickets Count", type: "number", reportType: "Performance" },
+      { key: "overdueTicketsCount", label: "Overdue Tickets Count", type: "number", reportType: "Performance" },
+      { key: "totalTickets", label: "Total Tickets", type: "number", reportType: "Performance" },
+      { key: "assigneeId", label: "Assignee", type: "text", reportType: "Performance" },
+      { key: "propertyId", label: "Property", type: "text", reportType: "Performance" },
+      { key: "category", label: "Category", type: "text", reportType: "Performance" },
+      { key: "estimatedHours", label: "Estimated Hours", type: "number", reportType: "Performance" },
+      { key: "actualHours", label: "Actual Hours", type: "number", reportType: "Performance" },
+      { key: "estimatedCost", label: "Estimated Cost", type: "number", reportType: "Performance" },
+      { key: "actualCost", label: "Actual Cost", type: "number", reportType: "Performance" },
+      { key: "ticketsResolvedCount", label: "Tickets Resolved Count", type: "number", reportType: "Performance" },
+      { key: "avgResolutionTime", label: "Average Resolution Time", type: "number", reportType: "Performance" },
+      { key: "percentageOverdueTickets", label: "Percentage Overdue Tickets", type: "number", reportType: "Performance" },
+      { key: "daysOpen", label: "Number of Days Open", type: "number", reportType: "Performance" },
+      { key: "daysOverdue", label: "Number of Days Overdue", type: "number", reportType: "Performance" }
     ]
   },
   "Assets": {
     label: "Assets",
     data: mockAssets,
-    columns: [
-      { key: "id", label: "Asset ID", type: "text" },
-      { key: "name", label: "Asset Name", type: "text" },
-      { key: "type", label: "Asset Type", type: "text" },
-      { key: "status", label: "Status", type: "select", options: ["Operational", "Pending Repair", "Missing", "Out of Service"] },
-      { key: "propertyId", label: "Property", type: "text" },
-      { key: "group", label: "Asset Group", type: "text" },
-      { key: "serialNumber", label: "Serial Number", type: "text" },
-      { key: "purchaseCost", label: "Purchase Cost", type: "number" },
-      { key: "estimatedValue", label: "Current Value", type: "number" },
-      { key: "installationDate", label: "Installation Date", type: "date" },
-      { key: "contractorResponsible", label: "Contractor", type: "text" },
-      { key: "lastInspection", label: "Last Inspection", type: "date" },
-      { key: "nextInspection", label: "Next Inspection", type: "date" },
-      { key: "purchaseDate", label: "Purchase Date", type: "date" },
-      { key: "warrantyExpirationDate", label: "Warranty Expiry", type: "date" },
-      { key: "location", label: "Location", type: "text" }
+    activityColumns: [
+      { key: "id", label: "Asset ID", type: "text", reportType: "Activity" },
+      { key: "name", label: "Asset Name", type: "text", reportType: "Activity" },
+      { key: "group", label: "Group", type: "text", reportType: "Activity" },
+      { key: "type", label: "Type", type: "text", reportType: "Activity" },
+      { key: "location", label: "Location", type: "text", reportType: "Activity" },
+      { key: "status", label: "Status", type: "select", options: ["Operational", "Pending Repair", "Missing", "Out of Service"], reportType: "Activity" },
+      { key: "lastInspection", label: "Last Inspection Date", type: "date", reportType: "Activity" },
+      { key: "nextInspection", label: "Next Inspection Date", type: "date", reportType: "Activity" },
+      { key: "condition", label: "Condition", type: "select", options: ["Excellent", "Good", "Fair", "Poor"], reportType: "Activity" },
+      { key: "manufacturer", label: "Manufacturer and Model", type: "text", reportType: "Activity" },
+      { key: "manufacturerDate", label: "Manufacturer Date", type: "date", reportType: "Activity" },
+      { key: "lastServiceDate", label: "Last Service Date", type: "date", reportType: "Activity" },
+      { key: "decommissionDate", label: "Decommission Date", type: "date", reportType: "Activity" },
+      { key: "installationDate", label: "Installation Date", type: "date", reportType: "Activity" },
+      { key: "warrantyExpirationDate", label: "Warranty Expiration Date", type: "date", reportType: "Activity" },
+      { key: "estimatedValue", label: "Estimated Value", type: "number", reportType: "Activity" },
+      { key: "purchaseCost", label: "Purchase Cost", type: "number", reportType: "Activity" },
+      { key: "totalCost", label: "Total Cost", type: "number", reportType: "Activity" },
+      { key: "propertyId", label: "Property", type: "text", reportType: "Activity" }
+    ],
+    performanceColumns: [
+      { key: "assetsDueInspection", label: "Assets Due for Inspection", type: "number", reportType: "Performance" },
+      { key: "assetsExpiringWarranty", label: "Assets with Expiring Warranties", type: "number", reportType: "Performance" },
+      { key: "assetsPoorCondition", label: "Assets in Poor Condition", type: "number", reportType: "Performance" },
+      { key: "overdueInspectionsCount", label: "Overdue Inspections Count", type: "number", reportType: "Performance" },
+      { key: "assetAge", label: "Asset Age", type: "number", reportType: "Performance" },
+      { key: "daysUntilNextInspection", label: "Days Until Next Inspection", type: "number", reportType: "Performance" },
+      { key: "daysSinceLastService", label: "Days Since Last Service", type: "number", reportType: "Performance" },
+      { key: "totalActiveAssets", label: "Total Active Assets", type: "number", reportType: "Performance" }
     ]
   },
   "Invoices": {
     label: "Invoices",
     data: mockInvoices,
-    columns: [
-      { key: "id", label: "Invoice ID", type: "text" },
-      { key: "type", label: "Type", type: "select", options: ["Received", "Issued"] },
-      { key: "invoiceNumber", label: "Invoice Number", type: "text" },
-      { key: "description", label: "Description", type: "text" },
-      { key: "contractorTenant", label: "Contractor/Tenant", type: "text" },
-      { key: "amount", label: "Amount", type: "number" },
-      { key: "dateIssued", label: "Date Issued", type: "date" },
-      { key: "dueDate", label: "Due Date", type: "date" },
-      { key: "paymentStatus", label: "Payment Status", type: "select", options: ["Outstanding", "Overdue", "Paid"] },
-      { key: "taxRate", label: "Tax Rate", type: "number" },
-      { key: "assignedWorkOrderId", label: "Work Order", type: "text" },
-      { key: "propertyId", label: "Property", type: "text" }
+    activityColumns: [
+      { key: "invoiceNumber", label: "Invoice Number", type: "text", reportType: "Activity" },
+      { key: "type", label: "Invoice Type", type: "select", options: ["Received", "Issued"], reportType: "Activity" },
+      { key: "contractorTenant", label: "Contractor", type: "text", reportType: "Activity" },
+      { key: "amount", label: "Amount", type: "number", reportType: "Activity" },
+      { key: "paymentStatus", label: "Status", type: "select", options: ["Outstanding", "Overdue", "Paid"], reportType: "Activity" },
+      { key: "dueDate", label: "Due Date", type: "date", reportType: "Activity" },
+      { key: "taxRate", label: "Tax Rate", type: "number", reportType: "Activity" }
+    ],
+    performanceColumns: [
+      { key: "totalUnpaidInvoices", label: "Total Unpaid Invoices", type: "number", reportType: "Performance" },
+      { key: "totalAmountOutstanding", label: "Total Amount Outstanding", type: "number", reportType: "Performance" },
+      { key: "overdueInvoicesCount", label: "Overdue Invoices Count", type: "number", reportType: "Performance" },
+      { key: "totalAmountOverdue", label: "Total Amount Overdue", type: "number", reportType: "Performance" },
+      { key: "totalPaidInvoices", label: "Total Paid Invoices", type: "number", reportType: "Performance" },
+      { key: "totalAmountPaid", label: "Total Amount Paid", type: "number", reportType: "Performance" },
+      { key: "avgPaymentTime", label: "Average Payment Time", type: "number", reportType: "Performance" },
+      { key: "contractorSpend", label: "Contractor Spend Analysis", type: "number", reportType: "Performance" },
+      { key: "daysOutstanding", label: "Days Outstanding", type: "number", reportType: "Performance" },
+      { key: "percentageOverdueInvoices", label: "Percentage Overdue Invoices", type: "number", reportType: "Performance" }
     ]
   },
   "Contractors": {
     label: "Contractors",
     data: mockContractors,
-    columns: [
-      { key: "id", label: "Contractor ID", type: "text" },
-      { key: "name", label: "Name", type: "text" },
-      { key: "company", label: "Company", type: "text" },
-      { key: "email", label: "Email", type: "text" },
-      { key: "phone", label: "Phone", type: "text" },
-      { key: "specialty", label: "Specialty", type: "text" },
-      { key: "rating", label: "Rating", type: "number" },
-      { key: "activeProjects", label: "Active Projects", type: "number" },
-      { key: "totalCompleted", label: "Total Completed", type: "number" }
+    activityColumns: [
+      { key: "name", label: "Contractor Name", type: "text", reportType: "Activity" },
+      { key: "specialty", label: "Service Type", type: "text", reportType: "Activity" },
+      { key: "status", label: "Status", type: "select", options: ["Active", "Inactive", "On Hold", "Pending Approval"], reportType: "Activity" },
+      { key: "phone", label: "Phone", type: "text", reportType: "Activity" },
+      { key: "email", label: "Email", type: "text", reportType: "Activity" },
+      { key: "activeProjects", label: "Active Jobs Count", type: "number", reportType: "Activity" }
+    ],
+    performanceColumns: [
+      { key: "totalActiveContractors", label: "Total Active Contractors", type: "number", reportType: "Performance" },
+      { key: "avgJobsPerContractor", label: "Average Jobs per Contractor", type: "number", reportType: "Performance" },
+      { key: "totalCompleted", label: "Total Jobs Completed", type: "number", reportType: "Performance" },
+      { key: "avgCompletionTime", label: "Average Completion Time", type: "number", reportType: "Performance" },
+      { key: "rating", label: "Contractor Rating", type: "number", reportType: "Performance" },
+      { key: "topPerformers", label: "Top Performing Contractors", type: "text", reportType: "Performance" }
     ]
   },
   "Documents": {
     label: "Documents",
     data: mockDocuments,
-    columns: [
-      { key: "id", label: "Document ID", type: "text" },
-      { key: "name", label: "Document Name", type: "text" },
-      { key: "type", label: "Document Type", type: "text" },
-      { key: "propertyId", label: "Property", type: "text" },
-      { key: "modified", label: "Modified Date", type: "date" },
-      { key: "expires", label: "Expires Date", type: "date" }
+    activityColumns: [
+      { key: "id", label: "Document ID", type: "text", reportType: "Activity" },
+      { key: "name", label: "Document Name", type: "text", reportType: "Activity" },
+      { key: "type", label: "Document Type", type: "text", reportType: "Activity" },
+      { key: "propertyId", label: "Property", type: "text", reportType: "Activity" },
+      { key: "modified", label: "Modified Date", type: "date", reportType: "Activity" },
+      { key: "expires", label: "Expires Date", type: "date", reportType: "Activity" }
+    ],
+    performanceColumns: [
+      { key: "totalDocuments", label: "Total Documents", type: "number", reportType: "Performance" },
+      { key: "expiringDocuments", label: "Expiring Documents Count", type: "number", reportType: "Performance" },
+      { key: "expiredDocuments", label: "Expired Documents Count", type: "number", reportType: "Performance" }
     ]
   }
 };

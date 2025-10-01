@@ -39,12 +39,26 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
   const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
   const [isMultiProperty, setIsMultiProperty] = useState(false);
   const [selectedDataSource, setSelectedDataSource] = useState(template?.dataSource || "");
+  const [reportType, setReportType] = useState<"Activity" | "Performance">("Activity");
   const [selectedColumns, setSelectedColumns] = useState<string[]>(template?.defaultColumns || []);
   const [filters, setFilters] = useState<Record<string, any>>(template?.defaultFilters || {});
   const [showPreview, setShowPreview] = useState(false);
 
-  // Get available columns based on selected data source
-  const availableColumns = selectedDataSource ? (dataSourceConfig[selectedDataSource as keyof typeof dataSourceConfig]?.columns as ColumnConfig[]) || [] : [];
+  // Get available columns based on selected data source and report type
+  const getAvailableColumns = (): ColumnConfig[] => {
+    if (!selectedDataSource) return [];
+    
+    const dataSource = dataSourceConfig[selectedDataSource as keyof typeof dataSourceConfig];
+    if (!dataSource) return [];
+    
+    const columns = reportType === "Activity" 
+      ? (dataSource as any).activityColumns 
+      : (dataSource as any).performanceColumns;
+    
+    return columns || [];
+  };
+
+  const availableColumns = getAvailableColumns();
   const selectedColumnsCount = selectedColumns.length;
 
   const handlePropertyChange = (propertyId: string, checked: boolean) => {
@@ -77,6 +91,7 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
       properties: selectedProperties,
       isMultiProperty,
       dataSource: selectedDataSource,
+      reportType,
       columns: selectedColumns,
       filters,
       createdAt: new Date().toISOString(),
@@ -167,10 +182,10 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Step 2: Data Source Selection */}
+      {/* Step 2: Data Source Selection & Report Type */}
       <Collapsible open={step2Open} onOpenChange={setStep2Open}>
         <CollapsibleTrigger className="flex items-center justify-between w-full p-4 border rounded-lg hover:bg-muted/50">
-          <h3 className="text-lg font-semibold">Step 2: Select Data Source</h3>
+          <h3 className="text-lg font-semibold">Step 2: Select Data Source & Report Type</h3>
           {step2Open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </CollapsibleTrigger>
         <CollapsibleContent className="mt-4">
@@ -178,7 +193,10 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
             <CardContent className="p-6 space-y-4">
               <div className="space-y-2">
                 <Label>Data Source</Label>
-                <Select value={selectedDataSource} onValueChange={setSelectedDataSource}>
+                <Select value={selectedDataSource} onValueChange={(value) => {
+                  setSelectedDataSource(value);
+                  setSelectedColumns([]); // Reset selected columns when data source changes
+                }}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select data source" />
                   </SelectTrigger>
@@ -193,12 +211,71 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
               </div>
               
               {selectedDataSource && (
-                <div className="p-3 bg-muted/50 rounded-lg">
-                  <div className="text-sm font-medium">Available Data Points</div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    {dataSourceConfig[selectedDataSource as keyof typeof dataSourceConfig]?.columns.length} columns available for reporting
+                <>
+                  <div className="space-y-3 pt-2">
+                    <Label>Report Type</Label>
+                    <div className="flex flex-col space-y-3">
+                      <div 
+                        className={`flex items-start space-x-3 p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                          reportType === "Performance" 
+                            ? "border-primary bg-primary/5" 
+                            : "border-border hover:border-primary/50"
+                        }`}
+                        onClick={() => {
+                          setReportType("Performance");
+                          setSelectedColumns([]); // Reset selected columns when report type changes
+                        }}
+                      >
+                        <div className={`mt-0.5 h-4 w-4 rounded-full border-2 flex items-center justify-center ${
+                          reportType === "Performance" ? "border-primary" : "border-muted-foreground"
+                        }`}>
+                          {reportType === "Performance" && (
+                            <div className="h-2 w-2 rounded-full bg-primary" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium">Performance Report</div>
+                          <div className="text-sm text-muted-foreground">
+                            Metrics and KPIs to evaluate efficiency and success over time
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div 
+                        className={`flex items-start space-x-3 p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                          reportType === "Activity" 
+                            ? "border-primary bg-primary/5" 
+                            : "border-border hover:border-primary/50"
+                        }`}
+                        onClick={() => {
+                          setReportType("Activity");
+                          setSelectedColumns([]); // Reset selected columns when report type changes
+                        }}
+                      >
+                        <div className={`mt-0.5 h-4 w-4 rounded-full border-2 flex items-center justify-center ${
+                          reportType === "Activity" ? "border-primary" : "border-muted-foreground"
+                        }`}>
+                          {reportType === "Activity" && (
+                            <div className="h-2 w-2 rounded-full bg-primary" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium">Activity Report</div>
+                          <div className="text-sm text-muted-foreground">
+                            Detailed raw data on specific records and operational details
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+
+                  <div className="p-3 bg-muted/50 rounded-lg">
+                    <div className="text-sm font-medium">Available Data Points</div>
+                    <div className="text-sm text-muted-foreground mt-1">
+                      {availableColumns.length} columns available for reporting
+                    </div>
+                  </div>
+                </>
               )}
             </CardContent>
           </Card>
@@ -318,6 +395,7 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
                     columns={selectedColumns}
                     filters={filters}
                     properties={selectedProperties}
+                    reportType={reportType}
                   />
                 </div>
               )}
