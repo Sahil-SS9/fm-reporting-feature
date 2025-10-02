@@ -25,6 +25,7 @@ import { CreatedVsCompletedTrendWidget } from "@/components/dashboard/CreatedVsC
 import { WorkOrderPriorityWidget } from "@/components/dashboard/WorkOrderPriorityWidget";
 import { EnhancedWorkOrderPriorityWidget } from "@/components/dashboard/EnhancedWorkOrderPriorityWidget";
 import { OnTimeVsOverdueWidget } from "@/components/dashboard/OnTimeVsOverdueWidget";
+import { WorkOrderStatusWidget } from "@/components/dashboard/WorkOrderStatusWidget";
 import { SchedulingWidget } from "@/components/dashboard/SchedulingWidget";
 import { getPerformanceMetrics } from "@/components/dashboard/PerformanceSummaryWidget";
 import { DonutChartWithCenter } from "@/components/ui/enhanced-charts";
@@ -253,18 +254,18 @@ export default function Dashboard() {
                 description="Work orders due today"
               />
               <EnhancedEssentialMetricsCard
-                title="Critical Issues"
-                value={filteredKpiMetrics.critical}
-                icon={AlertTriangle}
-                variant={filteredKpiMetrics.critical > 0 ? "critical" : "success"}
-                description="High priority items"
-              />
-              <EnhancedEssentialMetricsCard
                 title="Overdue Items"
                 value={filteredKpiMetrics.overdue}
                 icon={AlertTriangle}
                 variant={filteredKpiMetrics.overdue > 0 ? "critical" : "success"}
                 description="Past due work orders"
+              />
+              <EnhancedEssentialMetricsCard
+                title="Critical Issues"
+                value={filteredKpiMetrics.critical}
+                icon={AlertTriangle}
+                variant={filteredKpiMetrics.critical > 0 ? "critical" : "success"}
+                description="High priority items"
               />
             </div>
             {/* Second Row */}
@@ -300,12 +301,13 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Work Order Priority and On Time Performance */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Work Order Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <EnhancedWorkOrderPriorityWidget 
               selectedProperty={selectedProperty}
               filteredWorkOrders={filteredWorkOrders}
             />
+            <WorkOrderStatusWidget filteredWorkOrders={filteredWorkOrders} />
             <OnTimeVsOverdueWidget filteredWorkOrders={filteredWorkOrders} />
           </div>
 
@@ -372,10 +374,7 @@ export default function Dashboard() {
           {/* Trend Analysis */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
             <h3 className="text-xl font-semibold mb-6">Trend Analysis</h3>
-            <div className="space-y-6">
-              <EnhancedCompletionTimeTrendChart filteredWorkOrders={filteredWorkOrders} />
-              <CreatedVsCompletedTrendWidget filteredWorkOrders={filteredWorkOrders} />
-            </div>
+            <CreatedVsCompletedTrendWidget filteredWorkOrders={filteredWorkOrders} />
           </div>
 
           <SchedulingWidget filteredWorkOrders={filteredWorkOrders} />
