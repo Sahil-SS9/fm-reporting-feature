@@ -1,10 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, ArrowRight, DollarSign, Wrench } from "lucide-react";
+import { TrendingUp, ArrowRight, Clock, Wrench } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { VerticalBarChart } from "@/components/ui/enhanced-charts";
 import { DetailedViewModal } from "@/components/ui/detailed-view-modal";
 import { useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 
 interface TopAssetsWidgetProps {
   filteredAssets?: any[];
@@ -14,7 +15,7 @@ interface TopAssetsWidgetProps {
 export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }: TopAssetsWidgetProps) {
   const navigate = useNavigate();
   
-  // Calculate comprehensive asset metrics
+  // Calculate comprehensive asset metrics with priority breakdown
   const assetMetrics = filteredAssets.map(asset => {
     // Better filtering logic - match by asset type and work order category/title
     const workOrders = filteredWorkOrders.filter(wo => {
@@ -39,19 +40,35 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
     
     const workOrderCount = workOrders.length;
     
-    // Calculate critical issues count (Critical and High priority work orders)
-    const criticalIssues = workOrders.filter(wo => wo.priority === 'Critical' || wo.priority === 'High').length;
+    // Calculate priority breakdown
+    const criticalCount = workOrders.filter(wo => 
+      wo.priority === 'Critical' || wo.priority === 'Urgent' || wo.priority === 'High'
+    ).length;
+    const mediumCount = workOrders.filter(wo => wo.priority === 'Medium').length;
+    const lowCount = workOrders.filter(wo => wo.priority === 'Low').length;
     
-    // Calculate frequency score (work orders per year - assuming mock data spans 1 year)
-    const frequencyScore = workOrderCount; // This represents annual frequency
+    // Calculate frequency score (work orders per year)
+    const frequencyScore = workOrderCount;
     
     return {
       ...asset,
       workOrderCount,
-      criticalIssues,
+      criticalCount,
+      mediumCount,
+      lowCount,
       frequencyScore
     };
-  }).sort((a, b) => b.workOrderCount - a.workOrderCount).slice(0, 10);
+  });
+
+  // Top 10 by work order count for stacked chart
+  const topByWorkOrders = assetMetrics
+    .sort((a, b) => b.workOrderCount - a.workOrderCount)
+    .slice(0, 10);
+
+  // Top 10 by frequency for frequency chart
+  const topByFrequency = assetMetrics
+    .sort((a, b) => b.frequencyScore - a.frequencyScore)
+    .slice(0, 10);
 
   const handleClick = () => {
     navigate('/assets', { 
@@ -61,18 +78,31 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
     });
   };
 
-  // Prepare data for detailed view modal
-  const criticalData = assetMetrics.sort((a, b) => b.criticalIssues - a.criticalIssues);
-  const workOrderData = assetMetrics.sort((a, b) => b.workOrderCount - a.workOrderCount);
-  const frequencyData = assetMetrics.sort((a, b) => b.frequencyScore - a.frequencyScore);
+  // Prepare stacked chart data
+  const stackedChartData = topByWorkOrders.map(asset => ({
+    name: asset.name.length > 12 ? asset.name.substring(0, 12) + '...' : asset.name,
+    Critical: asset.criticalCount,
+    Medium: asset.mediumCount,
+    Low: asset.lowCount,
+    fullName: asset.name
+  }));
+
+  // Prepare frequency chart data
+  const frequencyChartData = topByFrequency.map(asset => ({
+    name: asset.name.length > 12 ? asset.name.substring(0, 12) + '...' : asset.name,
+    value: asset.frequencyScore,
+    fullName: asset.name
+  }));
 
   const tableColumns = [
     { key: 'name', label: 'Asset Name' },
     { key: 'type', label: 'Type' },
     { key: 'location', label: 'Location' },
     { key: 'workOrderCount', label: 'Work Orders' },
-    { key: 'criticalIssues', label: 'Critical Issues' },
-    { key: 'frequencyScore', label: 'Frequency Score', format: (value: number) => `${value}/year` }
+    { key: 'criticalCount', label: 'Critical/Urgent/High' },
+    { key: 'mediumCount', label: 'Medium' },
+    { key: 'lowCount', label: 'Low' },
+    { key: 'frequencyScore', label: 'Frequency', format: (value: number) => `${value} WOs` }
   ];
 
   return (
@@ -90,118 +120,90 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
-        <div className="grid grid-cols-3 gap-3" style={{ minHeight: '480px' }}>
+        <div className="grid grid-cols-2 gap-4" style={{ minHeight: '480px' }}>
           
-          {/* Critical Issues Panel */}
+          {/* Work Orders by Priority (Stacked) Panel */}
           <div className="space-y-2">
             <div className="h-96 bg-card border rounded-lg p-4" style={{ minHeight: '240px' }}>
-              <div className="flex justify-center mt-4 mb-5">
-                <VerticalBarChart 
-                  data={criticalData.slice(0, 10).map(asset => ({
-                    name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
-                    value: asset.criticalIssues
-                  }))}
-                  color="hsl(var(--destructive))"
-                  width={600}
-                  height={360}
-                />
-              </div>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={stackedChartData} margin={{ top: 20, right: 20, left: 20, bottom: 60 }}>
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                  <XAxis 
+                    dataKey="name" 
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    tick={{ fontSize: 11 }}
+                  />
+                  <YAxis tick={{ fontSize: 11 }} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--background))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '6px'
+                    }}
+                  />
+                  <Legend 
+                    wrapperStyle={{ paddingTop: '10px' }}
+                    iconType="circle"
+                  />
+                  <Bar dataKey="Critical" stackId="a" fill="hsl(var(--destructive))" />
+                  <Bar dataKey="Medium" stackId="a" fill="hsl(var(--dashboard-medium))" />
+                  <Bar dataKey="Low" stackId="a" fill="hsl(var(--dashboard-low))" />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
             <div className="bg-muted/30 rounded-lg p-2">
               <div className="flex items-center justify-between mb-2">
-                <h5 className="text-xs font-medium text-muted-foreground">Critical Issues</h5>
-                <TrendingUp className="h-4 w-4 text-destructive" />
-              </div>
-              <div className="space-y-2">
-                {criticalData.slice(0, 4).map((asset, index) => (
-                  <div key={`critical-${asset.id}`} className="flex items-center justify-between h-8 px-2 rounded hover:bg-background/50 transition-colors">
-                    <span className="truncate text-sm font-medium">{asset.name}</span>
-                    <span className="text-xs font-normal text-destructive">
-                      {asset.criticalIssues}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-3">
-                <DetailedViewModal
-                  title="Critical Issues - High Maintenance Assets"
-                  chartComponent={
-                    <div className="space-y-4">
-                      <h4 className="text-sm font-medium text-center">Critical Issues</h4>
-                      <div className="h-80">
-                        <VerticalBarChart 
-                          data={criticalData.map(asset => ({
-                            name: asset.name,
-                            value: asset.criticalIssues
-                          }))}
-                          color="hsl(var(--destructive))"
-                          width={800}
-                          height={400}
-                        />
-                      </div>
-                    </div>
-                  }
-                  tableData={criticalData}
-                  tableColumns={tableColumns}
-                >
-                  <Button variant="outline" size="sm" className="w-full h-7 text-xs" onClick={(e) => e.stopPropagation()}>
-                    View More
-                  </Button>
-                </DetailedViewModal>
-              </div>
-            </div>
-          </div>
-          
-          {/* Work Order Count Panel */}
-          <div className="space-y-2">
-            <div className="h-96 bg-card border rounded-lg p-4" style={{ minHeight: '240px' }}>
-              <div className="flex justify-center mt-4 mb-5">
-                <VerticalBarChart 
-                  data={workOrderData.slice(0, 10).map(asset => ({
-                    name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
-                    value: asset.workOrderCount
-                  }))}
-                  color="hsl(var(--dashboard-medium))"
-                  width={600}
-                  height={360}
-                />
-              </div>
-            </div>
-            <div className="bg-muted/30 rounded-lg p-2">
-              <div className="flex items-center justify-between mb-2">
-                <h5 className="text-xs font-medium text-muted-foreground">Work Orders</h5>
+                <h5 className="text-xs font-medium text-muted-foreground">Work Orders by Priority</h5>
                 <Wrench className="h-4 w-4 text-dashboard-medium" />
               </div>
               <div className="space-y-2">
-                {workOrderData.slice(0, 4).map((asset, index) => (
+                {topByWorkOrders.slice(0, 4).map((asset, index) => (
                   <div key={`wo-${asset.id}`} className="flex items-center justify-between h-8 px-2 rounded hover:bg-background/50 transition-colors">
                     <span className="truncate text-sm font-medium">{asset.name}</span>
-                    <span className="text-xs font-normal text-dashboard-medium">
-                      {asset.workOrderCount}
-                    </span>
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="text-destructive font-medium">{asset.criticalCount}</span>
+                      <span className="text-dashboard-medium font-medium">{asset.mediumCount}</span>
+                      <span className="text-dashboard-low font-medium">{asset.lowCount}</span>
+                    </div>
                   </div>
                 ))}
               </div>
               <div className="mt-3">
                 <DetailedViewModal
-                  title="Work Orders - High Maintenance Assets"
+                  title="Work Orders by Priority - High Maintenance Assets"
                   chartComponent={
                     <div className="space-y-4">
-                      <h4 className="text-sm font-medium text-center">Work Orders</h4>
-                      <div className="h-80">
-                        <VerticalBarChart 
-                          data={workOrderData.map(asset => ({
-                            name: asset.name,
-                            value: asset.workOrderCount
-                          }))}
-                          color="hsl(var(--dashboard-medium))"
-                          width={800}
-                          height={400}
-                        />
+                      <h4 className="text-sm font-medium text-center">Work Orders by Priority</h4>
+                      <div className="h-96">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={stackedChartData} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
+                            <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                            <XAxis 
+                              dataKey="name" 
+                              angle={-45}
+                              textAnchor="end"
+                              height={100}
+                            />
+                            <YAxis />
+                            <Tooltip 
+                              contentStyle={{ 
+                                backgroundColor: 'hsl(var(--background))',
+                                border: '1px solid hsl(var(--border))',
+                                borderRadius: '6px'
+                              }}
+                            />
+                            <Legend />
+                            <Bar dataKey="Critical" stackId="a" fill="hsl(var(--destructive))" />
+                            <Bar dataKey="Medium" stackId="a" fill="hsl(var(--dashboard-medium))" />
+                            <Bar dataKey="Low" stackId="a" fill="hsl(var(--dashboard-low))" />
+                          </BarChart>
+                        </ResponsiveContainer>
                       </div>
                     </div>
                   }
-                  tableData={workOrderData}
+                  tableData={topByWorkOrders}
                   tableColumns={tableColumns}
                 >
                   <Button variant="outline" size="sm" className="w-full h-7 text-xs" onClick={(e) => e.stopPropagation()}>
@@ -212,15 +214,12 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
             </div>
           </div>
           
-          {/* Frequency Score Panel */}
+          {/* Frequency Panel */}
           <div className="space-y-2">
             <div className="h-96 bg-card border rounded-lg p-4" style={{ minHeight: '240px' }}>
               <div className="flex justify-center mt-4 mb-5">
                 <VerticalBarChart 
-                  data={frequencyData.slice(0, 10).map(asset => ({
-                    name: asset.name.length > 8 ? asset.name.substring(0, 8) + '...' : asset.name,
-                    value: asset.frequencyScore
-                  }))}
+                  data={frequencyChartData}
                   color="hsl(var(--dashboard-high))"
                   width={600}
                   height={360}
@@ -229,28 +228,28 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
             </div>
             <div className="bg-muted/30 rounded-lg p-2">
               <div className="flex items-center justify-between mb-2">
-                <h5 className="text-xs font-medium text-muted-foreground">Frequency Score</h5>
-                <DollarSign className="h-4 w-4 text-dashboard-high" />
+                <h5 className="text-xs font-medium text-muted-foreground">Work Order Frequency</h5>
+                <Clock className="h-4 w-4 text-dashboard-high" />
               </div>
               <div className="space-y-2">
-                {frequencyData.slice(0, 4).map((asset, index) => (
+                {topByFrequency.slice(0, 4).map((asset, index) => (
                   <div key={`freq-${asset.id}`} className="flex items-center justify-between h-8 px-2 rounded hover:bg-background/50 transition-colors">
                     <span className="truncate text-sm font-medium">{asset.name}</span>
                     <span className="text-xs font-normal text-dashboard-high">
-                      {asset.frequencyScore}/year
+                      {asset.frequencyScore} WOs
                     </span>
                   </div>
                 ))}
               </div>
               <div className="mt-3">
                 <DetailedViewModal
-                  title="Frequency Score - High Maintenance Assets"
+                  title="Work Order Frequency - High Maintenance Assets"
                   chartComponent={
                     <div className="space-y-4">
-                      <h4 className="text-sm font-medium text-center">Frequency Score</h4>
+                      <h4 className="text-sm font-medium text-center">Top 10 by Frequency</h4>
                       <div className="h-80">
                         <VerticalBarChart 
-                          data={frequencyData.map(asset => ({
+                          data={topByFrequency.map(asset => ({
                             name: asset.name,
                             value: asset.frequencyScore
                           }))}
@@ -261,7 +260,7 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
                       </div>
                     </div>
                   }
-                  tableData={frequencyData}
+                  tableData={topByFrequency}
                   tableColumns={tableColumns}
                 >
                   <Button variant="outline" size="sm" className="w-full h-7 text-xs" onClick={(e) => e.stopPropagation()}>
