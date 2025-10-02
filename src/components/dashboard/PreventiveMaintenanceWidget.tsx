@@ -32,9 +32,7 @@ export function PreventiveMaintenanceWidget() {
 
   const getSelectedData = () => {
     switch (selectedStatus) {
-      case 'not-due':
-        return notDue;
-      case 'due-soon':
+      case 'due-today':
         return dueSoon;
       case 'overdue':
         return overdue;
@@ -45,10 +43,8 @@ export function PreventiveMaintenanceWidget() {
 
   const getStatusLabel = () => {
     switch (selectedStatus) {
-      case 'not-due':
-        return 'Not Due';
-      case 'due-soon':
-        return 'Due Soon';
+      case 'due-today':
+        return 'Due Today';
       case 'overdue':
         return 'Overdue';
       default:
@@ -72,21 +68,13 @@ export function PreventiveMaintenanceWidget() {
       </CardHeader>
       <CardContent className="space-y-3">
         {/* Status Grid */}
-        <div className="grid grid-cols-3 gap-2">
-          <div 
-            className="text-center p-2 rounded bg-dashboard-complete/10 hover:bg-dashboard-complete/20 transition-colors cursor-pointer"
-            onClick={(e) => handleStatusClick('not-due', e)}
-          >
-            <div className="text-lg font-bold text-dashboard-complete">{notDue.length}</div>
-            <div className="text-xs text-dashboard-complete font-medium">Not Due</div>
-          </div>
-          
+        <div className="grid grid-cols-2 gap-2">
           <div 
             className="text-center p-2 rounded bg-dashboard-medium/10 hover:bg-dashboard-medium/20 transition-colors cursor-pointer"
-            onClick={(e) => handleStatusClick('due-soon', e)}
+            onClick={(e) => handleStatusClick('due-today', e)}
           >
             <div className="text-lg font-bold text-dashboard-medium">{dueSoon.length}</div>
-            <div className="text-xs text-dashboard-medium font-medium">Due Soon</div>
+            <div className="text-xs text-dashboard-medium font-medium">Due Today</div>
           </div>
           
           <div 
