@@ -24,19 +24,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { 
   Search,
   ChevronDown,
   ChevronUp,
-  MoreVertical,
-  CheckCircle,
-  AlertTriangle,
   ArrowUpDown,
   ArrowUp,
   ArrowDown
@@ -47,7 +38,6 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 interface PropertyMetrics {
   property: any;
-  healthScore: number;
   workOrders: {
     open: number;
     overdue: number;
@@ -57,11 +47,6 @@ interface PropertyMetrics {
     low: number;
     medium: number;
     high: number;
-  };
-  preventativeMaintenance: {
-    open: number;
-    overdue: number;
-    completed: number;
   };
   assetStatus: {
     operational: number;
@@ -81,25 +66,11 @@ function getPropertyInitials(name: string) {
   return name.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
 }
 
-function getHealthScoreGrade(score: number) {
-  if (score >= 90) return { grade: 'A', variant: 'default' as const };
-  if (score >= 80) return { grade: 'B', variant: 'secondary' as const };
-  if (score >= 70) return { grade: 'C', variant: 'secondary' as const };
-  return { grade: 'D', variant: 'destructive' as const };
-}
-
-function getHealthScoreColor(score: number) {
-  if (score >= 85) return "text-success";
-  if (score >= 70) return "text-warning";
-  return "text-destructive";
-}
-
-type SortField = 'property' | 'healthScore' | 'compliance' | 'operational';
+type SortField = 'property' | 'compliance' | 'operational';
 type SortDirection = 'asc' | 'desc' | null;
 
 export function PropertyOverviewTab() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [propertyTypeFilter, setPropertyTypeFilter] = useState("all");
   const [showAll, setShowAll] = useState(false);
   
   // Get selected property from context
@@ -160,16 +131,11 @@ export function PropertyOverviewTab() {
     }).length;
     
     // Calculate scores
-    const completionRate = propertyWorkOrders.length > 0 ? (completedWorkOrders / propertyWorkOrders.length) * 100 : 100;
-    const assetHealthRate = propertyAssets.length > 0 ? (operationalAssets / propertyAssets.length) * 100 : 100;
-    const healthScore = Math.round((completionRate * 0.4 + assetHealthRate * 0.6));
-    
     const complianceScore = Math.round(75 + Math.random() * 25);
-    const operationalScore = Math.round(healthScore * 0.8 + Math.random() * 20);
+    const operationalScore = Math.round(70 + Math.random() * 30);
     
     return {
       property,
-      healthScore: Math.min(100, Math.max(0, healthScore)),
       workOrders: {
         open: openWorkOrders,
         overdue: overdueWorkOrders,
@@ -179,11 +145,6 @@ export function PropertyOverviewTab() {
         low: lowPriority,
         medium: mediumPriority,
         high: highPriority,
-      },
-      preventativeMaintenance: {
-        open: pmOpen,
-        overdue: pmOverdue,
-        completed: pmCompleted,
       },
       assetStatus: {
         operational: operationalAssets,
@@ -205,12 +166,11 @@ export function PropertyOverviewTab() {
     ? allPropertyMetrics 
     : allPropertyMetrics.filter(metric => metric.property.id === selectedProperty);
 
-  // Filter properties based on search and type
+  // Filter properties based on search
   const filteredProperties = propertyFilteredMetrics.filter(({ property }) => {
     const matchesSearch = property.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          property.location.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = propertyTypeFilter === "all" || property.type === propertyTypeFilter;
-    return matchesSearch && matchesType;
+    return matchesSearch;
   });
 
   // Handle sorting
@@ -249,10 +209,6 @@ export function PropertyOverviewTab() {
           aValue = a.property.name.toLowerCase();
           bValue = b.property.name.toLowerCase();
           break;
-        case 'healthScore':
-          aValue = a.healthScore;
-          bValue = b.healthScore;
-          break;
         case 'compliance':
           aValue = a.complianceScore;
           bValue = b.complianceScore;
@@ -272,8 +228,8 @@ export function PropertyOverviewTab() {
       }
     });
   } else {
-    // Default sort by health score descending
-    sortedProperties.sort((a, b) => b.healthScore - a.healthScore);
+    // Default sort by compliance score descending
+    sortedProperties.sort((a, b) => b.complianceScore - a.complianceScore);
   }
   
   const displayedProperties = showAll ? sortedProperties : sortedProperties.slice(0, 10);
@@ -455,18 +411,6 @@ export function PropertyOverviewTab() {
             className="pl-10"
           />
         </div>
-        <Select value={propertyTypeFilter} onValueChange={setPropertyTypeFilter}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="All Property Types" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Property Types</SelectItem>
-            <SelectItem value="Office">Office</SelectItem>
-            <SelectItem value="Retail">Retail</SelectItem>
-            <SelectItem value="Warehouse">Warehouse</SelectItem>
-            <SelectItem value="Mixed Use">Mixed Use</SelectItem>
-          </SelectContent>
-        </Select>
         <Badge variant="outline" className="text-sm">
           {displayedProperties.length} of {filteredProperties.length} Properties
         </Badge>
@@ -490,20 +434,7 @@ export function PropertyOverviewTab() {
                   </span>
                 </Button>
               </TableHead>
-              <TableHead className="text-center w-32">
-                <Button
-                  variant="ghost"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort('healthScore')}
-                >
-                  <span className="flex items-center gap-2">
-                    Health Score
-                    {getSortIcon('healthScore')}
-                  </span>
-                </Button>
-              </TableHead>
               <TableHead className="text-center w-40">Work Orders</TableHead>
-              <TableHead className="text-center w-44">Preventative Maintenance</TableHead>
               <TableHead className="text-center w-40">Asset Status</TableHead>
               <TableHead className="text-center w-36">Invoicing</TableHead>
               <TableHead className="text-center w-32">
@@ -530,13 +461,10 @@ export function PropertyOverviewTab() {
                   </span>
                 </Button>
               </TableHead>
-              <TableHead className="text-center w-24">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {displayedProperties.map((metrics) => {
-              const { grade, variant } = getHealthScoreGrade(metrics.healthScore);
-              
               return (
                 <React.Fragment key={metrics.property.id}>
                   <TableRow className="hover:bg-muted/50">
@@ -553,17 +481,6 @@ export function PropertyOverviewTab() {
                     </TableCell>
                     
                     <TableCell className="text-center">
-                      <div className="flex items-center justify-center space-x-2">
-                        <Badge variant={variant} className="w-8 h-8 rounded-full flex items-center justify-center p-0">
-                          {grade}
-                        </Badge>
-                        <span className={`text-sm font-bold ${getHealthScoreColor(metrics.healthScore)}`}>
-                          {metrics.healthScore}%
-                        </span>
-                      </div>
-                    </TableCell>
-                    
-                    <TableCell className="text-center">
                       <div className="space-y-2">
                         <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
                           <span>Open</span>
@@ -574,21 +491,6 @@ export function PropertyOverviewTab() {
                           <span>{metrics.workOrders.open}</span>
                           <span className="text-destructive">{metrics.workOrders.overdue}</span>
                           <span className="text-success">{metrics.workOrders.completed}</span>
-                        </div>
-                      </div>
-                    </TableCell>
-                    
-                    <TableCell className="text-center">
-                      <div className="space-y-2">
-                        <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
-                          <span>Open</span>
-                          <span>Overdue</span>
-                          <span>Completed</span>
-                        </div>
-                        <div className="text-sm font-medium grid grid-cols-3 gap-1">
-                          <span>{metrics.preventativeMaintenance.open}</span>
-                          <span className="text-destructive">{metrics.preventativeMaintenance.overdue}</span>
-                          <span className="text-success">{metrics.preventativeMaintenance.completed}</span>
                         </div>
                       </div>
                     </TableCell>
@@ -635,34 +537,6 @@ export function PropertyOverviewTab() {
                         <Progress value={metrics.operationalScore} className="w-16 h-2 mx-auto" />
                         <span className="text-sm font-medium">{metrics.operationalScore}%</span>
                       </div>
-                    </TableCell>
-                    
-                    <TableCell className="text-center">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 hover:bg-blue-100"
-                          >
-                            <MoreVertical className="h-4 w-4 text-blue-600" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-white border shadow-md">
-                          <DropdownMenuItem onClick={() => openDetailsModal('workOrders', metrics.property.id)}>
-                            Work Order Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openDetailsModal('preventativeMaintenance', metrics.property.id)}>
-                            Preventative Maintenance Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openDetailsModal('assets', metrics.property.id)}>
-                            Asset Status Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openDetailsModal('invoicing', metrics.property.id)}>
-                            Invoicing Details
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 </React.Fragment>
