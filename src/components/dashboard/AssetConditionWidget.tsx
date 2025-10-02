@@ -53,9 +53,6 @@ export function AssetConditionWidget({ filteredAssets = [] }: AssetConditionWidg
             <Activity className="h-5 w-5 text-primary" />
             <span className="text-lg">Asset Condition</span>
           </div>
-          <Badge variant="outline" className="text-sm">
-            Score: {conditionScore}
-          </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

@@ -49,12 +49,7 @@ export function AssetStatusWidget({ filteredAssets = [] }: AssetStatusWidgetProp
             <Settings className="h-4 w-4 text-primary" />
             <span className="text-base font-semibold">Asset Status</span>
           </div>
-          <div className="flex items-center space-x-2">
-            <Badge variant="outline" className="text-xs">
-              {healthScore}% Health
-            </Badge>
-            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
+          <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">

@@ -1,11 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { TrendingUp, ArrowRight, Clock, Wrench } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TrendingUp, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { VerticalBarChart } from "@/components/ui/enhanced-charts";
-import { DetailedViewModal } from "@/components/ui/detailed-view-modal";
-import { useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 
 interface TopAssetsWidgetProps {
   filteredAssets?: any[];
@@ -78,33 +74,6 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
     });
   };
 
-  // Prepare stacked chart data
-  const stackedChartData = topByWorkOrders.map(asset => ({
-    name: asset.name.length > 12 ? asset.name.substring(0, 12) + '...' : asset.name,
-    Critical: asset.criticalCount,
-    Medium: asset.mediumCount,
-    Low: asset.lowCount,
-    fullName: asset.name
-  }));
-
-  // Prepare frequency chart data
-  const frequencyChartData = topByFrequency.map(asset => ({
-    name: asset.name.length > 12 ? asset.name.substring(0, 12) + '...' : asset.name,
-    value: asset.frequencyScore,
-    fullName: asset.name
-  }));
-
-  const tableColumns = [
-    { key: 'name', label: 'Asset Name' },
-    { key: 'type', label: 'Type' },
-    { key: 'location', label: 'Location' },
-    { key: 'workOrderCount', label: 'Work Orders' },
-    { key: 'criticalCount', label: 'Critical/Urgent/High' },
-    { key: 'mediumCount', label: 'Medium' },
-    { key: 'lowCount', label: 'Low' },
-    { key: 'frequencyScore', label: 'Frequency', format: (value: number) => `${value} WOs` }
-  ];
-
   return (
     <Card 
       className="hover:shadow-md transition-shadow cursor-pointer group col-span-full min-h-[600px]" 
@@ -120,154 +89,71 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
-        <div className="grid grid-cols-2 gap-4" style={{ minHeight: '480px' }}>
+        <div className="grid grid-cols-2 gap-4">
           
-          {/* Work Orders by Priority (Stacked) Panel */}
+          {/* Work Orders by Priority */}
           <div className="space-y-2">
-            <div className="h-[420px] bg-card border rounded-lg p-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stackedChartData} margin={{ top: 20, right: 20, left: 20, bottom: 60 }}>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                  <XAxis 
-                    dataKey="name" 
-                    angle={-45}
-                    textAnchor="end"
-                    height={80}
-                    tick={{ fontSize: 11 }}
-                  />
-                  <YAxis tick={{ fontSize: 11 }} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'hsl(var(--background))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '6px'
-                    }}
-                  />
-                  <Legend 
-                    wrapperStyle={{ paddingTop: '10px' }}
-                    iconType="circle"
-                  />
-                  <Bar dataKey="Critical" stackId="a" fill="hsl(var(--destructive))" />
-                  <Bar dataKey="Medium" stackId="a" fill="hsl(var(--dashboard-medium))" />
-                  <Bar dataKey="Low" stackId="a" fill="hsl(var(--dashboard-low))" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="bg-muted/30 rounded-lg p-2">
-              <div className="flex items-center justify-between mb-2">
-                <h5 className="text-xs font-medium text-muted-foreground">Work Orders by Priority</h5>
-                <Wrench className="h-4 w-4 text-dashboard-medium" />
-              </div>
-              <div className="space-y-2">
-                {topByWorkOrders.slice(0, 10).map((asset, index) => (
-                  <div key={`wo-${asset.id}`} className="flex items-center justify-between h-8 px-2 rounded hover:bg-background/50 transition-colors">
-                    <span className="truncate text-sm font-medium">{asset.name}</span>
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="text-destructive font-medium">{asset.criticalCount}</span>
-                      <span className="text-dashboard-medium font-medium">{asset.mediumCount}</span>
-                      <span className="text-dashboard-low font-medium">{asset.lowCount}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-3">
-                <DetailedViewModal
-                  title="Work Orders by Priority - High Maintenance Assets"
-                  chartComponent={
-                    <div className="space-y-4">
-                      <h4 className="text-sm font-medium text-center">Work Orders by Priority</h4>
-                      <div className="h-96">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={stackedChartData} margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
-                            <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                            <XAxis 
-                              dataKey="name" 
-                              angle={-45}
-                              textAnchor="end"
-                              height={100}
-                            />
-                            <YAxis />
-                            <Tooltip 
-                              contentStyle={{ 
-                                backgroundColor: 'hsl(var(--background))',
-                                border: '1px solid hsl(var(--border))',
-                                borderRadius: '6px'
-                              }}
-                            />
-                            <Legend />
-                            <Bar dataKey="Critical" stackId="a" fill="hsl(var(--destructive))" />
-                            <Bar dataKey="Medium" stackId="a" fill="hsl(var(--dashboard-medium))" />
-                            <Bar dataKey="Low" stackId="a" fill="hsl(var(--dashboard-low))" />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                  }
-                  tableData={topByWorkOrders}
-                  tableColumns={tableColumns}
-                >
-                  <Button variant="outline" size="sm" className="w-full h-7 text-xs" onClick={(e) => e.stopPropagation()}>
-                    View More
-                  </Button>
-                </DetailedViewModal>
-              </div>
+            <h4 className="text-sm font-semibold text-center pb-2 border-b">Work Orders by Priority</h4>
+            <div className="border rounded-lg overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-xs">Asset Name</TableHead>
+                    <TableHead className="text-xs">Asset Group</TableHead>
+                    <TableHead className="text-xs">Property</TableHead>
+                    <TableHead className="text-xs text-right">Work Order Total</TableHead>
+                    <TableHead className="text-xs text-right">Critical (Urgent/High)</TableHead>
+                    <TableHead className="text-xs text-right">Medium</TableHead>
+                    <TableHead className="text-xs text-right">Low</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {topByWorkOrders.slice(0, 10).map((asset) => (
+                    <TableRow key={asset.id}>
+                      <TableCell className="text-xs font-medium">{asset.name}</TableCell>
+                      <TableCell className="text-xs">{asset.type}</TableCell>
+                      <TableCell className="text-xs">{asset.location}</TableCell>
+                      <TableCell className="text-xs text-right font-medium">{asset.workOrderCount}</TableCell>
+                      <TableCell className="text-xs text-right text-destructive font-medium">{asset.criticalCount}</TableCell>
+                      <TableCell className="text-xs text-right text-dashboard-medium font-medium">{asset.mediumCount}</TableCell>
+                      <TableCell className="text-xs text-right text-dashboard-low font-medium">{asset.lowCount}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </div>
           
-          {/* Frequency Panel */}
+          {/* Work Order Frequency */}
           <div className="space-y-2">
-            <div className="h-[420px] bg-card border rounded-lg p-4">
-              <div className="flex justify-center mt-4 mb-5">
-                <VerticalBarChart 
-                  data={frequencyChartData}
-                  color="hsl(var(--dashboard-high))"
-                  width={600}
-                  height={380}
-                />
-              </div>
-            </div>
-            <div className="bg-muted/30 rounded-lg p-2">
-              <div className="flex items-center justify-between mb-2">
-                <h5 className="text-xs font-medium text-muted-foreground">Work Order Frequency</h5>
-                <Clock className="h-4 w-4 text-dashboard-high" />
-              </div>
-              <div className="space-y-2">
-                {topByFrequency.slice(0, 10).map((asset, index) => (
-                  <div key={`freq-${asset.id}`} className="flex items-center justify-between h-8 px-2 rounded hover:bg-background/50 transition-colors">
-                    <span className="truncate text-sm font-medium">{asset.name}</span>
-                    <span className="text-xs font-normal text-dashboard-high">
-                      {asset.frequencyScore} WOs
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-3">
-                <DetailedViewModal
-                  title="Work Order Frequency - High Maintenance Assets"
-                  chartComponent={
-                    <div className="space-y-4">
-                      <h4 className="text-sm font-medium text-center">Top 10 by Frequency</h4>
-                      <div className="h-80">
-                        <VerticalBarChart 
-                          data={topByFrequency.map(asset => ({
-                            name: asset.name,
-                            value: asset.frequencyScore
-                          }))}
-                          color="hsl(var(--dashboard-high))"
-                          width={800}
-                          height={400}
-                        />
-                      </div>
-                    </div>
-                  }
-                  tableData={topByFrequency}
-                  tableColumns={tableColumns}
-                >
-                  <Button variant="outline" size="sm" className="w-full h-7 text-xs" onClick={(e) => e.stopPropagation()}>
-                    View More
-                  </Button>
-                </DetailedViewModal>
-              </div>
+            <h4 className="text-sm font-semibold text-center pb-2 border-b">Work Order Frequency</h4>
+            <div className="border rounded-lg overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-xs">Asset Name</TableHead>
+                    <TableHead className="text-xs">Asset Group</TableHead>
+                    <TableHead className="text-xs">Property</TableHead>
+                    <TableHead className="text-xs text-right">Work Order Total</TableHead>
+                    <TableHead className="text-xs text-right">Critical (Urgent/High)</TableHead>
+                    <TableHead className="text-xs text-right">Medium</TableHead>
+                    <TableHead className="text-xs text-right">Low</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {topByFrequency.slice(0, 10).map((asset) => (
+                    <TableRow key={asset.id}>
+                      <TableCell className="text-xs font-medium">{asset.name}</TableCell>
+                      <TableCell className="text-xs">{asset.type}</TableCell>
+                      <TableCell className="text-xs">{asset.location}</TableCell>
+                      <TableCell className="text-xs text-right font-medium">{asset.workOrderCount}</TableCell>
+                      <TableCell className="text-xs text-right text-destructive font-medium">{asset.criticalCount}</TableCell>
+                      <TableCell className="text-xs text-right text-dashboard-medium font-medium">{asset.mediumCount}</TableCell>
+                      <TableCell className="text-xs text-right text-dashboard-low font-medium">{asset.lowCount}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </div>
           

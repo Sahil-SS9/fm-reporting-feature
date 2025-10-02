@@ -114,17 +114,19 @@ export function PreventiveMaintenanceWidget() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="text-xs">Asset Name</TableHead>
-                    <TableHead className="text-xs">Type</TableHead>
-                    <TableHead className="text-xs">Location</TableHead>
-                    <TableHead className="text-xs">Next Inspection</TableHead>
+                    <TableHead className="text-xs">Task Type</TableHead>
+                    <TableHead className="text-xs">Assigned Team</TableHead>
+                    <TableHead className="text-xs">Assigned User</TableHead>
+                    <TableHead className="text-xs">Due Date</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {getSelectedData().slice(0, 10).map((asset) => (
                     <TableRow key={asset.id}>
                       <TableCell className="text-xs">{asset.name}</TableCell>
-                      <TableCell className="text-xs">{asset.type}</TableCell>
-                      <TableCell className="text-xs">{asset.location}</TableCell>
+                      <TableCell className="text-xs">Inspection</TableCell>
+                      <TableCell className="text-xs">Maintenance Team</TableCell>
+                      <TableCell className="text-xs">Unassigned</TableCell>
                       <TableCell className="text-xs">
                         {asset.nextInspection ? new Date(asset.nextInspection).toLocaleDateString() : 'N/A'}
                       </TableCell>
