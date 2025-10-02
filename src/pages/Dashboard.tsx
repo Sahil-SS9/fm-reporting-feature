@@ -8,7 +8,7 @@ import { TopAssetsWidget } from "@/components/dashboard/TopAssetsWidget";
 import { OutstandingInvoicesWidget } from "@/components/dashboard/OutstandingInvoicesWidget";
 import { IssuedInvoicesWidget } from "@/components/dashboard/IssuedInvoicesWidget";
 import { PropertyPerformanceWidget } from "@/components/dashboard/PropertyPerformanceWidget";
-import { PropertyComparisonChart } from "@/components/dashboard/PropertyComparisonChart";
+
 import { PropertyOverviewTab } from "@/components/dashboard/PropertyOverviewTab";
 import { ContractorInvoicingWidget } from "@/components/dashboard/ContractorInvoicingWidget";
 import { DocumentExpiryWidget } from "@/components/dashboard/DocumentExpiryWidget";
@@ -227,9 +227,6 @@ export default function Dashboard() {
         <TabsContent value="property" className="space-y-8">
           {/* Property Overview */}
           <PropertyOverviewTab />
-          
-          {/* Property Comparison Chart */}
-          <PropertyComparisonChart />
         </TabsContent>
 
         {/* Operations Tab */}
