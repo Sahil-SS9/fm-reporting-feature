@@ -21,13 +21,13 @@ export function OnTimeVsOverdueWidget({ filteredWorkOrders = [] }: OnTimeVsOverd
         <CardTitle className="text-lg font-semibold">On Time Performance</CardTitle>
         <Clock className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-8">
         {/* Semi-circular Gauge */}
-        <div className="flex justify-center">
+        <div className="flex justify-center pt-4">
           <SemiCircularGauge 
             value={onTimePercentage} 
-            size={140}
-            strokeWidth={12}
+            size={200}
+            strokeWidth={16}
             color={onTimePercentage >= 80 ? "hsl(var(--dashboard-complete))" : 
                    onTimePercentage >= 60 ? "hsl(var(--warning))" : "hsl(var(--destructive))"}
             label="On Time Rate"
@@ -35,7 +35,7 @@ export function OnTimeVsOverdueWidget({ filteredWorkOrders = [] }: OnTimeVsOverd
         </div>
 
         {/* Count Indicators */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 mt-8">
           <div className="text-center p-3 bg-dashboard-complete/5 rounded-lg">
             <div className="flex items-center justify-center space-x-2 mb-2">
               <CheckCircle className="h-4 w-4 text-dashboard-complete" />
@@ -56,13 +56,6 @@ export function OnTimeVsOverdueWidget({ filteredWorkOrders = [] }: OnTimeVsOverd
             <div className="text-xs text-muted-foreground">
               {(100 - onTimePercentage).toFixed(1)}% of total
             </div>
-          </div>
-        </div>
-
-        {/* Industry Benchmark Context */}
-        <div className="flex justify-center">
-          <div className="text-xs text-muted-foreground text-center">
-            Industry benchmark: 75-85%
           </div>
         </div>
       </CardContent>

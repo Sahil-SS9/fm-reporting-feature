@@ -311,63 +311,89 @@ export default function Dashboard() {
             <OnTimeVsOverdueWidget filteredWorkOrders={filteredWorkOrders} />
           </div>
 
-          {/* Performance Insights - Work Orders */}
-          <div className="bg-card rounded-lg p-6 shadow-sm">
-            <h3 className="text-xl font-semibold mb-6 text-foreground">Performance Insights - Work Orders</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <EnhancedEssentialMetricsCard
-                title="Avg Completion Time"
-                value={`${filteredKpiMetrics.avgCompletionTime}`}
-                subValue="days"
-                icon={TrendingUp}
-                variant={filteredKpiMetrics.avgCompletionTime <= 3 ? "success" : filteredKpiMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
-                description="Average time to complete"
-              />
-              <EnhancedEssentialMetricsCard
-                title="Closure Rate" 
-                value={`${filteredKpiMetrics.closureRate}%`}
-                icon={CheckCircle}
-                variant={filteredKpiMetrics.closureRate >= 80 ? "success" : "warning"}
-                description="Work orders completed"
-              />
-              <EnhancedEssentialMetricsCard
-                title="Resolution Time"
-                value={`${performanceMetrics.avgCompletionTime}`}
-                subValue="days"
-                icon={Activity}
-                variant={performanceMetrics.avgCompletionTime <= 3 ? "success" : performanceMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
-                description="Time to resolve issues"
-              />
+          {/* Performance Insights Section */}
+          <div className="space-y-8">
+            {/* Date Filter for Performance Insights */}
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold text-foreground">Performance Insights</h2>
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-muted-foreground">Date Range:</label>
+                <Select defaultValue="30">
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="7">Last 7 days</SelectItem>
+                    <SelectItem value="30">Last 30 days</SelectItem>
+                    <SelectItem value="90">Last 90 days</SelectItem>
+                    <SelectItem value="365">Last year</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          </div>
 
-          {/* Performance Insights - Cases */}
-          <div className="bg-card rounded-lg p-6 shadow-sm">
-            <h3 className="text-xl font-semibold mb-6 text-foreground">Performance Insights - Cases</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <EnhancedEssentialMetricsCard
-                title="Avg Completion Time"
-                value={`${filteredKpiMetrics.avgCompletionTime}`}
-                subValue="days"
-                icon={TrendingUp}
-                variant={filteredKpiMetrics.avgCompletionTime <= 3 ? "success" : filteredKpiMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
-                description="Average time to complete"
-              />
-              <EnhancedEssentialMetricsCard
-                title="Closure Rate" 
-                value={`${filteredKpiMetrics.closureRate}%`}
-                icon={CheckCircle}
-                variant={filteredKpiMetrics.closureRate >= 80 ? "success" : "warning"}
-                description="Cases completed"
-              />
-              <EnhancedEssentialMetricsCard
-                title="Resolution Time"
-                value={`${performanceMetrics.avgCompletionTime}`}
-                subValue="days"
-                icon={Activity}
-                variant={performanceMetrics.avgCompletionTime <= 3 ? "success" : performanceMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
-                description="Time to resolve cases"
-              />
+            {/* Work Orders Section */}
+            <div className="border-t-4 border-primary/20 pt-6">
+              <div className="bg-card rounded-lg p-6 shadow-sm">
+                <h3 className="text-xl font-semibold mb-6 text-foreground">Work Orders</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <EnhancedEssentialMetricsCard
+                    title="Avg Completion Time"
+                    value={`${filteredKpiMetrics.avgCompletionTime}`}
+                    subValue="days"
+                    icon={TrendingUp}
+                    variant={filteredKpiMetrics.avgCompletionTime <= 3 ? "success" : filteredKpiMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
+                    description="Average time to complete"
+                  />
+                  <EnhancedEssentialMetricsCard
+                    title="Closure Rate" 
+                    value={`${filteredKpiMetrics.closureRate}%`}
+                    icon={CheckCircle}
+                    variant={filteredKpiMetrics.closureRate >= 80 ? "success" : "warning"}
+                    description="Work orders completed"
+                  />
+                  <EnhancedEssentialMetricsCard
+                    title="Resolution Time"
+                    value={`${performanceMetrics.avgCompletionTime}`}
+                    subValue="days"
+                    icon={Activity}
+                    variant={performanceMetrics.avgCompletionTime <= 3 ? "success" : performanceMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
+                    description="Time to resolve issues"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Cases Section */}
+            <div className="border-t-4 border-primary/20 pt-6">
+              <div className="bg-card rounded-lg p-6 shadow-sm">
+                <h3 className="text-xl font-semibold mb-6 text-foreground">Cases</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <EnhancedEssentialMetricsCard
+                    title="Avg Completion Time"
+                    value={`${filteredKpiMetrics.avgCompletionTime}`}
+                    subValue="days"
+                    icon={TrendingUp}
+                    variant={filteredKpiMetrics.avgCompletionTime <= 3 ? "success" : filteredKpiMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
+                    description="Average time to complete"
+                  />
+                  <EnhancedEssentialMetricsCard
+                    title="Closure Rate" 
+                    value={`${filteredKpiMetrics.closureRate}%`}
+                    icon={CheckCircle}
+                    variant={filteredKpiMetrics.closureRate >= 80 ? "success" : "warning"}
+                    description="Cases completed"
+                  />
+                  <EnhancedEssentialMetricsCard
+                    title="Resolution Time"
+                    value={`${performanceMetrics.avgCompletionTime}`}
+                    subValue="days"
+                    icon={Activity}
+                    variant={performanceMetrics.avgCompletionTime <= 3 ? "success" : performanceMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
+                    description="Time to resolve cases"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           
