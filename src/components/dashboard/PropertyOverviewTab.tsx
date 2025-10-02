@@ -433,10 +433,6 @@ export function PropertyOverviewTab() {
     });
   };
 
-  // Get top performers and needs attention
-  const topPerformers = sortedProperties.slice(0, 3);
-  const needsAttention = sortedProperties.slice(-3).reverse();
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
