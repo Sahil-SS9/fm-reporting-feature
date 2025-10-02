@@ -629,11 +629,10 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
             <CardContent className="p-6">
               {selectedDataSource && selectedColumns.length > 0 && (
                 <EnhancedFilters
-                  columns={availableColumns}
+                  dataSource={selectedDataSource}
                   filters={filters}
                   onFilterChange={handleFilterChange}
                   reportType={reportType}
-                  onClearAll={() => setFilters({})}
                   onSkip={handleSave}
                   onSave={handleSave}
                 />
