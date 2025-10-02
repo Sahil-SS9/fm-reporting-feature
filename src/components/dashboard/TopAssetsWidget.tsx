@@ -2,6 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TrendingUp, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { VerticalBarChart } from "@/components/ui/enhanced-charts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 interface TopAssetsWidgetProps {
   filteredAssets?: any[];
@@ -74,6 +76,22 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
     });
   };
 
+  // Prepare stacked chart data
+  const stackedChartData = topByWorkOrders.map(asset => ({
+    name: asset.name.length > 12 ? asset.name.substring(0, 12) + '...' : asset.name,
+    Critical: asset.criticalCount,
+    Medium: asset.mediumCount,
+    Low: asset.lowCount,
+    fullName: asset.name
+  }));
+
+  // Prepare frequency chart data
+  const frequencyChartData = topByFrequency.map(asset => ({
+    name: asset.name.length > 12 ? asset.name.substring(0, 12) + '...' : asset.name,
+    value: asset.frequencyScore,
+    fullName: asset.name
+  }));
+
   return (
     <Card 
       className="hover:shadow-md transition-shadow cursor-pointer group col-span-full min-h-[600px]" 
@@ -91,9 +109,42 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
       <CardContent className="p-4">
         <div className="grid grid-cols-2 gap-4">
           
-          {/* Work Orders by Priority */}
-          <div className="space-y-2">
+          {/* Work Orders by Priority (Stacked Chart) */}
+          <div className="space-y-3">
             <h4 className="text-sm font-semibold text-center pb-2 border-b">Work Orders by Priority</h4>
+            
+            {/* Stacked Bar Chart */}
+            <div className="h-[300px] bg-card border rounded-lg p-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={stackedChartData} margin={{ top: 20, right: 20, left: 20, bottom: 60 }}>
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                  <XAxis 
+                    dataKey="name" 
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    tick={{ fontSize: 11 }}
+                  />
+                  <YAxis tick={{ fontSize: 11 }} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--background))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '6px'
+                    }}
+                  />
+                  <Legend 
+                    wrapperStyle={{ paddingTop: '10px' }}
+                    iconType="circle"
+                  />
+                  <Bar dataKey="Critical" stackId="a" fill="hsl(var(--destructive))" />
+                  <Bar dataKey="Medium" stackId="a" fill="hsl(var(--dashboard-medium))" />
+                  <Bar dataKey="Low" stackId="a" fill="hsl(var(--dashboard-low))" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Data Table */}
             <div className="border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
@@ -124,9 +175,21 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
             </div>
           </div>
           
-          {/* Work Order Frequency */}
-          <div className="space-y-2">
+          {/* Work Order Frequency (Bar Chart) */}
+          <div className="space-y-3">
             <h4 className="text-sm font-semibold text-center pb-2 border-b">Work Order Frequency</h4>
+            
+            {/* Vertical Bar Chart */}
+            <div className="h-[300px] bg-card border rounded-lg p-4 flex items-center justify-center">
+              <VerticalBarChart 
+                data={frequencyChartData}
+                color="hsl(var(--dashboard-high))"
+                width={500}
+                height={280}
+              />
+            </div>
+
+            {/* Data Table */}
             <div className="border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
