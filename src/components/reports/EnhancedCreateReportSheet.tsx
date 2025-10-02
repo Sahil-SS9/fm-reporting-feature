@@ -616,65 +616,37 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Step 4: Filters & Preview */}
+      {/* Step 4: Filters */}
       <Collapsible open={step4Open} onOpenChange={setStep4Open}>
         <CollapsibleTrigger className="flex items-center justify-between w-full p-4 border rounded-lg hover:bg-muted/50">
-          <h3 className="text-lg font-semibold">Step 4: Filters & Preview</h3>
+          <h3 className="text-lg font-semibold">
+            Step 4: {reportType === "Performance" ? "Analysis Settings" : "Report Filters"}
+          </h3>
           {step4Open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </CollapsibleTrigger>
         <CollapsibleContent className="mt-4">
           <Card>
-            <CardContent className="p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <Label>Report Filters (Optional)</Label>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowPreview(!showPreview)}
-                >
-                  <Eye className="h-4 w-4 mr-2" />
-                  {showPreview ? 'Hide' : 'Show'} Preview
-                </Button>
-              </div>
-
-              <p className="text-sm text-muted-foreground">
-                Add filters to refine your report data. Multiple filters use AND logic across fields, OR logic within field values.
-              </p>
-
+            <CardContent className="p-6">
               {selectedDataSource && selectedColumns.length > 0 && (
                 <EnhancedFilters
                   columns={availableColumns}
                   filters={filters}
                   onFilterChange={handleFilterChange}
+                  reportType={reportType}
+                  onClearAll={() => setFilters({})}
+                  onSkip={handleSave}
+                  onSave={handleSave}
                 />
-              )}
-
-              {showPreview && selectedDataSource && selectedColumns.length > 0 && (
-                <div className="mt-6">
-                  <ReportPreview
-                    dataSource={selectedDataSource}
-                    columns={selectedColumns}
-                    filters={filters}
-                    properties={[selectedProperty]}
-                    reportType={reportType}
-                  />
-                </div>
               )}
             </CardContent>
           </Card>
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Action Buttons */}
-      <div className="flex items-center justify-end space-x-3 pt-4 border-t">
+      {/* Cancel Button */}
+      <div className="flex items-center justify-start pt-4 border-t">
         <Button variant="outline" onClick={handleCancel}>
           Cancel
-        </Button>
-        <Button 
-          onClick={handleSave}
-          disabled={!isAllStepsValid || !hasPropertyAccess}
-        >
-          Save Report
         </Button>
       </div>
     </div>
