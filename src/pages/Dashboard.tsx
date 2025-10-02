@@ -35,7 +35,10 @@ import {
   CheckCircle,
   TrendingUp,
   Target,
-  Filter
+  Filter,
+  PlayCircle,
+  FileCheck,
+  CheckCircle2
 } from "lucide-react";
 import { 
   Select,
@@ -110,6 +113,12 @@ export default function Dashboard() {
   const filteredAssets = getFilteredAssets(selectedProperty);  
   const filteredInvoices = getFilteredInvoices(selectedProperty);
   const filteredKpiMetrics = calculateKPIMetrics(filteredWorkOrders);
+  
+  // Calculate status counts (mapping to available statuses)
+  const approvedCount = filteredWorkOrders.filter(wo => wo.status === "Open").length;
+  const inProgressCount = filteredWorkOrders.filter(wo => wo.status === "In Progress").length;
+  const inReviewCount = 0; // Not available in current data model
+  const completedCount = filteredWorkOrders.filter(wo => wo.status === "Completed").length;
   
   return (
     <DashboardContext.Provider value={{ currentTab, setCurrentTab, selectedProperty, setSelectedProperty }}>
@@ -234,20 +243,14 @@ export default function Dashboard() {
           {/* Essential Metrics */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
             <h3 className="text-xl font-semibold mb-6 text-foreground">Today's Metrics</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* First Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
               <EnhancedEssentialMetricsCard
                 title="Due Today"
                 value={filteredKpiMetrics.dueToday}
                 icon={Clock}
                 variant={filteredKpiMetrics.dueToday > 5 ? "warning" : "default"}
                 description="Work orders due today"
-              />
-              <EnhancedEssentialMetricsCard
-                title="Overdue Items"
-                value={filteredKpiMetrics.overdue}
-                icon={AlertTriangle}
-                variant={filteredKpiMetrics.overdue > 0 ? "critical" : "success"}
-                description="Past due work orders"
               />
               <EnhancedEssentialMetricsCard
                 title="Critical Issues"
@@ -257,16 +260,42 @@ export default function Dashboard() {
                 description="High priority items"
               />
               <EnhancedEssentialMetricsCard
-                title="On-Time Rate"
-                value={`${filteredKpiMetrics.onTimeRate}%`}
-                icon={Target}
-                variant={filteredKpiMetrics.onTimeRate >= 80 ? "success" : filteredKpiMetrics.onTimeRate >= 60 ? "warning" : "critical"}
-                change={{
-                  value: `${filteredKpiMetrics.weeklyTrend > 0 ? '+' : ''}${filteredKpiMetrics.weeklyTrend}%`,
-                  type: filteredKpiMetrics.weeklyTrend > 0 ? "positive" : filteredKpiMetrics.weeklyTrend < 0 ? "negative" : "neutral",
-                  label: "vs last week"
-                }}
-                description="Completed on time"
+                title="Overdue Items"
+                value={filteredKpiMetrics.overdue}
+                icon={AlertTriangle}
+                variant={filteredKpiMetrics.overdue > 0 ? "critical" : "success"}
+                description="Past due work orders"
+              />
+            </div>
+            {/* Second Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <EnhancedEssentialMetricsCard
+                title="Approved Work Orders"
+                value={approvedCount}
+                icon={CheckCircle2}
+                variant="default"
+                description="Work orders approved"
+              />
+              <EnhancedEssentialMetricsCard
+                title="In-Progress Work Orders"
+                value={inProgressCount}
+                icon={PlayCircle}
+                variant="default"
+                description="Work orders in progress"
+              />
+              <EnhancedEssentialMetricsCard
+                title="In Review Work Orders"
+                value={inReviewCount}
+                icon={FileCheck}
+                variant="default"
+                description="Work orders in review"
+              />
+              <EnhancedEssentialMetricsCard
+                title="Completed Work Orders"
+                value={completedCount}
+                icon={CheckCircle}
+                variant="success"
+                description="Work orders completed"
               />
             </div>
           </div>
@@ -280,10 +309,10 @@ export default function Dashboard() {
             <OnTimeVsOverdueWidget filteredWorkOrders={filteredWorkOrders} />
           </div>
 
-          {/* Performance Insights */}
+          {/* Performance Insights - Work Orders */}
           <div className="bg-card rounded-lg p-6 shadow-sm">
-            <h3 className="text-xl font-semibold mb-6 text-foreground">Performance Insights</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <h3 className="text-xl font-semibold mb-6 text-foreground">Performance Insights - Work Orders</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <EnhancedEssentialMetricsCard
                 title="Avg Completion Time"
                 value={`${filteredKpiMetrics.avgCompletionTime}`}
@@ -300,12 +329,34 @@ export default function Dashboard() {
                 description="Work orders completed"
               />
               <EnhancedEssentialMetricsCard
-                title="Avg Response Time"
-                value={`${performanceMetrics.avgResponseTime}`}
-                subValue="hours"
-                icon={Target}
-                variant={performanceMetrics.avgResponseTime <= 2 ? "success" : performanceMetrics.avgResponseTime <= 4 ? "warning" : "critical"}
-                description="Time to initial response"
+                title="Resolution Time"
+                value={`${performanceMetrics.avgCompletionTime}`}
+                subValue="days"
+                icon={Activity}
+                variant={performanceMetrics.avgCompletionTime <= 3 ? "success" : performanceMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
+                description="Time to resolve issues"
+              />
+            </div>
+          </div>
+
+          {/* Performance Insights - Cases */}
+          <div className="bg-card rounded-lg p-6 shadow-sm">
+            <h3 className="text-xl font-semibold mb-6 text-foreground">Performance Insights - Cases</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <EnhancedEssentialMetricsCard
+                title="Avg Completion Time"
+                value={`${filteredKpiMetrics.avgCompletionTime}`}
+                subValue="days"
+                icon={TrendingUp}
+                variant={filteredKpiMetrics.avgCompletionTime <= 3 ? "success" : filteredKpiMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
+                description="Average time to complete"
+              />
+              <EnhancedEssentialMetricsCard
+                title="Closure Rate" 
+                value={`${filteredKpiMetrics.closureRate}%`}
+                icon={CheckCircle}
+                variant={filteredKpiMetrics.closureRate >= 80 ? "success" : "warning"}
+                description="Cases completed"
               />
               <EnhancedEssentialMetricsCard
                 title="Resolution Time"
@@ -313,7 +364,7 @@ export default function Dashboard() {
                 subValue="days"
                 icon={Activity}
                 variant={performanceMetrics.avgCompletionTime <= 3 ? "success" : performanceMetrics.avgCompletionTime <= 7 ? "warning" : "critical"}
-                description="Time to resolve issues"
+                description="Time to resolve cases"
               />
             </div>
           </div>
