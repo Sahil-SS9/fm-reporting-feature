@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,16 +13,35 @@ import { ScheduleManagement } from "@/components/reports/ScheduleManagement";
 import { ReportResults } from "@/components/reports/ReportResults";
 import { EmailReportSheet } from "@/components/reports/EmailReportSheet";
 import { ScheduleReportSheet } from "@/components/reports/ScheduleReportSheet";
-import { quickReportTemplates, mockSavedReports, SavedReport } from "@/data/mockData";
+import { quickReportTemplates, mockReportConfigs, SavedReport, ReportConfig } from "@/data/mockData";
 
 const reportTypes = quickReportTemplates;
 
+// Convert ReportConfig to SavedReport for backwards compatibility
+const convertConfigToSavedReport = (config: ReportConfig): SavedReport => ({
+  id: config.id,
+  name: config.name,
+  description: config.description,
+  reportType: config.reportType,
+  properties: [config.property.id],
+  dataSource: config.dataSource,
+  columns: config.columns,
+  filters: config.filters,
+  createdDate: config.createdAt,
+  lastRun: config.lastGeneratedAt,
+  favorite: config.favorite,
+  userId: "user1" // Mock user ID
+});
+
 export default function Reporting() {
+  const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [hasReports, setHasReports] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
   const [currentView, setCurrentView] = useState<'main' | 'results'>('main');
-  const [savedReports, setSavedReports] = useState(mockSavedReports);
+  const [savedReports, setSavedReports] = useState<SavedReport[]>(
+    mockReportConfigs.map(convertConfigToSavedReport)
+  );
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [reportResults, setReportResults] = useState<any>(null);
   const [showEmailSheet, setShowEmailSheet] = useState(false);
@@ -233,9 +253,9 @@ export default function Reporting() {
                   .map((report) => (
                     <EnhancedReportCard
                       key={report.id}
-                      report={report}
-                      onView={handleViewResults}
-                      onEdit={handleEditReport}
+      report={report}
+      onView={() => navigate(`/reports/${report.id}`)}
+      onEdit={handleEditReport}
                       onCopy={handleCopyReport}
                       onEmail={handleEmailReport}
                       onDownload={handleDownloadReport}

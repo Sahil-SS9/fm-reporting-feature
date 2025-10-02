@@ -10,12 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Download, Search, Calendar as CalendarIcon, Filter, Mail, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { format, isWithinInterval, parseISO } from "date-fns";
-import { mockEmailHistory, type EmailHistory as EmailHistoryType } from "@/data/mockData";
+import { mockOldEmailHistory, type EmailHistory as EmailHistoryType } from "@/data/mockData";
 
 import { useToast } from "@/hooks/use-toast";
 
 export const EmailHistory: React.FC = () => {
-  const [emailHistory] = useState<EmailHistoryType[]>(mockEmailHistory);
+  const [emailHistory] = useState<EmailHistoryType[]>(mockOldEmailHistory);
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [statusFilter, setStatusFilter] = useState<string>("all");

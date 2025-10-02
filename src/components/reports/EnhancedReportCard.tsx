@@ -1,15 +1,15 @@
-import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Star, MoreHorizontal, Eye, Edit, Copy, Mail, Download, Trash2, Clock, Calendar } from "lucide-react";
+import { Star, MoreHorizontal, Settings, Edit, Copy, Mail, Download, Trash2, Clock, Calendar, Play } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { SavedReport } from "@/data/mockData";
 
 interface EnhancedReportCardProps {
   report: SavedReport;
-  onView: (report: SavedReport) => void;
+  onView: (reportId: string) => void;
   onEdit: (report: SavedReport) => void;
   onCopy: (report: SavedReport) => void;
   onEmail: (report: SavedReport) => void;
@@ -48,11 +48,15 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
 
   const formatDateTime = (dateString: string) => {
     try {
-      return format(parseISO(dateString), 'MMM dd, yyyy HH:mm');
+      return format(parseISO(dateString), 'MMM dd, yyyy h:mm a');
     } catch {
       return 'Never';
     }
   };
+
+  const lastGeneratedText = report.lastRun 
+    ? formatDateTime(report.lastRun)
+    : "Never generated";
 
   return (
     <Card className="group hover:shadow-md transition-shadow">
@@ -99,18 +103,6 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
                   <Copy className="mr-2 h-4 w-4" />
                   Copy
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onEmail(report)}>
-                  <Mail className="mr-2 h-4 w-4" />
-                  Email
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onSchedule(report)}>
-                  <Calendar className="mr-2 h-4 w-4" />
-                  Schedule
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onDownload(report)}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
-                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => onDelete(report)}
                   className="text-destructive focus:text-destructive"
@@ -131,20 +123,12 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
               <Calendar className="h-3 w-3" />
               <span>Created: {formatDate(report.createdDate)}</span>
             </div>
-            {report.lastRun && (
-              <div className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                <span>Last run: {formatDateTime(report.lastRun)}</span>
-              </div>
-            )}
           </div>
           
-          {report.lastSent && (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Mail className="h-3 w-3" />
-              <span>Last sent: {formatDateTime(report.lastSent)}</span>
-            </div>
-          )}
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Clock className="h-3 w-3" />
+            <span>Last generated: {lastGeneratedText}</span>
+          </div>
 
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-xs">
@@ -160,15 +144,24 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
             )}
           </div>
 
-          <div className="pt-2">
+          <div className="flex items-center gap-2 pt-2">
             <Button
               variant="default"
               size="sm"
-              onClick={() => onView(report)}
-              className="w-full"
+              onClick={() => onView(report.id)}
+              className="flex-1"
             >
-              <Eye className="mr-2 h-4 w-4" />
-              View Report
+              <Settings className="mr-2 h-4 w-4" />
+              View Config
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => onView(report.id)}
+              className="flex-1"
+            >
+              <Play className="mr-2 h-4 w-4" />
+              Generate
             </Button>
           </div>
         </div>

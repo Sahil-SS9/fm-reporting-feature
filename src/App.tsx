@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FMLayout } from "./components/layout/FMLayout";
 import Dashboard from "./pages/Dashboard";
 import Reporting from "./pages/Reporting";
+import ReportConfigDetail from "./pages/ReportConfigDetail";
+import ReportInstanceResults from "./pages/ReportInstanceResults";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +22,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/reporting" element={<Reporting />} />
+            <Route path="/reports/:configId" element={<ReportConfigDetail />} />
+            <Route path="/reports/:configId/instances/:instanceId/results" element={<ReportInstanceResults />} />
             <Route path="/schedule" element={<div className="p-6"><h1 className="text-2xl font-bold">Schedule</h1><p className="text-muted-foreground">Coming soon...</p></div>} />
             <Route path="/assets" element={<div className="p-6"><h1 className="text-2xl font-bold">Assets & Maintenance</h1><p className="text-muted-foreground">Coming soon...</p></div>} />
             <Route path="/cases" element={<div className="p-6"><h1 className="text-2xl font-bold">Cases & Work Orders</h1><p className="text-muted-foreground">Coming soon...</p></div>} />

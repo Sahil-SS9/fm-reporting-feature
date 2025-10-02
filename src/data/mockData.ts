@@ -12,6 +12,7 @@ export interface SavedReport {
   name: string;
   description: string;
   dataSource: string;
+  properties: string[];
   columns: string[];
   filters: Record<string, any>;
   createdDate: string;
@@ -20,6 +21,47 @@ export interface SavedReport {
   favorite: boolean;
   userId: string;
   reportType: 'Activity' | 'Performance';
+}
+
+// Report Config (template/definition)
+export interface ReportConfig {
+  id: string;
+  name: string;
+  description: string;
+  reportType: 'Activity' | 'Performance';
+  dataSource: string;
+  property: { id: string; name: string };
+  columns: string[];
+  filters: Record<string, any>;
+  createdAt: string;
+  createdBy: { name: string };
+  lastModified?: string;
+  lastGeneratedAt?: string;
+  favorite: boolean;
+}
+
+// Report Instance (generated snapshot)
+export interface ReportInstance {
+  id: string;
+  configId: string;
+  status: 'generating' | 'generated' | 'failed';
+  generatedAt: string;
+  generatedBy: { name: string };
+  rowCount: number | null;
+  filePath?: string;
+}
+
+// Email History Record
+export interface EmailHistoryRecord {
+  id: string;
+  instanceId: string;
+  configId: string;
+  sentAt: string;
+  sentBy: { name: string };
+  recipientsTo: string[];
+  recipientsCc?: string[];
+  status: 'sent' | 'failed';
+  csvAttached: boolean;
 }
 
 export interface ScheduledReport {
@@ -1260,6 +1302,139 @@ export const dataSourceConfig = {
 };
 
 // Mock saved reports
+// Mock Report Configs
+export const mockReportConfigs: ReportConfig[] = [
+  {
+    id: "config-1",
+    name: "Weekly Work Orders Summary",
+    description: "Open work orders from last 7 days",
+    reportType: "Activity",
+    dataSource: "work_orders",
+    property: { id: "prop-1", name: "Downtown Mall A" },
+    columns: ["id", "title", "status", "priority", "created_date", "assignee"],
+    filters: { status: ["open", "in_progress"], created_date: "last_7_days" },
+    createdAt: "2025-10-01T10:00:00Z",
+    createdBy: { name: "Sarah Thompson" },
+    lastModified: "2025-10-10T14:30:00Z",
+    lastGeneratedAt: "2025-10-15T15:42:00Z",
+    favorite: true
+  },
+  {
+    id: "config-2",
+    name: "Monthly Maintenance Performance",
+    description: "Maintenance completion rates and efficiency",
+    reportType: "Performance",
+    dataSource: "maintenance",
+    property: { id: "prop-2", name: "Harbor View Plaza" },
+    columns: ["asset_id", "maintenance_type", "completion_time", "cost", "technician"],
+    filters: { date_range: "last_30_days", maintenance_type: ["preventive", "corrective"] },
+    createdAt: "2025-09-15T09:00:00Z",
+    createdBy: { name: "Michael Chen" },
+    lastModified: "2025-10-05T11:20:00Z",
+    lastGeneratedAt: "2025-10-14T08:15:00Z",
+    favorite: false
+  },
+  {
+    id: "config-3",
+    name: "Asset Health Report",
+    description: "Current status and upcoming maintenance needs",
+    reportType: "Performance",
+    dataSource: "assets",
+    property: { id: "prop-1", name: "Downtown Mall A" },
+    columns: ["asset_name", "condition", "last_maintenance", "next_maintenance", "warranty_status"],
+    filters: { condition: ["fair", "poor"], asset_type: ["hvac", "electrical"] },
+    createdAt: "2025-09-20T13:45:00Z",
+    createdBy: { name: "Sarah Thompson" },
+    lastGeneratedAt: null,
+    favorite: false
+  }
+];
+
+// Mock Report Instances
+export const mockReportInstances: ReportInstance[] = [
+  {
+    id: "instance-1",
+    configId: "config-1",
+    status: "generated",
+    generatedAt: "2025-10-15T15:42:00Z",
+    generatedBy: { name: "Sarah Thompson" },
+    rowCount: 247,
+    filePath: "/reports/instance-1.csv"
+  },
+  {
+    id: "instance-2",
+    configId: "config-1",
+    status: "generated",
+    generatedAt: "2025-10-08T15:28:00Z",
+    generatedBy: { name: "Sarah Thompson" },
+    rowCount: 193,
+    filePath: "/reports/instance-2.csv"
+  },
+  {
+    id: "instance-3",
+    configId: "config-1",
+    status: "generated",
+    generatedAt: "2025-10-01T14:15:00Z",
+    generatedBy: { name: "Michael Chen" },
+    rowCount: 218,
+    filePath: "/reports/instance-3.csv"
+  },
+  {
+    id: "instance-4",
+    configId: "config-2",
+    status: "generated",
+    generatedAt: "2025-10-14T08:15:00Z",
+    generatedBy: { name: "Michael Chen" },
+    rowCount: 156,
+    filePath: "/reports/instance-4.csv"
+  },
+  {
+    id: "instance-5",
+    configId: "config-2",
+    status: "generated",
+    generatedAt: "2025-09-30T09:22:00Z",
+    generatedBy: { name: "Michael Chen" },
+    rowCount: 142,
+    filePath: "/reports/instance-5.csv"
+  }
+];
+
+// Mock Email History
+export const mockEmailHistory: EmailHistoryRecord[] = [
+  {
+    id: "email-1",
+    instanceId: "instance-1",
+    configId: "config-1",
+    sentAt: "2025-10-15T15:45:00Z",
+    sentBy: { name: "Sarah Thompson" },
+    recipientsTo: ["manager@company.com", "director@company.com"],
+    recipientsCc: ["team@company.com"],
+    status: "sent",
+    csvAttached: true
+  },
+  {
+    id: "email-2",
+    instanceId: "instance-2",
+    configId: "config-1",
+    sentAt: "2025-10-08T16:10:00Z",
+    sentBy: { name: "Sarah Thompson" },
+    recipientsTo: ["manager@company.com"],
+    status: "sent",
+    csvAttached: true
+  },
+  {
+    id: "email-3",
+    instanceId: "instance-4",
+    configId: "config-2",
+    sentAt: "2025-10-14T09:05:00Z",
+    sentBy: { name: "Michael Chen" },
+    recipientsTo: ["facilities@company.com", "director@company.com"],
+    recipientsCc: ["accounting@company.com"],
+    status: "sent",
+    csvAttached: true
+  }
+];
+
 export const mockSavedReports: SavedReport[] = [
   {
     id: "report-1",
@@ -1337,8 +1512,8 @@ export const mockScheduledReports: ScheduledReport[] = [
   }
 ];
 
-// Mock email history
-export const mockEmailHistory: EmailHistory[] = [
+// Mock email history (for old EmailHistory component)
+export const mockOldEmailHistory: EmailHistory[] = [
   {
     id: "email-1",
     reportId: "report-1",
