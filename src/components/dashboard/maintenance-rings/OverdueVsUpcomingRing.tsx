@@ -26,17 +26,19 @@ export function OverdueVsUpcomingRing() {
   const totalMaintenance = overdueCount + upcomingCount;
   
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 flex flex-col items-center">
       <h4 className="text-sm font-semibold text-center border-b border-border pb-1">Scheduled Items</h4>
-      <PieChartWithCenter 
-        data={maintenanceData}
-        size={180}
-        centerContent={
-          <div className="text-center">
-            <div className="text-3xl font-bold">{totalMaintenance}</div>
-          </div>
-        }
-      />
+      <div className="flex justify-center">
+        <PieChartWithCenter 
+          data={maintenanceData}
+          size={180}
+          centerContent={
+            <div className="text-center">
+              <div className="text-3xl font-bold">{totalMaintenance}</div>
+            </div>
+          }
+        />
+      </div>
       
       <div className="space-y-1">
         {maintenanceData.map((item) => (
@@ -53,11 +55,6 @@ export function OverdueVsUpcomingRing() {
             </Badge>
           </div>
         ))}
-        <div className="pt-2 mt-2 border-t border-muted/20">
-          <div className="flex justify-center items-center text-xs text-muted-foreground min-h-[1.5rem]">
-            <span className="text-warning">↑ +5 this week</span>
-          </div>
-        </div>
       </div>
     </div>
   );

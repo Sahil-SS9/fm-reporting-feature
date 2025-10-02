@@ -88,11 +88,6 @@ export function AssetStatusWidget({ filteredAssets = [] }: AssetStatusWidgetProp
                 </Badge>
               </div>
             ))}
-            <div className="pt-1 border-t border-muted/20">
-              <div className="flex justify-between items-center text-xs text-muted-foreground">
-                <span className="text-success">↑ +3 this week</span>
-              </div>
-            </div>
           </div>
         </div>
       </CardContent>

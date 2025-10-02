@@ -19,17 +19,19 @@ export function MaintenanceTypeRing() {
   const totalTypes = workOrderCount + inspectionCount + auditCount;
   
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 flex flex-col items-center">
       <h4 className="text-sm font-semibold text-center border-b border-border pb-1">Maintenance Types</h4>
-      <PieChartWithCenter 
-        data={typeData}
-        size={180}
-        centerContent={
-          <div className="text-center">
-            <div className="text-3xl font-bold">{totalTypes}</div>
-          </div>
-        }
-      />
+      <div className="flex justify-center">
+        <PieChartWithCenter 
+          data={typeData}
+          size={180}
+          centerContent={
+            <div className="text-center">
+              <div className="text-3xl font-bold">{totalTypes}</div>
+            </div>
+          }
+        />
+      </div>
       
       <div className="space-y-1">
         {typeData.map((item) => (
@@ -46,11 +48,6 @@ export function MaintenanceTypeRing() {
             </Badge>
           </div>
         ))}
-        <div className="pt-1 border-t border-muted/20">
-          <div className="flex justify-between items-center text-xs text-muted-foreground">
-            <span className="text-primary">↑ +8 inspections</span>
-          </div>
-        </div>
       </div>
     </div>
   );
