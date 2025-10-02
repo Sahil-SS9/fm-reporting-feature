@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AssetMaintenanceWidget } from "@/components/dashboard/AssetMaintenanceWidget";
 import { AssetStatusWidget } from "@/components/dashboard/AssetStatusWidget";
-import { WarrantyExpiryWidget } from "@/components/dashboard/WarrantyExpiryWidget"; 
+import { AssetConditionWidget } from "@/components/dashboard/AssetConditionWidget";
+import { WarrantyExpiryWidget } from "@/components/dashboard/WarrantyExpiryWidget";
 import { PreventiveMaintenanceWidget } from "@/components/dashboard/PreventiveMaintenanceWidget";
 import { TopAssetsWidget } from "@/components/dashboard/TopAssetsWidget";
 import { OutstandingInvoicesWidget } from "@/components/dashboard/OutstandingInvoicesWidget";
@@ -382,11 +383,14 @@ export default function Dashboard() {
         {/* Assets Tab */}
         <TabsContent value="assets" className="space-y-6">
           {/* Core Asset Widgets - Asset Status and Asset Maintenance take majority width, Warranty Expiry compact */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
             <div className="lg:col-span-2">
               <AssetStatusWidget filteredAssets={filteredAssets} />
             </div>
             <div className="lg:col-span-2">
+              <AssetConditionWidget filteredAssets={filteredAssets} />
+            </div>
+            <div className="lg:col-span-1">
               <AssetMaintenanceWidget filteredAssets={filteredAssets} />
             </div>
             <div className="lg:col-span-1">

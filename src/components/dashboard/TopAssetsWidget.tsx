@@ -124,7 +124,7 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
           
           {/* Work Orders by Priority (Stacked) Panel */}
           <div className="space-y-2">
-            <div className="h-96 bg-card border rounded-lg p-4" style={{ minHeight: '240px' }}>
+            <div className="h-[420px] bg-card border rounded-lg p-4">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={stackedChartData} margin={{ top: 20, right: 20, left: 20, bottom: 60 }}>
                   <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
@@ -159,7 +159,7 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
                 <Wrench className="h-4 w-4 text-dashboard-medium" />
               </div>
               <div className="space-y-2">
-                {topByWorkOrders.slice(0, 4).map((asset, index) => (
+                {topByWorkOrders.slice(0, 10).map((asset, index) => (
                   <div key={`wo-${asset.id}`} className="flex items-center justify-between h-8 px-2 rounded hover:bg-background/50 transition-colors">
                     <span className="truncate text-sm font-medium">{asset.name}</span>
                     <div className="flex items-center gap-2 text-xs">
@@ -216,13 +216,13 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
           
           {/* Frequency Panel */}
           <div className="space-y-2">
-            <div className="h-96 bg-card border rounded-lg p-4" style={{ minHeight: '240px' }}>
+            <div className="h-[420px] bg-card border rounded-lg p-4">
               <div className="flex justify-center mt-4 mb-5">
                 <VerticalBarChart 
                   data={frequencyChartData}
                   color="hsl(var(--dashboard-high))"
                   width={600}
-                  height={360}
+                  height={380}
                 />
               </div>
             </div>
@@ -232,7 +232,7 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
                 <Clock className="h-4 w-4 text-dashboard-high" />
               </div>
               <div className="space-y-2">
-                {topByFrequency.slice(0, 4).map((asset, index) => (
+                {topByFrequency.slice(0, 10).map((asset, index) => (
                   <div key={`freq-${asset.id}`} className="flex items-center justify-between h-8 px-2 rounded hover:bg-background/50 transition-colors">
                     <span className="truncate text-sm font-medium">{asset.name}</span>
                     <span className="text-xs font-normal text-dashboard-high">
