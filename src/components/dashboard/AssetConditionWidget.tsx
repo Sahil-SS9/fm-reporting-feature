@@ -59,17 +59,25 @@ export function AssetConditionWidget({ filteredAssets = [] }: AssetConditionWidg
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex justify-center">
-          <DonutChartWithCenter 
-            data={conditionData}
-            centerContent={
-              <div className="text-center">
-                <div className="text-2xl font-bold">{totalAssets}</div>
-                <div className="text-xs text-muted-foreground">Total Assets</div>
-              </div>
-            }
-          />
-        </div>
+        {conditionData.length > 0 ? (
+          <div className="flex justify-center">
+            <DonutChartWithCenter 
+              data={conditionData}
+              centerContent={
+                <div className="text-center">
+                  <div className="text-2xl font-bold">{totalAssets}</div>
+                  <div className="text-xs text-muted-foreground">Total Assets</div>
+                </div>
+              }
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <div className="text-2xl font-bold text-muted-foreground">{totalAssets}</div>
+            <div className="text-xs text-muted-foreground">Total Assets</div>
+            <p className="text-sm text-muted-foreground mt-2">No condition data available</p>
+          </div>
+        )}
         
         <div className="space-y-2">
           {excellentCount > 0 && (

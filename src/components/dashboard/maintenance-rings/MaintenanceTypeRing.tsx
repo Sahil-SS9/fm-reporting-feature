@@ -20,13 +20,13 @@ export function MaintenanceTypeRing() {
   
   return (
     <div className="space-y-2">
+      <h4 className="text-sm font-semibold text-center border-b border-border pb-1">Maintenance Types</h4>
       <PieChartWithCenter 
         data={typeData}
         size={180}
         centerContent={
           <div className="text-center">
             <div className="text-3xl font-bold">{totalTypes}</div>
-            <div className="text-xs text-muted-foreground">Maintenance Types</div>
           </div>
         }
       />

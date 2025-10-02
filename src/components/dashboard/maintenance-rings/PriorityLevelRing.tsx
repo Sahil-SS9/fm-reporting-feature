@@ -20,13 +20,13 @@ export function PriorityLevelRing() {
   
   return (
     <div className="space-y-2">
+      <h4 className="text-sm font-semibold text-center border-b border-border pb-1">Asset Priorities</h4>
       <PieChartWithCenter 
         data={priorityData}
         size={180}
         centerContent={
           <div className="text-center">
             <div className="text-3xl font-bold">{totalPriority}</div>
-            <div className="text-xs text-muted-foreground">Asset Priorities</div>
           </div>
         }
       />

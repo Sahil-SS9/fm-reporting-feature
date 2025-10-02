@@ -27,13 +27,13 @@ export function OverdueVsUpcomingRing() {
   
   return (
     <div className="space-y-2">
+      <h4 className="text-sm font-semibold text-center border-b border-border pb-1">Scheduled Items</h4>
       <PieChartWithCenter 
         data={maintenanceData}
         size={180}
         centerContent={
           <div className="text-center">
             <div className="text-3xl font-bold">{totalMaintenance}</div>
-            <div className="text-xs text-muted-foreground">Scheduled Items</div>
           </div>
         }
       />
