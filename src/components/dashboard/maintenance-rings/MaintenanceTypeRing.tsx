@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { DonutChartWithCenter } from "@/components/ui/enhanced-charts";
+import { PieChartWithCenter } from "@/components/ui/enhanced-charts";
 import { mockAssets } from "@/data/mockData";
 
 export function MaintenanceTypeRing() {
@@ -20,10 +20,9 @@ export function MaintenanceTypeRing() {
   
   return (
     <div className="space-y-2">
-      <DonutChartWithCenter 
+      <PieChartWithCenter 
         data={typeData}
         size={180}
-        strokeWidth={14}
         centerContent={
           <div className="text-center">
             <div className="text-3xl font-bold">{totalTypes}</div>

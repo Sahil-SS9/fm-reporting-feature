@@ -262,6 +262,54 @@ export function DonutChartWithCenter({
   );
 }
 
+// Pie Chart with Center Content (no inner radius)
+interface PieChartWithCenterProps {
+  data: { name: string; value: number; color: string }[];
+  size?: number;
+  className?: string;
+  centerContent?: React.ReactNode;
+}
+
+export function PieChartWithCenter({ 
+  data, 
+  size = 120, 
+  className = "",
+  centerContent
+}: PieChartWithCenterProps) {
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+
+  return (
+    <div className={cn("relative", className)} style={{ width: size, height: size }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={0}
+            outerRadius={size / 2}
+            dataKey="value"
+            stroke="none"
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip formatter={(value) => [value, ""]} />
+        </PieChart>
+      </ResponsiveContainer>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        {centerContent || (
+          <>
+            <div className="text-2xl font-bold text-foreground">{total}</div>
+            <div className="text-xs text-muted-foreground">Total</div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // Vertical Bar Chart Component
 interface VerticalBarChartProps {
   data: { name: string; value: number }[];
