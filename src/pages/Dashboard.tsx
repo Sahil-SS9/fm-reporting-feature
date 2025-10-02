@@ -26,7 +26,6 @@ import { WorkOrderPriorityWidget } from "@/components/dashboard/WorkOrderPriorit
 import { EnhancedWorkOrderPriorityWidget } from "@/components/dashboard/EnhancedWorkOrderPriorityWidget";
 import { OnTimeVsOverdueWidget } from "@/components/dashboard/OnTimeVsOverdueWidget";
 import { WorkOrderStatusWidget } from "@/components/dashboard/WorkOrderStatusWidget";
-import { SchedulingWidget } from "@/components/dashboard/SchedulingWidget";
 import { getPerformanceMetrics } from "@/components/dashboard/PerformanceSummaryWidget";
 import { DonutChartWithCenter } from "@/components/ui/enhanced-charts";
 import {
@@ -377,7 +376,7 @@ export default function Dashboard() {
             <CreatedVsCompletedTrendWidget filteredWorkOrders={filteredWorkOrders} />
           </div>
 
-          <SchedulingWidget filteredWorkOrders={filteredWorkOrders} />
+          
         </TabsContent>
 
         {/* Assets Tab */}

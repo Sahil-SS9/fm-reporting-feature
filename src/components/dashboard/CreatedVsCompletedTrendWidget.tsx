@@ -7,46 +7,23 @@ interface CreatedVsCompletedTrendWidgetProps {
   filteredWorkOrders?: any[];
 }
 
-const generateTrendData = (period: string) => {
+const generateTrendData = (days: number) => {
   const now = new Date();
   const data = [];
   
-  const periods = {
-    daily: { count: 7, unit: 'day', format: 'MM/dd' },
-    weekly: { count: 8, unit: 'week', format: 'Week' },
-    monthly: { count: 12, unit: 'month', format: 'MMM' },
-    quarterly: { count: 4, unit: 'quarter', format: 'Q' },
-    yearly: { count: 3, unit: 'year', format: 'yyyy' }
-  };
-  
-  const config = periods[period as keyof typeof periods];
-  
-  for (let i = config.count - 1; i >= 0; i--) {
+  for (let i = days - 1; i >= 0; i--) {
     const date = new Date(now);
-    if (config.unit === 'day') {
-      date.setDate(date.getDate() - i);
-    } else if (config.unit === 'week') {
-      date.setDate(date.getDate() - (i * 7));
-    } else if (config.unit === 'month') {
-      date.setMonth(date.getMonth() - i);
-    } else if (config.unit === 'quarter') {
-      date.setMonth(date.getMonth() - (i * 3));
-    } else if (config.unit === 'year') {
-      date.setFullYear(date.getFullYear() - i);
-    }
+    date.setDate(date.getDate() - i);
     
-    // Mock data generation based on period
+    // Mock data generation
     const created = Math.floor(Math.random() * 30) + 15;
     const completed = Math.floor(Math.random() * 25) + 10;
     
     data.push({
-      period: config.unit === 'week' ? `Week ${config.count - i}` :
-              config.unit === 'quarter' ? `Q${Math.floor(date.getMonth() / 3) + 1}` :
-              date.toLocaleDateString('en-US', { 
-                month: config.unit === 'monthly' ? 'short' : undefined,
-                day: config.unit === 'daily' ? '2-digit' : undefined,
-                year: config.unit === 'yearly' ? 'numeric' : undefined
-              }),
+      period: date.toLocaleDateString('en-US', { 
+        month: 'short',
+        day: 'numeric'
+      }),
       created,
       completed
     });
@@ -56,23 +33,22 @@ const generateTrendData = (period: string) => {
 };
 
 export function CreatedVsCompletedTrendWidget({ filteredWorkOrders = [] }: CreatedVsCompletedTrendWidgetProps) {
-  const [period, setPeriod] = useState("weekly");
-  const trendData = generateTrendData(period);
+  const [days, setDays] = useState(7);
+  const trendData = generateTrendData(days);
   
   return (
     <Card className="col-span-2">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle className="text-lg font-semibold">Created vs Completed</CardTitle>
-        <Select value={period} onValueChange={setPeriod}>
+        <Select value={days.toString()} onValueChange={(value) => setDays(parseInt(value))}>
           <SelectTrigger className="w-32">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="daily">Daily</SelectItem>
-            <SelectItem value="weekly">Weekly</SelectItem>
-            <SelectItem value="monthly">Monthly</SelectItem>
-            <SelectItem value="quarterly">Quarterly</SelectItem>
-            <SelectItem value="yearly">Yearly</SelectItem>
+            <SelectItem value="7">Last 7 Days</SelectItem>
+            <SelectItem value="30">Last 30 Days</SelectItem>
+            <SelectItem value="90">Last 90 Days</SelectItem>
+            <SelectItem value="180">Last 180 Days</SelectItem>
           </SelectContent>
         </Select>
       </CardHeader>

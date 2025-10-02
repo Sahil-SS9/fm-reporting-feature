@@ -82,16 +82,15 @@ export function WorkOrderStatusWidget({ filteredWorkOrders }: WorkOrderStatusWid
   const total = statusData.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <Card>
+    <Card className="hover:shadow-lg transition-shadow">
       <CardHeader>
         <CardTitle className="text-lg font-semibold">Work Order Status</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-center mb-4">
+        <div className="h-64 flex items-center justify-center">
           <DonutChartWithCenter 
             data={statusData}
-            size={140}
-            strokeWidth={16}
+            size={280}
             centerContent={
               <>
                 <div className="text-2xl font-bold text-foreground">{total}</div>
@@ -102,16 +101,17 @@ export function WorkOrderStatusWidget({ filteredWorkOrders }: WorkOrderStatusWid
         </div>
         
         {/* Legend - 2 columns */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-4 mt-4 text-sm">
           {statusData.map((status) => (
-            <div key={status.name} className="flex items-center space-x-2">
-              <div 
-                className="w-3 h-3 rounded-full flex-shrink-0" 
-                style={{ backgroundColor: status.color }}
-              />
-              <span className="text-xs text-muted-foreground truncate">
-                {status.name}: {status.value}
+            <div key={status.name} className="flex items-center justify-between">
+              <span className="flex items-center">
+                <div 
+                  className="w-3 h-3 rounded flex-shrink-0 mr-2" 
+                  style={{ backgroundColor: status.color }}
+                />
+                {status.name}
               </span>
+              <span className="font-semibold">{status.value}</span>
             </div>
           ))}
         </div>
