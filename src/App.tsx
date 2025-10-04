@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { FMLayout } from "./components/layout/FMLayout";
 import Dashboard from "./pages/Dashboard";
 import Reporting from "./pages/Reporting";
 import ReportConfigDetail from "./pages/ReportConfigDetail";
@@ -18,7 +17,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <FMLayout>
+        <div className="min-h-screen w-full bg-background">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/reporting" element={<Reporting />} />
@@ -32,7 +31,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </FMLayout>
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
