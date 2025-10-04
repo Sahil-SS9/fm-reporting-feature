@@ -168,8 +168,7 @@ export function PropertyOverviewTab() {
 
   // Filter properties based on search
   const filteredProperties = propertyFilteredMetrics.filter(({ property }) => {
-    const matchesSearch = property.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         property.location.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = property.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
 
@@ -475,7 +474,6 @@ export function PropertyOverviewTab() {
                         </div>
                         <div>
                           <div className="font-medium">{metrics.property.name}</div>
-                          <div className="text-sm text-muted-foreground">{metrics.property.location}</div>
                         </div>
                       </div>
                     </TableCell>

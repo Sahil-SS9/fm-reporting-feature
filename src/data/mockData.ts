@@ -3,7 +3,6 @@
 export interface Property {
   id: string;
   name: string;
-  location: string;
   type: "Office" | "Retail" | "Warehouse" | "Mixed Use";
 }
 
@@ -184,26 +183,26 @@ export interface Document {
 
 // Mock Properties
 export const mockProperties: Property[] = [
-  { id: "1", name: "Downtown Office Tower", location: "123 Main St, London", type: "Office" },
-  { id: "2", name: "Westfield Shopping Centre", location: "456 High St, Manchester", type: "Retail" },
-  { id: "3", name: "Industrial Park A", location: "789 Industrial Rd, Birmingham", type: "Warehouse" },
-  { id: "4", name: "Metro Business Complex", location: "321 Business Ave, Leeds", type: "Mixed Use" },
-  { id: "5", name: "Riverside Office Park", location: "654 River St, Bristol", type: "Office" },
-  { id: "6", name: "Gateway Shopping Mall", location: "987 Commercial Blvd, Edinburgh", type: "Retail" },
-  { id: "7", name: "Tech Hub Central", location: "147 Innovation Dr, Cambridge", type: "Office" },
-  { id: "8", name: "Distribution Center North", location: "258 Logistics Way, Glasgow", type: "Warehouse" },
-  { id: "9", name: "City Square Complex", location: "369 Urban Plaza, Liverpool", type: "Mixed Use" },
-  { id: "10", name: "Harbor View Offices", location: "741 Marina Rd, Southampton", type: "Office" },
-  { id: "11", name: "Royal Crown Mall", location: "852 Regent St, Newcastle", type: "Retail" },
-  { id: "12", name: "Industrial Estate B", location: "963 Factory Lane, Sheffield", type: "Warehouse" },
-  { id: "13", name: "Corporate Plaza West", location: "159 Executive Ave, Cardiff", type: "Office" },
-  { id: "14", name: "Heritage Market Centre", location: "357 Historic Square, York", type: "Mixed Use" },
-  { id: "15", name: "Logistics Hub South", location: "468 Transport Rd, Portsmouth", type: "Warehouse" },
-  { id: "16", name: "Premier Business Park", location: "579 Professional Dr, Nottingham", type: "Office" },
-  { id: "17", name: "Oceanfront Retail Plaza", location: "681 Coastal Ave, Brighton", type: "Retail" },
-  { id: "18", name: "Innovation Quarter", location: "792 Research Blvd, Oxford", type: "Mixed Use" },
-  { id: "19", name: "Storage Facility Central", location: "893 Warehouse St, Coventry", type: "Warehouse" },
-  { id: "20", name: "Executive Tower North", location: "915 Corporate Way, Derby", type: "Office" },
+  { id: "1", name: "Downtown Office Tower", type: "Office" },
+  { id: "2", name: "Westfield Shopping Centre", type: "Retail" },
+  { id: "3", name: "Industrial Park A", type: "Warehouse" },
+  { id: "4", name: "Metro Business Complex", type: "Mixed Use" },
+  { id: "5", name: "Riverside Office Park", type: "Office" },
+  { id: "6", name: "Gateway Shopping Mall", type: "Retail" },
+  { id: "7", name: "Tech Hub Central", type: "Office" },
+  { id: "8", name: "Distribution Center North", type: "Warehouse" },
+  { id: "9", name: "City Square Complex", type: "Mixed Use" },
+  { id: "10", name: "Harbor View Offices", type: "Office" },
+  { id: "11", name: "Royal Crown Mall", type: "Retail" },
+  { id: "12", name: "Industrial Estate B", type: "Warehouse" },
+  { id: "13", name: "Corporate Plaza West", type: "Office" },
+  { id: "14", name: "Heritage Market Centre", type: "Mixed Use" },
+  { id: "15", name: "Logistics Hub South", type: "Warehouse" },
+  { id: "16", name: "Premier Business Park", type: "Office" },
+  { id: "17", name: "Oceanfront Retail Plaza", type: "Retail" },
+  { id: "18", name: "Innovation Quarter", type: "Mixed Use" },
+  { id: "19", name: "Storage Facility Central", type: "Warehouse" },
+  { id: "20", name: "Executive Tower North", type: "Office" },
 ];
 
 // Mock Work Orders - Expanded with realistic asset-specific maintenance scenarios
@@ -1325,10 +1324,14 @@ export const mockReportConfigs: ReportConfig[] = [
     name: "Weekly Work Orders Summary",
     description: "Open work orders from last 7 days",
     reportType: "Activity",
-    dataSource: "work_orders",
-    property: { id: "prop-1", name: "Downtown Mall A" },
-    columns: ["id", "title", "status", "priority", "created_date", "assignee"],
-    filters: { status: ["open", "in_progress"], created_date: "last_7_days" },
+    dataSource: "Work Orders",
+    property: { id: "1", name: "Downtown Office Tower" },
+    columns: ["id", "title", "status", "priority", "createdDate", "dueDate"],
+    filters: { 
+      status: ["Open", "In Progress"],
+      date_range_start: "2024-11-25T00:00:00Z",
+      date_range_end: "2024-12-02T00:00:00Z"
+    },
     createdAt: "2025-10-01T10:00:00Z",
     createdBy: { name: "Sarah Thompson" },
     lastModified: "2025-10-10T14:30:00Z",
@@ -1338,12 +1341,16 @@ export const mockReportConfigs: ReportConfig[] = [
   {
     id: "config-2",
     name: "Monthly Maintenance Performance",
-    description: "Maintenance completion rates and efficiency",
+    description: "Work order completion rates and efficiency over the last 30 days",
     reportType: "Performance",
-    dataSource: "maintenance",
-    property: { id: "prop-2", name: "Harbor View Plaza" },
-    columns: ["asset_id", "maintenance_type", "completion_time", "cost", "technician"],
-    filters: { date_range: "last_30_days", maintenance_type: ["preventive", "corrective"] },
+    dataSource: "Work Orders",
+    property: { id: "1", name: "Downtown Office Tower" },
+    columns: ["id", "title", "category", "status", "estimatedHours", "actualHours"],
+    filters: { 
+      analysis_period_start: "2024-11-01T00:00:00Z",
+      analysis_period_end: "2024-11-30T00:00:00Z",
+      status_inclusion: ["In Progress", "Completed"]
+    },
     createdAt: "2025-09-15T09:00:00Z",
     createdBy: { name: "Michael Chen" },
     lastModified: "2025-10-05T11:20:00Z",
@@ -1355,10 +1362,14 @@ export const mockReportConfigs: ReportConfig[] = [
     name: "Asset Health Report",
     description: "Current status and upcoming maintenance needs",
     reportType: "Performance",
-    dataSource: "assets",
-    property: { id: "prop-1", name: "Downtown Mall A" },
-    columns: ["asset_name", "condition", "last_maintenance", "next_maintenance", "warranty_status"],
-    filters: { condition: ["fair", "poor"], asset_type: ["hvac", "electrical"] },
+    dataSource: "Assets",
+    property: { id: "1", name: "Downtown Office Tower" },
+    columns: ["name", "type", "condition", "lastInspection", "nextInspection", "status"],
+    filters: { 
+      analysis_period_start: "2024-10-01T00:00:00Z",
+      analysis_period_end: "2024-12-31T00:00:00Z",
+      status_inclusion: ["Out of Service", "Outstanding"]
+    },
     createdAt: "2025-09-20T13:45:00Z",
     createdBy: { name: "Sarah Thompson" },
     lastGeneratedAt: null,

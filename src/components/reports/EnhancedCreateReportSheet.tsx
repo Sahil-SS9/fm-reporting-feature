@@ -377,10 +377,7 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
                   <SelectContent>
                     {mockProperties.map((property) => (
                       <SelectItem key={property.id} value={property.id}>
-                        <div className="flex items-center gap-2">
-                          <span>{property.name}</span>
-                          <span className="text-xs text-muted-foreground">- {property.location}</span>
-                        </div>
+                        {property.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

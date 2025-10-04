@@ -20,23 +20,35 @@ interface EnhancedFiltersProps {
   onSave?: () => void;
 }
 
-// Mapping of data sources to their primary date field
+// Mapping of data sources to their primary date field for Activity reports
 const DATE_FIELD_MAP: Record<string, { key: string; label: string } | null> = {
   "Work Orders": { key: "createdDate", label: "Created Date" },
   "Assets": { key: "lastInspection", label: "Last Inspection Date" },
   "Invoices": { key: "dueDate", label: "Due Date" },
   "Contractors": null, // No date filter
-  "Documents": { key: "modified", label: "Modified Date" },
+  "Documents": { key: "createdDate", label: "Created Date" },
 };
 
-// Mapping of data sources to their status options
+// Mapping of data sources to their status options for Activity reports
 const STATUS_OPTIONS_MAP: Record<string, string[] | null> = {
-  "Work Orders": ["Open", "In Progress", "Completed", "Cancelled"],
-  "Assets": ["Operational", "Pending Repair", "Missing", "Out of Service"],
+  "Work Orders": ["Rejected", "On Hold", "In Progress", "In Review", "Completed", "Completed (Unconfirmed)", "Cancelled", "Sent", "Scheduled", "Open", "Approved"],
+  "Assets": ["Pending Repair", "Out of Service", "Missing", "Operational"],
   "Invoices": ["Outstanding", "Overdue", "Paid"],
   "Contractors": ["Active", "Inactive", "On Hold", "Pending Approval"],
   "Documents": null, // No status filter
 };
+
+// Performance report status inclusion options
+const PERFORMANCE_STATUS_MAP: Record<string, string[] | null> = {
+  "Work Orders": ["On Hold", "In Progress", "In Review", "Completed", "Completed (Unconfirmed)", "Cancelled"],
+  "Assets": ["Out of Service", "Missing", "Outstanding"],
+  "Invoices": ["Outstanding", "Overdue", "Paid"],
+  "Contractors": null,
+  "Documents": null,
+};
+
+// Data sources that REQUIRE date filter for Performance reports
+const PERFORMANCE_REQUIRED_DATE_SOURCES = ["Work Orders", "Assets", "Documents"];
 
 export function EnhancedFilters({ 
   dataSource,
@@ -100,9 +112,10 @@ export function EnhancedFilters({
   if (reportType === "Performance") {
     const fromDate = filters['analysis_period_start'];
     const toDate = filters['analysis_period_end'];
-    const defaultStatuses = ["Open", "In Progress", "Completed"];
-    const includedStatuses = filters['status_inclusion'] || defaultStatuses;
-    const isSaveDisabled = !fromDate || !toDate;
+    const performanceStatuses = PERFORMANCE_STATUS_MAP[dataSource];
+    const includedStatuses = filters['status_inclusion'] || performanceStatuses || [];
+    const requiresDate = PERFORMANCE_REQUIRED_DATE_SOURCES.includes(dataSource);
+    const isSaveDisabled = requiresDate && (!fromDate || !toDate);
 
     return (
       <div className="space-y-6">
@@ -113,10 +126,11 @@ export function EnhancedFilters({
           </p>
         </div>
 
-        {/* Required Analysis Period */}
+        {/* Analysis Period */}
         <div className="space-y-3">
           <Label className="text-base font-medium">
-            Analysis Period <span className="text-destructive">*</span>
+            Analysis Period {requiresDate && <span className="text-destructive">*</span>}
+            {!requiresDate && <span className="text-xs text-muted-foreground ml-1">(Optional)</span>}
           </Label>
           <div className="flex gap-4">
             {renderDatePicker("From", 'analysis_period_start')}
@@ -124,34 +138,38 @@ export function EnhancedFilters({
           </div>
         </div>
 
-        <div className="border-t" />
+        {performanceStatuses && performanceStatuses.length > 0 && (
+          <>
+            <div className="border-t" />
 
-        {/* Optional Status Inclusion */}
-        <div className="space-y-3">
-          <Label className="text-base font-medium">Include in Calculations (Optional)</Label>
-          <div className="flex flex-wrap gap-4">
-            {["Open", "In Progress", "Completed", "Cancelled"].map((status) => (
-              <div key={status} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`status-inclusion-${status}`}
-                  checked={includedStatuses.includes(status)}
-                  onCheckedChange={(checked) => {
-                    const newStatuses = checked
-                      ? [...includedStatuses, status]
-                      : includedStatuses.filter((s: string) => s !== status);
-                    onFilterChange('status_inclusion', newStatuses);
-                  }}
-                />
-                <label 
-                  htmlFor={`status-inclusion-${status}`} 
-                  className="text-sm cursor-pointer"
-                >
-                  {status}
-                </label>
+            {/* Optional Status Inclusion */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium">Include in Calculations (Optional)</Label>
+              <div className="flex flex-wrap gap-4">
+                {performanceStatuses.map((status) => (
+                  <div key={status} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`status-inclusion-${status}`}
+                      checked={includedStatuses.includes(status)}
+                      onCheckedChange={(checked) => {
+                        const newStatuses = checked
+                          ? [...includedStatuses, status]
+                          : includedStatuses.filter((s: string) => s !== status);
+                        onFilterChange('status_inclusion', newStatuses);
+                      }}
+                    />
+                    <label 
+                      htmlFor={`status-inclusion-${status}`} 
+                      className="text-sm cursor-pointer"
+                    >
+                      {status}
+                    </label>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          </>
+        )}
 
         {/* Save Button */}
         <div className="flex justify-end pt-4 border-t">
