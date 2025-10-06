@@ -3,15 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Plus, FileText, TrendingUp, BarChart3, Star } from "lucide-react";
+import { Star, Plus, FileText } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { EnhancedCreateReportSheet } from "@/components/reports/EnhancedCreateReportSheet";
 import { EnhancedReportCard } from "@/components/reports/EnhancedReportCard";
 import { ReportResults } from "@/components/reports/ReportResults";
 import { quickReportTemplates, mockReportConfigs, SavedReport, ReportConfig } from "@/data/mockData";
-
-const reportTypes = quickReportTemplates;
 
 // Convert ReportConfig to SavedReport for backwards compatibility
 const convertConfigToSavedReport = (config: ReportConfig): SavedReport => ({
@@ -41,15 +38,6 @@ export default function Reporting() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [reportResults, setReportResults] = useState<any>(null);
 
-  const handleTemplateClick = (template: any) => {
-    setSelectedTemplate(template);
-    setShowCreateModal(true);
-  };
-
-  const handleViewResults = (reportConfig: any) => {
-    setReportResults(reportConfig);
-    setCurrentView('results');
-  };
 
   const handleToggleFavorite = (reportId: string) => {
     setSavedReports(prev => prev.map(report => 
@@ -59,39 +47,6 @@ export default function Reporting() {
     ));
   };
 
-  const handleEditReport = (report: any) => {
-    setSelectedTemplate(report);
-    setShowCreateModal(true);
-  };
-
-  const handleCopyReport = (report: any) => {
-    const copiedReport = {
-      ...report,
-      id: `report-${Date.now()}`,
-      name: `${report.name} (Copy)`,
-      createdDate: new Date().toISOString(),
-      favorite: false
-    };
-    setSavedReports(prev => [...prev, copiedReport]);
-  };
-
-  const handleDeleteReport = (report: any) => {
-    setSavedReports(prev => prev.filter(r => r.id !== report.id));
-  };
-
-  const handleDownloadReport = (report: any) => {
-    // Create CSV content
-    const csvContent = `Report Name,Data Source,Columns,Created Date\n${report.name},${report.dataSource || 'N/A'},${report.columns?.length || 0},${report.createdDate}`;
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${report.name.replace(/\s+/g, '_')}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-  };
 
   if (currentView === 'results' && reportResults) {
     return (
@@ -142,63 +97,6 @@ export default function Reporting() {
 
       {hasReports ? (
         <>
-          {/* Report Templates */}
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="templates">
-              <AccordionTrigger className="text-lg font-semibold flex-col items-start space-y-2 hover:no-underline">
-                <span>Report Templates</span>
-                <div className="text-sm text-muted-foreground font-normal">Click to expand templates</div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-                  {reportTypes.map((report, index) => {
-                    const IconComponent = report.icon === "FileText" ? FileText : 
-                                         report.icon === "TrendingUp" ? TrendingUp : BarChart3;
-                    
-                    return (
-                      <Card key={index} className="hover:shadow-md transition-shadow cursor-pointer">
-                        <CardHeader className="pb-3">
-                          <div className="flex items-center space-x-3">
-                            <div className="p-2 bg-primary/10 rounded-lg">
-                              <IconComponent className="h-5 w-5 text-primary" />
-                            </div>
-                            <div>
-                              <CardTitle className="text-base">{report.title}</CardTitle>
-                              <p className="text-sm text-muted-foreground">{report.description}</p>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="pt-0 space-y-2">
-                          <Button 
-                            size="sm" 
-                            className="w-full"
-                            onClick={() => handleTemplateClick(report)}
-                          >
-                            Create Report
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="w-full"
-                            onClick={() => handleViewResults({
-                              ...report,
-                              name: report.title,
-                              properties: ["1", "2"], // Mock selection
-                              columns: report.defaultColumns,
-                              filters: report.defaultFilters
-                            })}
-                          >
-                            Quick View
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-
           {/* Main Reports Section */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -230,10 +128,6 @@ export default function Reporting() {
                     key={report.id}
                     report={report}
                     onView={() => navigate(`/reports/${report.id}`)}
-                    onEdit={handleEditReport}
-                    onCopy={handleCopyReport}
-                    onDownload={handleDownloadReport}
-                    onDelete={handleDeleteReport}
                     onToggleFavorite={handleToggleFavorite}
                   />
                 ))}

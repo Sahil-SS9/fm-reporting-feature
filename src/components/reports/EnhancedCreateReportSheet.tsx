@@ -504,99 +504,44 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Step 3: Column Selection */}
+      {/* Step 3: Column Selection (View Only) */}
       <Collapsible open={step3Open} onOpenChange={setStep3Open}>
         <CollapsibleTrigger className="flex items-center justify-between w-full p-4 border rounded-lg hover:bg-muted/50">
-          <h3 className="text-lg font-semibold">Step 3: Select Columns ({selectedColumnsCount} selected)</h3>
+          <h3 className="text-lg font-semibold">Step 3: Selected Columns ({selectedColumnsCount} selected)</h3>
           {step3Open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </CollapsibleTrigger>
         <CollapsibleContent className="mt-4">
           <Card>
             <CardContent className="p-6">
               <div className="space-y-4">
-                {selectedColumns.length > 0 && (
-                  <div>
-                    <Label>Selected Columns (Drag to reorder)</Label>
-                    <p className="text-xs text-muted-foreground mb-3">
-                      Column order determines the output order in your report
-                    </p>
-                    <DndContext
-                      sensors={sensors}
-                      collisionDetection={closestCenter}
-                      onDragEnd={handleDragEnd}
-                    >
-                      <SortableContext
-                        items={selectedColumns}
-                        strategy={verticalListSortingStrategy}
-                      >
-                        <div className="space-y-2 max-h-60 overflow-y-auto">
-                          {selectedColumns.map((columnKey, index) => {
-                            const column = availableColumns.find(c => c.key === columnKey);
-                            return column ? (
-                              <DraggableColumnItem
-                                key={column.key}
-                                column={column}
-                                index={index}
-                                onRemove={() => handleColumnToggle(column.key)}
-                              />
-                            ) : null;
-                          })}
+                <div>
+                  <Label>Selected Columns (View Only)</Label>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    These columns will appear in your report in the order shown
+                  </p>
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {selectedColumns.map((columnKey, index) => {
+                      const column = availableColumns.find(c => c.key === columnKey);
+                      return column ? (
+                        <div 
+                          key={column.key}
+                          className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30"
+                        >
+                          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                            {index + 1}
+                          </div>
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">{column.label}</div>
+                            <div className="text-xs text-muted-foreground capitalize">{column.type}</div>
+                          </div>
                         </div>
-                      </SortableContext>
-                    </DndContext>
+                      ) : null;
+                    })}
                   </div>
-                )}
-
-                <div className="flex items-center justify-between">
-                  <Label>Available Columns</Label>
-                  <div className="flex items-center gap-2">
-                    <div className="text-sm text-muted-foreground">
-                      {selectedColumnsCount} of {availableColumns.length} selected
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleSelectAllColumns}
-                      disabled={selectedColumnsCount === availableColumns.length}
-                    >
-                      Select All
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleClearAllColumns}
-                      disabled={selectedColumnsCount === 0}
-                    >
-                      Clear All
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto">
-                  {availableColumns.map((column) => (
-                    <div 
-                      key={column.key} 
-                      className={`flex items-center justify-between p-2 border rounded cursor-pointer hover:bg-accent/50 ${
-                        selectedColumns.includes(column.key) ? 'bg-accent/30 border-primary' : ''
-                      }`}
-                      onClick={() => handleColumnToggle(column.key)}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <Checkbox
-                          checked={selectedColumns.includes(column.key)}
-                          onCheckedChange={(checked) => handleColumnToggle(column.key)}
-                        />
-                        <div>
-                          <div className="font-medium text-sm">{column.label}</div>
-                          <div className="text-xs text-muted-foreground capitalize">{column.type}</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
                 </div>
 
                 {selectedColumns.length === 0 && (
-                  <p className="text-sm text-muted-foreground">Please select at least one column to continue</p>
+                  <p className="text-sm text-muted-foreground">No columns selected</p>
                 )}
 
                 <div className="flex justify-end pt-4 border-t">

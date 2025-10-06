@@ -2,28 +2,19 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Star, MoreHorizontal, Settings, Edit, Copy, Trash2, Clock, Calendar, Play } from "lucide-react";
+import { Star, Clock, Calendar, Play, History } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { SavedReport } from "@/data/mockData";
 
 interface EnhancedReportCardProps {
   report: SavedReport;
   onView: (reportId: string) => void;
-  onEdit: (report: SavedReport) => void;
-  onCopy: (report: SavedReport) => void;
-  onDownload: (report: SavedReport) => void;
-  onDelete: (report: SavedReport) => void;
   onToggleFavorite: (reportId: string) => void;
 }
 
 export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
   report,
   onView,
-  onEdit,
-  onCopy,
-  onDownload,
-  onDelete,
   onToggleFavorite
 }) => {
   const getReportTypeBadge = (type: SavedReport['reportType']) => {
@@ -59,11 +50,14 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1 space-y-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <CardTitle className="text-lg font-semibold leading-tight">
                 {report.name}
               </CardTitle>
               {getReportTypeBadge(report.reportType)}
+              <Badge variant="outline" className="text-xs">
+                {report.dataSource}
+              </Badge>
             </div>
             <p className="text-sm text-muted-foreground line-clamp-2">
               {report.description}
@@ -84,30 +78,6 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
                 }`}
               />
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onEdit(report)}>
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onCopy(report)}>
-                  <Copy className="mr-2 h-4 w-4" />
-                  Copy
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => onDelete(report)}
-                  className="text-destructive focus:text-destructive"
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
       </CardHeader>
@@ -128,9 +98,6 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
 
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-xs">
-              {report.dataSource}
-            </Badge>
-            <Badge variant="outline" className="text-xs">
               {report.columns.length} columns
             </Badge>
             {Object.keys(report.filters).length > 0 && (
@@ -147,8 +114,8 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
               onClick={() => onView(report.id)}
               className="flex-1"
             >
-              <Settings className="mr-2 h-4 w-4" />
-              View Config
+              <History className="mr-2 h-4 w-4" />
+              View Reports History
             </Button>
             <Button
               variant="secondary"
