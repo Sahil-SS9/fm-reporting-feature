@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Star, MoreHorizontal, Settings, Edit, Copy, Mail, Download, Trash2, Clock, Calendar, Play } from "lucide-react";
+import { Star, MoreHorizontal, Settings, Edit, Copy, Trash2, Clock, Calendar, Play } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { SavedReport } from "@/data/mockData";
 
@@ -12,9 +12,7 @@ interface EnhancedReportCardProps {
   onView: (reportId: string) => void;
   onEdit: (report: SavedReport) => void;
   onCopy: (report: SavedReport) => void;
-  onEmail: (report: SavedReport) => void;
   onDownload: (report: SavedReport) => void;
-  onSchedule: (report: SavedReport) => void;
   onDelete: (report: SavedReport) => void;
   onToggleFavorite: (reportId: string) => void;
 }
@@ -24,9 +22,7 @@ export const EnhancedReportCard: React.FC<EnhancedReportCardProps> = ({
   onView,
   onEdit,
   onCopy,
-  onEmail,
   onDownload,
-  onSchedule,
   onDelete,
   onToggleFavorite
 }) => {

@@ -27,8 +27,6 @@ import {
 import {
   Search,
   Download,
-  Mail,
-  Calendar,
   Filter,
   ArrowUpDown,
   ChevronLeft,
@@ -36,8 +34,6 @@ import {
   X
 } from "lucide-react";
 import { dataSourceConfig, mockProperties } from "@/data/mockData";
-import { EmailReportSheet } from "./EmailReportSheet";
-import { ScheduleReportSheet } from "./ScheduleReportSheet";
 
 interface ReportResultsProps {
   config: any;
@@ -49,8 +45,6 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
   const [sortColumn, setSortColumn] = useState("");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [currentPage, setCurrentPage] = useState(1);
-  const [showEmailModal, setShowEmailModal] = useState(false);
-  const [showScheduleModal, setShowScheduleModal] = useState(false);
   const rowsPerPage = 10;
 
   // Get and process data
@@ -212,42 +206,6 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
         </div>
 
         <div className="flex items-center space-x-2">
-          <Sheet open={showEmailModal} onOpenChange={setShowEmailModal}>
-            <SheetTrigger asChild>
-              <Button variant="outline">
-                <Mail className="h-4 w-4 mr-2" />
-                Email
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="sm:max-w-md">
-              <SheetHeader>
-                <SheetTitle>Email Report</SheetTitle>
-              </SheetHeader>
-              <EmailReportSheet 
-                reportConfig={config}
-                onClose={() => setShowEmailModal(false)}
-              />
-            </SheetContent>
-          </Sheet>
-
-          <Sheet open={showScheduleModal} onOpenChange={setShowScheduleModal}>
-            <SheetTrigger asChild>
-              <Button variant="outline">
-                <Calendar className="h-4 w-4 mr-2" />
-                Schedule
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="sm:max-w-md">
-              <SheetHeader>
-                <SheetTitle>Schedule Report</SheetTitle>
-              </SheetHeader>
-              <ScheduleReportSheet 
-                reportConfig={config}
-                onClose={() => setShowScheduleModal(false)}
-              />
-            </SheetContent>
-          </Sheet>
-
           <Button onClick={handleExportCSV}>
             <Download className="h-4 w-4 mr-2" />
             Export CSV

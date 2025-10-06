@@ -7,8 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ArrowLeft, Edit, MoreHorizontal, Trash2, Play } from "lucide-react";
 import { ReportDefinitionTab } from "@/components/reports/ReportDefinitionTab";
 import { ReportHistoryTab } from "@/components/reports/ReportHistoryTab";
-import { EmailHistoryTab } from "@/components/reports/EmailHistoryTab";
-import { mockReportConfigs, mockReportInstances, mockEmailHistory } from "@/data/mockData";
+import { mockReportConfigs, mockReportInstances } from "@/data/mockData";
 
 export default function ReportConfigDetail() {
   const { configId } = useParams();
@@ -17,7 +16,6 @@ export default function ReportConfigDetail() {
 
   const config = mockReportConfigs.find(c => c.id === configId);
   const instances = mockReportInstances.filter(i => i.configId === configId);
-  const emails = mockEmailHistory.filter(e => e.configId === configId);
 
   if (!config) {
     return (
@@ -112,9 +110,6 @@ export default function ReportConfigDetail() {
           <TabsTrigger value="history">
             Report History ({instances.length})
           </TabsTrigger>
-          <TabsTrigger value="email">
-            Email History ({emails.length})
-          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="definition" className="space-y-6">
@@ -126,14 +121,6 @@ export default function ReportConfigDetail() {
             configId={config.id} 
             instances={instances}
             onGenerate={handleGenerate}
-          />
-        </TabsContent>
-
-        <TabsContent value="email" className="space-y-6">
-          <EmailHistoryTab 
-            configId={config.id}
-            emails={emails}
-            instances={instances}
           />
         </TabsContent>
       </Tabs>

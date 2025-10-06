@@ -21,7 +21,6 @@ import {
   Search,
   Filter,
   Download,
-  Mail,
   MoreHorizontal,
   Star,
   Edit,
@@ -29,7 +28,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { EmailReportSheet } from "./EmailReportSheet";
 import { EnhancedCreateReportSheet } from "./EnhancedCreateReportSheet";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -82,7 +80,6 @@ export function ReportTable({ onViewReport }: ReportTableProps) {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<"all" | "favorites">("all");
-  const [showEmailModal, setShowEmailModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const { toast } = useToast();
@@ -125,11 +122,6 @@ export function ReportTable({ onViewReport }: ReportTableProps) {
       title: "Report Copied",
       description: `"${report.subject}" has been copied`,
     });
-  };
-
-  const handleEmailReport = (report: Report) => {
-    setSelectedReport(report);
-    setShowEmailModal(true);
   };
 
   const handleDownloadReport = (report: Report) => {
@@ -272,10 +264,6 @@ export function ReportTable({ onViewReport }: ReportTableProps) {
                         <Copy className="h-4 w-4 mr-2" />
                         Copy
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleEmailReport(report)}>
-                        <Mail className="h-4 w-4 mr-2" />
-                        Email
-                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleDownloadReport(report)}>
                         <Download className="h-4 w-4 mr-2" />
                         Download
@@ -302,25 +290,6 @@ export function ReportTable({ onViewReport }: ReportTableProps) {
           <span>Page 1 of 1</span>
         </div>
       </div>
-
-      {/* Email Sheet */}
-      <Sheet open={showEmailModal} onOpenChange={setShowEmailModal}>
-        <SheetContent side="right" className="sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>Email Report</SheetTitle>
-          </SheetHeader>
-          {selectedReport && (
-            <EmailReportSheet 
-              reportConfig={{
-                name: selectedReport.subject,
-                id: selectedReport.id,
-                status: selectedReport.status
-              }}
-              onClose={() => setShowEmailModal(false)}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
 
       {/* Edit Sheet */}
       <Sheet open={showEditModal} onOpenChange={setShowEditModal}>

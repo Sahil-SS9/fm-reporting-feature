@@ -8,11 +8,7 @@ import { Plus, FileText, TrendingUp, BarChart3, Star } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { EnhancedCreateReportSheet } from "@/components/reports/EnhancedCreateReportSheet";
 import { EnhancedReportCard } from "@/components/reports/EnhancedReportCard";
-import { EmailHistory } from "@/components/reports/EmailHistory";
-import { ScheduleManagement } from "@/components/reports/ScheduleManagement";
 import { ReportResults } from "@/components/reports/ReportResults";
-import { EmailReportSheet } from "@/components/reports/EmailReportSheet";
-import { ScheduleReportSheet } from "@/components/reports/ScheduleReportSheet";
 import { quickReportTemplates, mockReportConfigs, SavedReport, ReportConfig } from "@/data/mockData";
 
 const reportTypes = quickReportTemplates;
@@ -44,10 +40,6 @@ export default function Reporting() {
   );
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [reportResults, setReportResults] = useState<any>(null);
-  const [showEmailSheet, setShowEmailSheet] = useState(false);
-  const [showScheduleSheet, setShowScheduleSheet] = useState(false);
-  const [emailReportConfig, setEmailReportConfig] = useState<any>(null);
-  const [scheduleReportConfig, setScheduleReportConfig] = useState<any>(null);
 
   const handleTemplateClick = (template: any) => {
     setSelectedTemplate(template);
@@ -87,11 +79,6 @@ export default function Reporting() {
     setSavedReports(prev => prev.filter(r => r.id !== report.id));
   };
 
-  const handleEmailReport = (report: any) => {
-    setEmailReportConfig(report);
-    setShowEmailSheet(true);
-  };
-
   const handleDownloadReport = (report: any) => {
     // Create CSV content
     const csvContent = `Report Name,Data Source,Columns,Created Date\n${report.name},${report.dataSource || 'N/A'},${report.columns?.length || 0},${report.createdDate}`;
@@ -104,11 +91,6 @@ export default function Reporting() {
     a.click();
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
-  };
-
-  const handleScheduleReport = (report: any) => {
-    setScheduleReportConfig(report);
-    setShowScheduleSheet(true);
   };
 
   if (currentView === 'results' && reportResults) {
@@ -218,63 +200,45 @@ export default function Reporting() {
           </Accordion>
 
           {/* Main Reports Section */}
-          <Tabs defaultValue="saved-reports" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="saved-reports">Saved Reports</TabsTrigger>
-              <TabsTrigger value="schedules">Scheduled Reports</TabsTrigger>
-              <TabsTrigger value="email-history">Email History</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="saved-reports" className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant={!showFavoritesOnly ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setShowFavoritesOnly(false)}
-                  >
-                    View All
-                  </Button>
-                  <Button
-                    variant={showFavoritesOnly ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setShowFavoritesOnly(true)}
-                  >
-                    <Star className="h-4 w-4 mr-2" />
-                    Favorites Only
-                  </Button>
-                </div>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant={!showFavoritesOnly ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowFavoritesOnly(false)}
+                >
+                  View All
+                </Button>
+                <Button
+                  variant={showFavoritesOnly ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setShowFavoritesOnly(true)}
+                >
+                  <Star className="h-4 w-4 mr-2" />
+                  Favorites Only
+                </Button>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {savedReports
-                  .filter(report => !showFavoritesOnly || report.favorite)
-                  .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
-                  .map((report) => (
-                    <EnhancedReportCard
-                      key={report.id}
-      report={report}
-      onView={() => navigate(`/reports/${report.id}`)}
-      onEdit={handleEditReport}
-                      onCopy={handleCopyReport}
-                      onEmail={handleEmailReport}
-                      onDownload={handleDownloadReport}
-                      onSchedule={handleScheduleReport}
-                      onDelete={handleDeleteReport}
-                      onToggleFavorite={handleToggleFavorite}
-                    />
-                  ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="schedules">
-              <ScheduleManagement />
-            </TabsContent>
-
-            <TabsContent value="email-history">
-              <EmailHistory />
-            </TabsContent>
-          </Tabs>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {savedReports
+                .filter(report => !showFavoritesOnly || report.favorite)
+                .sort((a, b) => new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime())
+                .map((report) => (
+                  <EnhancedReportCard
+                    key={report.id}
+                    report={report}
+                    onView={() => navigate(`/reports/${report.id}`)}
+                    onEdit={handleEditReport}
+                    onCopy={handleCopyReport}
+                    onDownload={handleDownloadReport}
+                    onDelete={handleDeleteReport}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
+                ))}
+            </div>
+          </div>
         </>
       ) : (
         /* Empty State */
@@ -293,36 +257,6 @@ export default function Reporting() {
           </Button>
         </div>
       )}
-
-      {/* Email Report Sheet */}
-      <Sheet open={showEmailSheet} onOpenChange={setShowEmailSheet}>
-        <SheetContent side="right" className="sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>Email Report</SheetTitle>
-          </SheetHeader>
-          {emailReportConfig && (
-            <EmailReportSheet 
-              reportConfig={emailReportConfig}
-              onClose={() => setShowEmailSheet(false)}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
-
-      {/* Schedule Report Sheet */}
-      <Sheet open={showScheduleSheet} onOpenChange={setShowScheduleSheet}>
-        <SheetContent side="right" className="sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>Schedule Report</SheetTitle>
-          </SheetHeader>
-          {scheduleReportConfig && (
-            <ScheduleReportSheet 
-              reportConfig={scheduleReportConfig}
-              onClose={() => setShowScheduleSheet(false)}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
     </div>
   );
 }
