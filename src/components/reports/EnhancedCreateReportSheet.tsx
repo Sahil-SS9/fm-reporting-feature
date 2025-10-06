@@ -155,6 +155,9 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
         setStep2Open(true);
       }
     } else if (currentStep === 2 && isStep2Valid) {
+      // Auto-select all available columns when moving to Step 3
+      const allColumnKeys = availableColumns.map(col => col.key);
+      setSelectedColumns(allColumnKeys);
       setStep2Open(false);
       setStep3Open(true);
     } else if (currentStep === 3 && isStep3Valid) {
@@ -520,25 +523,22 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
                     These columns will be included in your report
                   </p>
                   <div className="space-y-2 max-h-60 overflow-y-auto">
-                    {selectedColumns.map((columnKey) => {
-                      const column = availableColumns.find(c => c.key === columnKey);
-                      return column ? (
-                        <div 
-                          key={column.key}
-                          className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30"
-                        >
-                          <div className="flex-1">
-                            <div className="font-medium text-sm">{column.label}</div>
-                            <div className="text-xs text-muted-foreground capitalize">{column.type}</div>
-                          </div>
+                    {availableColumns.map((column) => (
+                      <div 
+                        key={column.key}
+                        className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30"
+                      >
+                        <div className="flex-1">
+                          <div className="font-medium text-sm">{column.label}</div>
+                          <div className="text-xs text-muted-foreground capitalize">{column.type}</div>
                         </div>
-                      ) : null;
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                {selectedColumns.length === 0 && (
-                  <p className="text-sm text-muted-foreground">No columns selected</p>
+                {availableColumns.length === 0 && (
+                  <p className="text-sm text-muted-foreground">No columns available. Please select a data source in Step 2.</p>
                 )}
 
                 <div className="flex justify-end pt-4 border-t">
