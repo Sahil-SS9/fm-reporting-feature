@@ -507,7 +507,7 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
       {/* Step 3: Column Selection (View Only) */}
       <Collapsible open={step3Open} onOpenChange={setStep3Open}>
         <CollapsibleTrigger className="flex items-center justify-between w-full p-4 border rounded-lg hover:bg-muted/50">
-          <h3 className="text-lg font-semibold">Step 3: Selected Columns ({selectedColumnsCount} selected)</h3>
+          <h3 className="text-lg font-semibold">Step 3: Available Columns ({selectedColumnsCount} selected)</h3>
           {step3Open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </CollapsibleTrigger>
         <CollapsibleContent className="mt-4">
@@ -515,9 +515,9 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div>
-                  <Label>Selected Columns (View Only)</Label>
+                  <Label>Available Columns</Label>
                   <p className="text-xs text-muted-foreground mb-3">
-                    These columns will appear in your report in the order shown
+                    These columns will be available in your report
                   </p>
                   <div className="space-y-2 max-h-60 overflow-y-auto">
                     {selectedColumns.map((columnKey, index) => {

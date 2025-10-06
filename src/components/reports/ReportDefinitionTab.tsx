@@ -110,48 +110,6 @@ export const ReportDefinitionTab: React.FC<ReportDefinitionTabProps> = ({ config
           </div>
         </CardContent>
       </Card>
-
-      {/* Applied Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Applied Filters ({Object.keys(config.filters).length} applied)
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {Object.keys(config.filters).length > 0 ? (
-            <div className="space-y-3">
-              {Object.entries(config.filters).map(([key, value]) => (
-                <div key={key} className="flex items-start gap-3 text-sm">
-                  <Badge variant="outline" className="mt-0.5">
-                    {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                  </Badge>
-                  <div className="flex-1">
-                    {Array.isArray(value) ? (
-                      <div className="flex flex-wrap gap-2">
-                        {value.map((v, i) => (
-                          <Badge key={i} variant="secondary">
-                            {String(v).replace(/_/g, ' ')}
-                          </Badge>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground">
-                        {String(value).replace(/_/g, ' ')}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">
-              No filters applied. All records will be included.
-            </p>
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
 };

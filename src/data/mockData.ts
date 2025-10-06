@@ -48,6 +48,8 @@ export interface ReportInstance {
   generatedBy: { name: string };
   rowCount: number | null;
   filePath?: string;
+  filters?: Record<string, any>;
+  dateRange?: { from: string; to: string };
 }
 
 // Email History Record
@@ -1386,7 +1388,9 @@ export const mockReportInstances: ReportInstance[] = [
     generatedAt: "2025-10-15T15:42:00Z",
     generatedBy: { name: "Sarah Thompson" },
     rowCount: 247,
-    filePath: "/reports/instance-1.csv"
+    filePath: "/reports/instance-1.csv",
+    filters: { status: ["Completed", "In Progress"], priority: ["High", "Critical"] },
+    dateRange: { from: "2025-10-01", to: "2025-10-15" }
   },
   {
     id: "instance-2",
@@ -1395,7 +1399,9 @@ export const mockReportInstances: ReportInstance[] = [
     generatedAt: "2025-10-08T15:28:00Z",
     generatedBy: { name: "Sarah Thompson" },
     rowCount: 193,
-    filePath: "/reports/instance-2.csv"
+    filePath: "/reports/instance-2.csv",
+    filters: { status: ["Completed", "In Progress"] },
+    dateRange: { from: "2025-10-01", to: "2025-10-08" }
   },
   {
     id: "instance-3",
@@ -1404,7 +1410,9 @@ export const mockReportInstances: ReportInstance[] = [
     generatedAt: "2025-10-01T14:15:00Z",
     generatedBy: { name: "Michael Chen" },
     rowCount: 218,
-    filePath: "/reports/instance-3.csv"
+    filePath: "/reports/instance-3.csv",
+    filters: { status: ["Completed"] },
+    dateRange: { from: "2025-09-01", to: "2025-09-30" }
   },
   {
     id: "instance-4",
@@ -1413,7 +1421,9 @@ export const mockReportInstances: ReportInstance[] = [
     generatedAt: "2025-10-14T08:15:00Z",
     generatedBy: { name: "Michael Chen" },
     rowCount: 156,
-    filePath: "/reports/instance-4.csv"
+    filePath: "/reports/instance-4.csv",
+    filters: { condition: ["Good", "Fair", "Poor"] },
+    dateRange: { from: "2025-09-01", to: "2025-10-14" }
   },
   {
     id: "instance-5",
@@ -1422,7 +1432,9 @@ export const mockReportInstances: ReportInstance[] = [
     generatedAt: "2025-09-30T09:22:00Z",
     generatedBy: { name: "Michael Chen" },
     rowCount: 142,
-    filePath: "/reports/instance-5.csv"
+    filePath: "/reports/instance-5.csv",
+    filters: { condition: ["Fair", "Poor", "Critical"] },
+    dateRange: { from: "2025-09-01", to: "2025-09-30" }
   }
 ];
 

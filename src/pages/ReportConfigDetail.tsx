@@ -4,15 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ArrowLeft, Edit, MoreHorizontal, Trash2, Play } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Trash2, Play } from "lucide-react";
 import { ReportDefinitionTab } from "@/components/reports/ReportDefinitionTab";
 import { ReportHistoryTab } from "@/components/reports/ReportHistoryTab";
+import { ConfirmationModal } from "@/components/reports/ConfirmationModal";
 import { mockReportConfigs, mockReportInstances } from "@/data/mockData";
 
 export default function ReportConfigDetail() {
   const { configId } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("definition");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const config = mockReportConfigs.find(c => c.id === configId);
   const instances = mockReportInstances.filter(i => i.configId === configId);
@@ -30,15 +32,10 @@ export default function ReportConfigDetail() {
     );
   }
 
-  const handleEdit = () => {
-    // Navigate to edit mode (would open the create sheet in edit mode)
-    console.log("Edit config:", configId);
-  };
-
   const handleDelete = () => {
-    // Would show confirmation dialog
     console.log("Delete config:", configId);
     navigate("/reporting");
+    setShowDeleteConfirm(false);
   };
 
   const handleGenerate = () => {
@@ -75,10 +72,6 @@ export default function ReportConfigDetail() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button onClick={handleEdit}>
-              <Edit className="h-4 w-4 mr-2" />
-              Edit Config
-            </Button>
             <Button onClick={handleGenerate}>
               <Play className="h-4 w-4 mr-2" />
               Generate New Version
@@ -91,11 +84,11 @@ export default function ReportConfigDetail() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={handleDelete}
+                  onClick={() => setShowDeleteConfirm(true)}
                   className="text-destructive focus:text-destructive"
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Delete Config
+                  Delete Report Settings
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -124,6 +117,16 @@ export default function ReportConfigDetail() {
           />
         </TabsContent>
       </Tabs>
+
+      <ConfirmationModal
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+        title="Delete Report Settings"
+        description="Are you sure you want to delete this report configuration? This action is irreversible and will permanently remove all settings and history."
+        confirmLabel="Delete"
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </div>
   );
 }
