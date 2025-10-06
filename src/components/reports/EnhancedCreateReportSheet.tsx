@@ -132,21 +132,7 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
   const isStep3Valid = selectedColumns.length > 0;
   const isStep4Valid = true;
   
-  // Check date range validity in filters
-  const hasValidDateRanges = () => {
-    const dateFilters = Object.keys(filters).filter(key => key.endsWith('_start'));
-    for (const startKey of dateFilters) {
-      const endKey = startKey.replace('_start', '_end');
-      const start = filters[startKey];
-      const end = filters[endKey];
-      if (start && end && new Date(start) >= new Date(end)) {
-        return false;
-      }
-    }
-    return true;
-  };
-
-  const isAllStepsValid = isStep1Valid && isStep2Valid && isStep3Valid && isStep4Valid && hasValidDateRanges();
+  const isAllStepsValid = isStep1Valid && isStep2Valid && isStep3Valid && isStep4Valid;
 
   const handleNextStep = (currentStep: number) => {
     if (currentStep === 1) {

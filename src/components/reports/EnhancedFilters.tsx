@@ -1,15 +1,13 @@
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface EnhancedFiltersProps {
   dataSource: string;
@@ -50,6 +48,15 @@ const PERFORMANCE_STATUS_MAP: Record<string, string[] | null> = {
 // Data sources that REQUIRE date filter for Performance reports
 const PERFORMANCE_REQUIRED_DATE_SOURCES = ["Work Orders", "Assets", "Documents"];
 
+// Pre-defined date range options
+const DATE_RANGE_OPTIONS = [
+  { value: "7", label: "Last 7 Days" },
+  { value: "30", label: "Last 30 Days" },
+  { value: "90", label: "Last 90 Days (3 months)" },
+  { value: "180", label: "Last 180 Days (6 months)" },
+  { value: "365", label: "Last 365 Days (12 months)" },
+];
+
 export function EnhancedFilters({ 
   dataSource,
   filters, 
@@ -69,53 +76,13 @@ export function EnhancedFilters({
     onFilterChange('status', newStatuses.length > 0 ? newStatuses : undefined);
   };
 
-  const renderDatePicker = (label: string, filterKey: string, minDate?: Date) => {
-    const dateValue = filters[filterKey];
-    const isInvalid = minDate && dateValue && new Date(dateValue) < minDate;
-
-    return (
-      <div className="space-y-2 flex-1">
-        <Label className="text-sm font-medium">{label}</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "w-full justify-start text-left font-normal",
-                !dateValue && "text-muted-foreground",
-                isInvalid && "border-destructive"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateValue ? format(new Date(dateValue), "MMM dd, yyyy") : "Select date..."}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0 bg-background" align="start">
-            <Calendar
-              mode="single"
-              selected={dateValue ? new Date(dateValue) : undefined}
-              onSelect={(date) => onFilterChange(filterKey, date?.toISOString())}
-              disabled={(date) => minDate ? date < minDate : false}
-              initialFocus
-              className="pointer-events-auto"
-            />
-          </PopoverContent>
-        </Popover>
-        {isInvalid && (
-          <p className="text-xs text-destructive">From date must be before To date</p>
-        )}
-      </div>
-    );
-  };
-
   // PERFORMANCE REPORT MODE
   if (reportType === "Performance") {
-    const fromDate = filters['analysis_period_start'];
-    const toDate = filters['analysis_period_end'];
+    const dateRangePreset = filters['date_range_preset'];
     const performanceStatuses = PERFORMANCE_STATUS_MAP[dataSource];
     const includedStatuses = filters['status_inclusion'] || performanceStatuses || [];
     const requiresDate = PERFORMANCE_REQUIRED_DATE_SOURCES.includes(dataSource);
-    const isSaveDisabled = requiresDate && (!fromDate || !toDate);
+    const isSaveDisabled = requiresDate && !dateRangePreset;
 
     return (
       <div className="space-y-6">
@@ -129,13 +96,21 @@ export function EnhancedFilters({
         {/* Analysis Period */}
         <div className="space-y-3">
           <Label className="text-base font-medium">
-            Analysis Period {requiresDate && <span className="text-destructive">*</span>}
+            Date Range {requiresDate && <span className="text-destructive">*</span>}
             {!requiresDate && <span className="text-xs text-muted-foreground ml-1">(Optional)</span>}
           </Label>
-          <div className="flex gap-4">
-            {renderDatePicker("From", 'analysis_period_start')}
-            {renderDatePicker("To", 'analysis_period_end', fromDate ? new Date(fromDate) : undefined)}
-          </div>
+          <Select value={dateRangePreset} onValueChange={(value) => onFilterChange('date_range_preset', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select date range" />
+            </SelectTrigger>
+            <SelectContent>
+              {DATE_RANGE_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {performanceStatuses && performanceStatuses.length > 0 && (
@@ -186,8 +161,7 @@ export function EnhancedFilters({
   }
 
   // DETAILED REPORT MODE - Simplified
-  const fromDate = filters['date_range_start'];
-  const toDate = filters['date_range_end'];
+  const dateRangePreset = filters['date_range_preset'];
   const selectedStatuses = filters['status'] || [];
 
   return (
@@ -202,11 +176,19 @@ export function EnhancedFilters({
       {/* Date Range Filter (if available) */}
       {dateField && (
         <div className="space-y-3">
-          <Label className="text-base font-medium">{dateField.label} Range (Optional)</Label>
-          <div className="flex gap-4">
-            {renderDatePicker("From", 'date_range_start')}
-            {renderDatePicker("To", 'date_range_end', fromDate ? new Date(fromDate) : undefined)}
-          </div>
+          <Label className="text-base font-medium">Date Range (Optional)</Label>
+          <Select value={dateRangePreset} onValueChange={(value) => onFilterChange('date_range_preset', value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select date range" />
+            </SelectTrigger>
+            <SelectContent>
+              {DATE_RANGE_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       )}
 
