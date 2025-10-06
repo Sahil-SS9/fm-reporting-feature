@@ -43,7 +43,7 @@ export interface ReportConfig {
 export interface ReportInstance {
   id: string;
   configId: string;
-  status: 'generating' | 'generated' | 'failed';
+  status: 'generating' | 'generated' | 'failed' | 'deleted';
   generatedAt: string;
   generatedBy: { name: string };
   rowCount: number | null;

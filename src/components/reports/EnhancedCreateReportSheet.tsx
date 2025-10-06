@@ -507,7 +507,7 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
       {/* Step 3: Column Selection (View Only) */}
       <Collapsible open={step3Open} onOpenChange={setStep3Open}>
         <CollapsibleTrigger className="flex items-center justify-between w-full p-4 border rounded-lg hover:bg-muted/50">
-          <h3 className="text-lg font-semibold">Step 3: Available Columns ({selectedColumnsCount} selected)</h3>
+          <h3 className="text-lg font-semibold">Step 3: Available Columns</h3>
           {step3Open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </CollapsibleTrigger>
         <CollapsibleContent className="mt-4">
@@ -517,19 +517,16 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
                 <div>
                   <Label>Available Columns</Label>
                   <p className="text-xs text-muted-foreground mb-3">
-                    These columns will be available in your report
+                    These columns will be included in your report
                   </p>
                   <div className="space-y-2 max-h-60 overflow-y-auto">
-                    {selectedColumns.map((columnKey, index) => {
+                    {selectedColumns.map((columnKey) => {
                       const column = availableColumns.find(c => c.key === columnKey);
                       return column ? (
                         <div 
                           key={column.key}
                           className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30"
                         >
-                          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-sm font-medium">
-                            {index + 1}
-                          </div>
                           <div className="flex-1">
                             <div className="font-medium text-sm">{column.label}</div>
                             <div className="text-xs text-muted-foreground capitalize">{column.type}</div>

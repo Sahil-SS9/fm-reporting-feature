@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Mail, Download, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Download, CheckCircle2 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { ReportResults } from "@/components/reports/ReportResults";
 import { mockReportConfigs, mockReportInstances } from "@/data/mockData";
@@ -32,11 +32,6 @@ export default function ReportInstanceResults() {
     } catch {
       return 'N/A';
     }
-  };
-
-  const handleEmail = () => {
-    console.log("Email instance:", instanceId);
-    // Would open email sheet
   };
 
   const handleDownload = () => {
@@ -102,11 +97,7 @@ export default function ReportInstanceResults() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button onClick={handleEmail}>
-              <Mail className="h-4 w-4 mr-2" />
-              Email Report
-            </Button>
-            <Button variant="outline" onClick={handleDownload}>
+            <Button onClick={handleDownload}>
               <Download className="h-4 w-4 mr-2" />
               Download CSV
             </Button>
