@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ArrowLeft, MoreHorizontal, Trash2, Play } from "lucide-react";
+import { MoreHorizontal, Trash2, Play } from "lucide-react";
 import { ReportDefinitionTab } from "@/components/reports/ReportDefinitionTab";
 import { ReportHistoryTab } from "@/components/reports/ReportHistoryTab";
 import { ConfirmationModal } from "@/components/reports/ConfirmationModal";
@@ -46,18 +46,24 @@ export default function ReportConfigDetail() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="space-y-4">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
         <Button 
-          variant="ghost" 
+          variant="link" 
           size="sm"
           onClick={() => navigate("/reporting")}
-          className="mb-2"
+          className="h-auto p-0"
         >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Reports
+          Reports
         </Button>
+        <span>/</span>
+        <span className="font-medium text-foreground">
+          {config.name}
+        </span>
+      </div>
 
+      {/* Header */}
+      <div className="space-y-4">
         <div className="flex items-start justify-between">
           <div className="space-y-3">
             <div className="flex items-center gap-3">
