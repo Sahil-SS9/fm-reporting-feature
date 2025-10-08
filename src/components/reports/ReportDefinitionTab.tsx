@@ -66,16 +66,6 @@ export const ReportDefinitionTab: React.FC<ReportDefinitionTabProps> = ({ config
               <p className="text-base">{formatDate(config.createdAt)}</p>
             </div>
 
-            {config.lastModified && (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span>Last Modified</span>
-                </div>
-                <p className="text-base">{formatDateTime(config.lastModified)}</p>
-              </div>
-            )}
-
             {config.lastGeneratedAt && (
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -88,6 +78,44 @@ export const ReportDefinitionTab: React.FC<ReportDefinitionTabProps> = ({ config
           </div>
         </CardContent>
       </Card>
+
+      {/* Applied Filters */}
+      {config.filters && Object.keys(config.filters).length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">
+              <div className="flex items-center gap-2">
+                <Filter className="h-5 w-5" />
+                Applied Filters
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {Object.entries(config.filters).map(([key, value]) => (
+                <div key={key} className="flex items-start gap-3 pb-3 border-b last:border-0 last:pb-0">
+                  <div className="flex-1">
+                    <div className="text-sm font-medium text-muted-foreground mb-1">
+                      {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    </div>
+                    <div className="text-base">
+                      {Array.isArray(value) ? (
+                        <div className="flex flex-wrap gap-1">
+                          {value.map((v, i) => (
+                            <Badge key={i} variant="secondary">{v}</Badge>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="font-medium">{String(value)}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Selected Columns */}
       <Card>

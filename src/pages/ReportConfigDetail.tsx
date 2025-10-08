@@ -122,7 +122,7 @@ export default function ReportConfigDetail() {
         open={showDeleteConfirm}
         onOpenChange={setShowDeleteConfirm}
         title="Delete Report Settings"
-        description="Are you sure you want to delete this report configuration? This action is irreversible and will permanently remove all settings and history."
+        description="Are you sure you want to delete this report configuration? This will also permanently delete all previously generated reports and they will no longer be accessible. This action cannot be undone."
         confirmLabel="Delete"
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteConfirm(false)}

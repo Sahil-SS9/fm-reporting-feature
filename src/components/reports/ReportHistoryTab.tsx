@@ -164,7 +164,11 @@ export const ReportHistoryTab: React.FC<ReportHistoryTabProps> = ({
                   )}
                 </TableCell>
                 <TableCell>
-                  {instance.dateRange ? (
+                  {instance.filters?.date_range_preset ? (
+                    <Badge variant="outline" className="font-medium">
+                      {instance.filters.date_range_preset}
+                    </Badge>
+                  ) : instance.dateRange ? (
                     <div className="text-sm">
                       <div className="font-medium">{instance.dateRange.from}</div>
                       <div className="text-muted-foreground">to {instance.dateRange.to}</div>
