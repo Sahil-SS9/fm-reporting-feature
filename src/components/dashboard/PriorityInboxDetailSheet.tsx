@@ -257,8 +257,6 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
             </Button>
           </div>
 
-          <Separator />
-
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -282,10 +280,10 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
                 <div className="flex items-center gap-2 mt-1">
                   <Avatar className="h-6 w-6">
                     <AvatarFallback className="text-xs">
-                      {invoice.contractorTenant.substring(0, 2).toUpperCase()}
+                      {invoice.contractorTenant ? invoice.contractorTenant.substring(0, 2).toUpperCase() : "-"}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm text-muted-foreground">{invoice.contractorTenant}</span>
+                  <span className="text-sm text-muted-foreground">{invoice.contractorTenant || "-"}</span>
                 </div>
               </div>
               <div>
@@ -298,29 +296,47 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <div>
                 <label className="text-sm font-medium text-foreground">Date Issued</label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {invoice.dateIssued ? format(new Date(invoice.dateIssued), "MMM dd, yyyy") : "No issued date"}
+                  {invoice.dateIssued ? format(new Date(invoice.dateIssued), "dd/MM/yyyy") : "No issued date"}
                 </p>
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground">Due Date</label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {invoice.dueDate ? format(new Date(invoice.dueDate), "MMM dd, yyyy") : "No due date"}
+                  {invoice.dueDate ? format(new Date(invoice.dueDate), "dd/MM/yyyy") : "No due date"}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-foreground mb-2 block">Payment Status</label>
+                <Select defaultValue={invoice.paymentStatus}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Outstanding">Outstanding</SelectItem>
+                    <SelectItem value="Paid">Paid</SelectItem>
+                    <SelectItem value="Overdue">Overdue</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground">Tax Rate</label>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Basic Rate ({invoice.taxRate || 0}%)
                 </p>
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">Payment Status</label>
-              <Select defaultValue={invoice.paymentStatus}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Outstanding">Outstanding</SelectItem>
-                  <SelectItem value="Paid">Paid</SelectItem>
-                  <SelectItem value="Overdue">Overdue</SelectItem>
-                </SelectContent>
-              </Select>
+              <label className="text-sm font-medium text-foreground mb-2 block">Payment Date</label>
+              <div className="flex items-center border rounded-md px-3 py-2">
+                <span className="text-sm text-muted-foreground">
+                  {invoice.paymentStatus === "Paid" ? format(new Date(invoice.dateIssued), "dd/MM/yyyy") : "Not paid"}
+                </span>
+                <Calendar className="h-4 w-4 ml-auto text-muted-foreground" />
+              </div>
             </div>
           </div>
         </div>
@@ -377,8 +393,19 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
             <div className="space-y-6">
               <div>
                 <label className="text-sm font-medium text-foreground">Asset Image</label>
-                <div className="mt-2 border rounded-lg p-8 bg-muted/30 flex items-center justify-center">
-                  <p className="text-sm text-muted-foreground">No image available</p>
+                <div className="mt-2 grid grid-cols-2 gap-4">
+                  <div className="border rounded-lg p-8 bg-muted/30 flex items-center justify-center">
+                    <p className="text-sm text-muted-foreground">No image available</p>
+                  </div>
+                  <div className="border rounded-lg p-4 flex flex-col items-center justify-center gap-2">
+                    <div className="w-32 h-32 bg-foreground/10 flex items-center justify-center">
+                      <div className="text-xs text-center text-muted-foreground">QR Code</div>
+                    </div>
+                    <Button size="sm" variant="outline">
+                      <Download className="h-3 w-3 mr-2" />
+                      Download
+                    </Button>
+                  </div>
                 </div>
               </div>
 
@@ -487,18 +514,19 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
                 <p className="text-sm text-muted-foreground mt-1">No tags assigned</p>
               </div>
 
-              <Separator />
+              <div>
+                <label className="text-sm font-medium text-foreground">Tags</label>
+                <p className="text-sm text-muted-foreground mt-1">No tags assigned</p>
+              </div>
 
               <div>
                 <label className="text-sm font-medium text-foreground">Documents</label>
                 <p className="text-sm text-muted-foreground mt-1">No documents assigned</p>
               </div>
 
-              <Separator />
-
               <div>
                 <label className="text-sm font-medium text-foreground">Invoices</label>
-                <p className="text-sm text-muted-foreground mt-1">No invoices linked</p>
+                <p className="text-sm text-muted-foreground mt-1">No invoices assigned</p>
               </div>
             </div>
           </TabsContent>
