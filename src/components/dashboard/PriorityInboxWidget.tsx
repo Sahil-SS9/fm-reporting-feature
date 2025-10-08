@@ -44,10 +44,21 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
     setShowAll(!showAll);
   };
 
-  const getCategoryBadge = (category: "CRITICAL" | "URGENT" | "DUE_SOON") => {
-    if (category === "CRITICAL") return { variant: "destructive" as const, label: "CRITICAL", icon: AlertTriangle };
-    if (category === "URGENT") return { variant: "secondary" as const, label: "URGENT", icon: Clock };
-    return { variant: "outline" as const, label: "DUE SOON", icon: Calendar };
+  const getCategoryBadge = (label: string) => {
+    // Map labels to appropriate badge variants
+    if (label === "Overdue" || label === "Expired") {
+      return { variant: "destructive" as const };
+    }
+    if (label === "Critical") {
+      return { variant: "destructive" as const };
+    }
+    if (label === "High" || label === "Outstanding") {
+      return { variant: "secondary" as const };
+    }
+    if (label === "Medium") {
+      return { variant: "outline" as const };
+    }
+    return { variant: "outline" as const };
   };
 
   const getTypeIcon = (type: string) => {
@@ -123,7 +134,7 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
         {/* Priority Items List */}
         <div className="space-y-3">
           {displayItems.map((item) => {
-            const categoryBadge = getCategoryBadge(item.category);
+            const categoryBadge = getCategoryBadge(item.label);
             const TypeIcon = getTypeIcon(item.type);
             
             return (
@@ -165,7 +176,7 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
                   {/* Right side: Category badge and View button aligned vertically */}
                   <div className="flex flex-col items-end justify-between space-y-2 min-h-full">
                     <Badge variant={categoryBadge.variant} className="text-xs whitespace-nowrap">
-                      {categoryBadge.label}
+                      {item.label}
                     </Badge>
                     
                     <Button 

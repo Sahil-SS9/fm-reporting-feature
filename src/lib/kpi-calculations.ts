@@ -56,22 +56,6 @@ export function getPriorityInboxItems(workOrders: any[]): PriorityItem[] {
 
   // Add work orders
   activeWorkOrders.forEach(wo => {
-    const today = new Date();
-    const dueDate = new Date(wo.dueDate);
-    const isOverdue = dueDate < today;
-    
-    // Determine contextual label
-    let label = wo.priority;
-    if (isOverdue) {
-      label = "Overdue";
-    } else if (wo.priority === "Critical") {
-      label = "Critical Priority";
-    } else if (wo.priority === "High") {
-      label = "High Priority";
-    } else if (wo.status === "On Hold") {
-      label = "On Hold";
-    }
-    
     priorityItems.push({
       id: wo.id,
       title: wo.title,
@@ -83,7 +67,7 @@ export function getPriorityInboxItems(workOrders: any[]): PriorityItem[] {
       isPropertyImpacting: wo.category === "Emergency" || wo.priority === "Critical",
       type: "work_order",
       module: "Cases & Work Orders",
-      label: label,
+      label: wo.priority, // Show actual priority: Critical, High, Medium, Low
       routePath: `/cases/${wo.id}`
     });
   });
