@@ -3,6 +3,7 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
+  SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -62,6 +63,7 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <X className="h-4 w-4" />
             </Button>
           </div>
+          <SheetDescription className="sr-only">Work order details and information</SheetDescription>
         </SheetHeader>
 
         <Tabs defaultValue="details" className="mt-6">
@@ -240,6 +242,7 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <X className="h-4 w-4" />
             </Button>
           </div>
+          <SheetDescription className="sr-only">Invoice details and payment information</SheetDescription>
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
@@ -345,6 +348,7 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <X className="h-4 w-4" />
             </Button>
           </div>
+          <SheetDescription className="sr-only">Asset details and maintenance information</SheetDescription>
         </SheetHeader>
 
         <Tabs defaultValue="details" className="mt-6">
@@ -511,6 +515,96 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
     );
   };
 
+  const renderDocumentDetails = () => {
+    return (
+      <>
+        <SheetHeader>
+          <div className="flex items-start justify-between">
+            <SheetTitle className="text-base font-semibold text-foreground pr-8">
+              {item.title}
+            </SheetTitle>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-4 top-4"
+              onClick={() => onOpenChange(false)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          <SheetDescription className="sr-only">Document details and expiry information</SheetDescription>
+        </SheetHeader>
+
+        <div className="mt-6 space-y-6">
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline">
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+            <Button size="sm" variant="outline">
+              <Download className="h-4 w-4 mr-2" />
+              Download
+            </Button>
+            <Button size="sm" variant="outline">
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
+          </div>
+
+          <Separator />
+
+          <div className="space-y-6">
+            <div>
+              <label className="text-sm font-medium text-foreground">Document Name</label>
+              <p className="text-sm text-muted-foreground mt-1">{item.title}</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-foreground">Document Type</label>
+                <p className="text-sm text-muted-foreground mt-1">Certificate</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground">Status</label>
+                <Badge variant="destructive" className="mt-1">{item.label}</Badge>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-foreground">Property</label>
+                <p className="text-sm text-muted-foreground mt-1">{item.property}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground">Expiry Date</label>
+                <p className="text-sm text-muted-foreground mt-1">{item.dueDate}</p>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-foreground">Last Modified</label>
+              <p className="text-sm text-muted-foreground mt-1">
+                {format(new Date(), "MMM dd, yyyy HH:mm")}
+              </p>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-foreground">File Size</label>
+              <p className="text-sm text-muted-foreground mt-1">2.4 MB</p>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-foreground">Description</label>
+              <p className="text-sm text-muted-foreground mt-1">
+                Annual fire safety inspection certificate for the property. This document must be renewed before expiry to maintain compliance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
   const renderDetails = () => {
     switch (item.type) {
       case "work_order":
@@ -520,6 +614,8 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
       case "asset":
       case "inspection":
         return renderAssetDetails();
+      case "document":
+        return renderDocumentDetails();
       default:
         return <p className="text-sm text-muted-foreground">Details not available for this item type.</p>;
     }
