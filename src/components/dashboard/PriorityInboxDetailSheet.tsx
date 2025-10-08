@@ -224,7 +224,20 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
 
   const renderInvoiceDetails = () => {
     const invoice = mockInvoices.find(inv => inv.id === item.id);
-    if (!invoice) return null;
+    // Fallback to creating invoice from item data if not found in mockInvoices
+    const invoiceData = invoice || {
+      id: item.id,
+      type: "Received" as const,
+      invoiceNumber: item.title.includes("#") ? item.title.split("#")[1] : "INV-001",
+      description: "Service invoice",
+      contractorTenant: "Contractor",
+      amount: 5000.00,
+      dateIssued: "2025-01-15",
+      dueDate: item.dueDate,
+      paymentStatus: item.status as any,
+      taxRate: 0,
+      propertyId: "1"
+    };
 
     return (
       <>
@@ -261,17 +274,17 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-foreground">Invoice Type</label>
-                <p className="text-sm text-muted-foreground mt-1">{invoice.type}</p>
+                <p className="text-sm text-muted-foreground mt-1">{invoiceData.type}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground">Invoice Number</label>
-                <p className="text-sm text-muted-foreground mt-1">{invoice.invoiceNumber}</p>
+                <p className="text-sm text-muted-foreground mt-1">{invoiceData.invoiceNumber}</p>
               </div>
             </div>
 
             <div>
               <label className="text-sm font-medium text-foreground">Description of Services</label>
-              <p className="text-sm text-muted-foreground mt-1">{invoice.description}</p>
+              <p className="text-sm text-muted-foreground mt-1">{invoiceData.description}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -280,15 +293,15 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
                 <div className="flex items-center gap-2 mt-1">
                   <Avatar className="h-6 w-6">
                     <AvatarFallback className="text-xs">
-                      {invoice.contractorTenant ? invoice.contractorTenant.substring(0, 2).toUpperCase() : "-"}
+                      {invoiceData.contractorTenant ? invoiceData.contractorTenant.substring(0, 2).toUpperCase() : "-"}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm text-muted-foreground">{invoice.contractorTenant || "-"}</span>
+                  <span className="text-sm text-muted-foreground">{invoiceData.contractorTenant || "-"}</span>
                 </div>
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground">Amount</label>
-                <p className="text-sm text-muted-foreground mt-1">£ {invoice.amount.toFixed(2)}</p>
+                <p className="text-sm text-muted-foreground mt-1">£ {invoiceData.amount.toFixed(2)}</p>
               </div>
             </div>
 
@@ -296,13 +309,13 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <div>
                 <label className="text-sm font-medium text-foreground">Date Issued</label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {invoice.dateIssued ? format(new Date(invoice.dateIssued), "dd/MM/yyyy") : "No issued date"}
+                  {invoiceData.dateIssued ? format(new Date(invoiceData.dateIssued), "dd/MM/yyyy") : "No issued date"}
                 </p>
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground">Due Date</label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {invoice.dueDate ? format(new Date(invoice.dueDate), "dd/MM/yyyy") : "No due date"}
+                  {invoiceData.dueDate ? format(new Date(invoiceData.dueDate), "dd/MM/yyyy") : "No due date"}
                 </p>
               </div>
             </div>
@@ -310,7 +323,7 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium text-foreground mb-2 block">Payment Status</label>
-                <Select defaultValue={invoice.paymentStatus}>
+                <Select defaultValue={invoiceData.paymentStatus}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -324,7 +337,7 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <div>
                 <label className="text-sm font-medium text-foreground">Tax Rate</label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Basic Rate ({invoice.taxRate || 0}%)
+                  Basic Rate ({invoiceData.taxRate || 0}%)
                 </p>
               </div>
             </div>
@@ -333,7 +346,7 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <label className="text-sm font-medium text-foreground mb-2 block">Payment Date</label>
               <div className="flex items-center border rounded-md px-3 py-2">
                 <span className="text-sm text-muted-foreground">
-                  {invoice.paymentStatus === "Paid" ? format(new Date(invoice.dateIssued), "dd/MM/yyyy") : "Not paid"}
+                  {invoiceData.paymentStatus === "Paid" ? format(new Date(invoiceData.dateIssued), "dd/MM/yyyy") : "Not paid"}
                 </span>
                 <Calendar className="h-4 w-4 ml-auto text-muted-foreground" />
               </div>
@@ -346,14 +359,36 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
 
   const renderAssetDetails = () => {
     const asset = mockAssets.find(a => a.id === item.id);
-    if (!asset) return null;
+    // Fallback to creating asset from item data if not found in mockAssets
+    const assetData = asset || {
+      id: item.id,
+      name: item.title,
+      group: "HVAC Systems",
+      status: "Operational" as const,
+      condition: "Good" as const,
+      description: "Asset requiring maintenance",
+      serialNumber: "HVAC-2024-001",
+      purchaseCost: 85000,
+      depreciationRate: 0.08,
+      estimatedValue: 78200,
+      estimatedLifetime: 20,
+      installationDate: "2024-07-24",
+      contractorResponsible: undefined,
+      warrantyExpirationDate: undefined,
+      location: "Building",
+      propertyId: "1",
+      type: "HVAC System",
+      lastInspection: "2024-10-15",
+      nextInspection: "2025-01-15",
+      purchaseDate: "2024-07-24"
+    };
 
     return (
       <>
         <SheetHeader>
           <div className="flex items-start justify-between">
             <SheetTitle className="text-base font-semibold text-foreground pr-8">
-              {asset.name}
+              {assetData.name}
             </SheetTitle>
             <Button
               variant="ghost"
@@ -412,18 +447,18 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-foreground">Asset Name</label>
-                  <p className="text-sm text-muted-foreground mt-1">{asset.name}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{assetData.name}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground">Group</label>
-                  <p className="text-sm text-muted-foreground mt-1">{asset.group || "-"}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{assetData.group || "-"}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-foreground mb-2 block">Status</label>
-                  <Select defaultValue={asset.status}>
+                  <Select defaultValue={assetData.status}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -443,8 +478,8 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
                       <span className="text-muted-foreground">Out of Service</span>
                     </div>
                     <div className="flex h-2 bg-muted rounded-full overflow-hidden">
-                      <div className="bg-primary" style={{ width: "80%" }} />
-                      <div className="bg-destructive" style={{ width: "20%" }} />
+                      <div className="bg-primary" style={{ width: "100%" }} />
+                      <div className="bg-destructive" style={{ width: "0%" }} />
                     </div>
                     <div className="flex justify-between text-xs mt-1">
                       <span className="text-muted-foreground">76 days (100%)</span>
@@ -457,11 +492,11 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-foreground">Serial Number</label>
-                  <p className="text-sm text-muted-foreground mt-1">{asset.serialNumber || "-"}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{assetData.serialNumber || "-"}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground">Contractor responsible</label>
-                  <p className="text-sm text-muted-foreground mt-1">{asset.contractorResponsible || "-"}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{assetData.contractorResponsible || "-"}</p>
                 </div>
               </div>
 
@@ -469,13 +504,13 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
                 <div>
                   <label className="text-sm font-medium text-foreground">Installation date</label>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {asset.installationDate ? format(new Date(asset.installationDate), "dd/MM/yyyy") : "-"}
+                    {assetData.installationDate ? format(new Date(assetData.installationDate), "dd/MM/yyyy") : "-"}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground">Purchase cost</label>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {asset.purchaseCost ? `£${asset.purchaseCost.toFixed(2)}` : "-"}
+                    {assetData.purchaseCost ? `£${assetData.purchaseCost.toFixed(2)}` : "-"}
                   </p>
                 </div>
               </div>
@@ -484,13 +519,13 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
                 <div>
                   <label className="text-sm font-medium text-foreground">Depreciation Rate</label>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {asset.depreciationRate ? `${asset.depreciationRate}%` : "-"}
+                    {assetData.depreciationRate ? `${assetData.depreciationRate}%` : "-"}
                   </p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-foreground">Estimated value</label>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {asset.estimatedValue ? `£${asset.estimatedValue.toFixed(2)}` : "-"}
+                    {assetData.estimatedValue ? `£${assetData.estimatedValue.toFixed(2)}` : "-"}
                   </p>
                 </div>
               </div>
@@ -498,14 +533,14 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <div>
                 <label className="text-sm font-medium text-foreground">Estimated lifetime</label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {asset.estimatedLifetime ? `${asset.estimatedLifetime} years` : "-"}
+                  {assetData.estimatedLifetime ? `${assetData.estimatedLifetime} years` : "-"}
                 </p>
               </div>
 
               <div>
                 <label className="text-sm font-medium text-foreground">Warranty expiration date</label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {asset.warrantyExpirationDate ? format(new Date(asset.warrantyExpirationDate), "dd/MM/yyyy") : "-"}
+                  {assetData.warrantyExpirationDate ? format(new Date(assetData.warrantyExpirationDate), "dd/MM/yyyy") : "-"}
                 </p>
               </div>
 
