@@ -14,8 +14,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
 import { mockWorkOrders, type WorkOrder } from "@/data/mockData";
 import { format } from "date-fns";
 
@@ -61,56 +59,14 @@ export function WorkOrderDetailsModal({
     }
   };
 
-  const handleExportCSV = () => {
-    const headers = ["ID", "Title", "Status", "Priority", "Property", "Due Date", "Category", "Assignee"];
-    const rows = workOrders.map(wo => [
-      wo.id,
-      wo.title,
-      wo.status,
-      wo.priority,
-      wo.property || "",
-      wo.dueDate,
-      wo.category,
-      wo.assigneeId
-    ]);
-
-    const csvContent = [
-      headers.join(","),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `work-orders-${title.toLowerCase().replace(/\s+/g, "-")}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <DialogTitle className="text-xl">{title}</DialogTitle>
-              <DialogDescription className="mt-1">
-                {workOrders.length} work order{workOrders.length !== 1 ? "s" : ""} found
-              </DialogDescription>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleExportCSV}
-              className="ml-4"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export CSV
-            </Button>
-          </div>
+          <DialogTitle className="text-xl">{title}</DialogTitle>
+          <DialogDescription className="mt-1">
+            {workOrders.length} work order{workOrders.length !== 1 ? "s" : ""} found
+          </DialogDescription>
         </DialogHeader>
 
         <div className="mt-4">
