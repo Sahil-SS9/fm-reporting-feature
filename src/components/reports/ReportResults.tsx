@@ -193,6 +193,14 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
 
   return (
     <div className="space-y-6">
+      {/* Back Button */}
+      <div className="mb-4">
+        <Button variant="outline" onClick={onBack} size="sm">
+          <ChevronLeft className="h-4 w-4 mr-2" />
+          Back to Report
+        </Button>
+      </div>
+
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div className="space-y-3">
@@ -206,10 +214,6 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={onBack}>
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Back to Report
-          </Button>
           <Button onClick={handleExportCSV}>
             <Download className="h-4 w-4 mr-2" />
             Download CSV

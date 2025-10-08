@@ -105,8 +105,10 @@ export const ReportDefinitionTab: React.FC<ReportDefinitionTabProps> = ({ config
                             <Badge key={i} variant="secondary">{v}</Badge>
                           ))}
                         </div>
-                      ) : key.includes('date') || key.includes('_at') ? (
-                        <span className="font-medium">{formatDateTime(String(value))}</span>
+                      ) : key === 'date_range_preset' ? (
+                        <Badge variant="outline" className="text-sm">{String(value)}</Badge>
+                      ) : key.includes('date') && !key.includes('preset') && !key.includes('range') ? (
+                        <span className="font-medium">{formatDate(String(value))}</span>
                       ) : (
                         <span className="font-medium">{String(value)}</span>
                       )}
