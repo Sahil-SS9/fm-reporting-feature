@@ -14,7 +14,6 @@ import { SchedulingWidget } from "@/components/dashboard/SchedulingWidget";
 import { PropertyOverviewTab } from "@/components/dashboard/PropertyOverviewTab";
 import { WorkOrderDetailsModal } from "@/components/dashboard/WorkOrderDetailsModal";
 import { ContractorInvoicingWidget } from "@/components/dashboard/ContractorInvoicingWidget";
-import { DocumentExpiryWidget } from "@/components/dashboard/DocumentExpiryWidget";
 import { DocumentsExpiringWidget } from "@/components/dashboard/DocumentsExpiringWidget";
 import { DocumentsExpiredWidget } from "@/components/dashboard/DocumentsExpiredWidget";
 import { CasesCreatedClosedWidget } from "@/components/dashboard/CasesCreatedClosedWidget";
@@ -514,7 +513,6 @@ export default function Dashboard() {
             <DocumentsExpiringWidget />
             <DocumentsExpiredWidget />
           </div>
-          <DocumentExpiryWidget />
         </TabsContent>
 
       </Tabs>
