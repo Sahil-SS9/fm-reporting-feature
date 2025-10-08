@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
 import { getPriorityInboxItems } from "@/lib/kpi-calculations";
 import { useState } from "react";
+import { PriorityInboxDetailSheet } from "./PriorityInboxDetailSheet";
 
 interface PriorityInboxWidgetProps {
   selectedProperty?: string;
@@ -28,12 +29,15 @@ interface PriorityInboxWidgetProps {
 export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrders = mockWorkOrders }: PriorityInboxWidgetProps) {
   const navigate = useNavigate();
   const [showAll, setShowAll] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
   
   const priorityItems = getPriorityInboxItems(filteredWorkOrders);
   const displayItems = showAll ? priorityItems : priorityItems.slice(0, 5);
   
   const handleViewItem = (item: any) => {
-    navigate(item.routePath);
+    setSelectedItem(item);
+    setSheetOpen(true);
   };
 
   const toggleShowAll = () => {
@@ -203,6 +207,12 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
           </Button>
         )}
       </CardContent>
+
+      <PriorityInboxDetailSheet 
+        item={selectedItem}
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+      />
     </Card>
   );
 }
