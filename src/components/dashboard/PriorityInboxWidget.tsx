@@ -45,20 +45,23 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
   };
 
   const getCategoryBadge = (label: string) => {
-    // Map labels to appropriate badge variants
-    if (label === "Overdue" || label === "Expired") {
-      return { variant: "destructive" as const };
+    // Map labels to appropriate badge variants and colors
+    if (label === "Critical" || label === "Outstanding" || label === "Expired") {
+      return { variant: "destructive" as const, className: "bg-destructive text-destructive-foreground" }; // Dark Red
     }
-    if (label === "Critical") {
-      return { variant: "destructive" as const };
-    }
-    if (label === "High" || label === "Outstanding") {
-      return { variant: "secondary" as const };
+    if (label === "High") {
+      return { variant: "secondary" as const, className: "bg-red-100 text-red-700 border-red-300 dark:bg-red-950 dark:text-red-400" }; // Light Red
     }
     if (label === "Medium") {
-      return { variant: "outline" as const };
+      return { variant: "outline" as const, className: "bg-orange-100 text-orange-700 border-orange-300 dark:bg-orange-950 dark:text-orange-400" }; // Orange
     }
-    return { variant: "outline" as const };
+    if (label === "Low") {
+      return { variant: "outline" as const, className: "bg-blue-100 text-blue-700 border-blue-300 dark:bg-blue-950 dark:text-blue-400" }; // Blue
+    }
+    if (label === "Overdue") {
+      return { variant: "destructive" as const, className: "bg-destructive text-destructive-foreground" }; // Dark Red
+    }
+    return { variant: "outline" as const, className: "" };
   };
 
   const getTypeIcon = (type: string) => {
@@ -175,7 +178,7 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
                   
                   {/* Right side: Category badge and View button aligned vertically */}
                   <div className="flex flex-col items-end justify-between space-y-2 min-h-full">
-                    <Badge variant={categoryBadge.variant} className="text-xs whitespace-nowrap">
+                    <Badge variant={categoryBadge.variant} className={`text-xs whitespace-nowrap ${categoryBadge.className}`}>
                       {item.label}
                     </Badge>
                     
