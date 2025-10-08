@@ -16,6 +16,7 @@ interface EnhancedEssentialMetricsCardProps {
     label: string;
   };
   subValue?: string;
+  onClick?: () => void;
 }
 
 export function EnhancedEssentialMetricsCard({
@@ -25,7 +26,8 @@ export function EnhancedEssentialMetricsCard({
   variant = "default",
   description,
   change,
-  subValue
+  subValue,
+  onClick
 }: EnhancedEssentialMetricsCardProps) {
   
   const getVariantStyles = () => {
@@ -64,7 +66,10 @@ export function EnhancedEssentialMetricsCard({
   const styles = getVariantStyles();
 
   return (
-    <Card className={`${styles.border} ${styles.bg} hover:shadow-md transition-all duration-200 group cursor-pointer`}>
+    <Card 
+      className={`${styles.border} ${styles.bg} hover:shadow-md transition-all duration-200 group ${onClick ? 'cursor-pointer' : ''}`}
+      onClick={onClick}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}

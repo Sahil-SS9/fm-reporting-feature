@@ -10,7 +10,9 @@ import { OutstandingInvoicesWidget } from "@/components/dashboard/OutstandingInv
 import { IssuedInvoicesWidget } from "@/components/dashboard/IssuedInvoicesWidget";
 import { PropertyPerformanceWidget } from "@/components/dashboard/PropertyPerformanceWidget";
 
+import { SchedulingWidget } from "@/components/dashboard/SchedulingWidget";
 import { PropertyOverviewTab } from "@/components/dashboard/PropertyOverviewTab";
+import { WorkOrderDetailsModal } from "@/components/dashboard/WorkOrderDetailsModal";
 import { ContractorInvoicingWidget } from "@/components/dashboard/ContractorInvoicingWidget";
 import { DocumentExpiryWidget } from "@/components/dashboard/DocumentExpiryWidget";
 import { CasesCreatedClosedWidget } from "@/components/dashboard/CasesCreatedClosedWidget";
@@ -108,6 +110,17 @@ export default function Dashboard() {
   // Pass current tab and property filter to layout  
   const [currentTab, setCurrentTab] = useState("overview");
   const [selectedProperty, setSelectedProperty] = useState("all");
+  
+  // State for work order modal
+  const [workOrderModal, setWorkOrderModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    workOrders: typeof mockWorkOrders;
+  }>({
+    isOpen: false,
+    title: "",
+    workOrders: []
+  });
 
   // Get filtered data based on selected property
   const filteredWorkOrders = getFilteredWorkOrders(selectedProperty);
@@ -120,6 +133,63 @@ export default function Dashboard() {
   const inProgressCount = filteredWorkOrders.filter(wo => wo.status === "In Progress").length;
   const inReviewCount = 0; // Not available in current data model
   const completedCount = filteredWorkOrders.filter(wo => wo.status === "Completed").length;
+  
+  // Handlers for metric card clicks
+  const handleMetricClick = (type: string) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+    
+    let filtered: typeof mockWorkOrders = [];
+    let title = "";
+    
+    switch (type) {
+      case "dueToday":
+        filtered = filteredWorkOrders.filter(wo => {
+          if (!wo.dueDate || wo.status === "Completed") return false;
+          const dueDate = new Date(wo.dueDate);
+          return dueDate >= today && dueDate <= endOfToday;
+        });
+        title = "Work Orders Due Today";
+        break;
+      case "overdue":
+        filtered = filteredWorkOrders.filter(wo => {
+          if (!wo.dueDate || wo.status === "Completed") return false;
+          return new Date(wo.dueDate) < today;
+        });
+        title = "Overdue Work Orders";
+        break;
+      case "critical":
+        filtered = filteredWorkOrders.filter(wo => 
+          wo.priority === "Critical" && wo.status !== "Completed"
+        );
+        title = "Critical Priority Work Orders";
+        break;
+      case "approved":
+        filtered = filteredWorkOrders.filter(wo => wo.status === "Open");
+        title = "Approved Work Orders";
+        break;
+      case "inProgress":
+        filtered = filteredWorkOrders.filter(wo => wo.status === "In Progress");
+        title = "In-Progress Work Orders";
+        break;
+      case "inReview":
+        filtered = filteredWorkOrders.filter(wo => wo.status === "Overdue");
+        title = "In-Review Work Orders";
+        break;
+      case "completed":
+        filtered = filteredWorkOrders.filter(wo => wo.status === "Completed");
+        title = "Completed Work Orders";
+        break;
+    }
+    
+    setWorkOrderModal({
+      isOpen: true,
+      title,
+      workOrders: filtered
+    });
+  };
   
   return (
     <DashboardContext.Provider value={{ currentTab, setCurrentTab, selectedProperty, setSelectedProperty }}>
@@ -252,6 +322,7 @@ export default function Dashboard() {
                 icon={Clock}
                 variant={filteredKpiMetrics.dueToday > 5 ? "warning" : "default"}
                 description="Work orders due today"
+                onClick={() => handleMetricClick("dueToday")}
               />
               <EnhancedEssentialMetricsCard
                 title="Overdue Items"
@@ -259,6 +330,7 @@ export default function Dashboard() {
                 icon={AlertTriangle}
                 variant={filteredKpiMetrics.overdue > 0 ? "critical" : "success"}
                 description="Past due work orders"
+                onClick={() => handleMetricClick("overdue")}
               />
               <EnhancedEssentialMetricsCard
                 title="Critical Issues"
@@ -266,6 +338,7 @@ export default function Dashboard() {
                 icon={AlertTriangle}
                 variant={filteredKpiMetrics.critical > 0 ? "critical" : "success"}
                 description="High priority items"
+                onClick={() => handleMetricClick("critical")}
               />
             </div>
             {/* Second Row */}
@@ -276,6 +349,7 @@ export default function Dashboard() {
                 icon={CheckCircle2}
                 variant="default"
                 description="Work orders approved"
+                onClick={() => handleMetricClick("approved")}
               />
               <EnhancedEssentialMetricsCard
                 title="In-Progress Work Orders"
@@ -283,6 +357,7 @@ export default function Dashboard() {
                 icon={PlayCircle}
                 variant="default"
                 description="Work orders in progress"
+                onClick={() => handleMetricClick("inProgress")}
               />
               <EnhancedEssentialMetricsCard
                 title="In Review Work Orders"
@@ -290,6 +365,7 @@ export default function Dashboard() {
                 icon={FileCheck}
                 variant="default"
                 description="Work orders in review"
+                onClick={() => handleMetricClick("inReview")}
               />
               <EnhancedEssentialMetricsCard
                 title="Completed Work Orders"
@@ -297,6 +373,7 @@ export default function Dashboard() {
                 icon={CheckCircle}
                 variant="success"
                 description="Work orders completed"
+                onClick={() => handleMetricClick("completed")}
               />
             </div>
           </div>
@@ -443,12 +520,21 @@ export default function Dashboard() {
           <ContractorInvoicingWidget />
         </TabsContent>
 
+
         {/* Documents Tab */}
         <TabsContent value="documents" className="space-y-6">
           <DocumentExpiryWidget />
         </TabsContent>
 
       </Tabs>
+      
+      {/* Work Order Details Modal */}
+      <WorkOrderDetailsModal
+        open={workOrderModal.isOpen}
+        onOpenChange={(open) => setWorkOrderModal(prev => ({ ...prev, isOpen: open }))}
+        title={workOrderModal.title}
+        workOrders={workOrderModal.workOrders}
+      />
     </div>
     </DashboardContext.Provider>
   );
