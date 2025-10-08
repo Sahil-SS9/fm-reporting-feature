@@ -497,8 +497,8 @@ export function PropertyOverviewTab() {
                       <div className="space-y-2">
                         <div className="text-xs text-muted-foreground grid grid-cols-3 gap-1">
                           <span>Operational</span>
-                          <span>Repair</span>
-                          <span>Out</span>
+                          <span>Pending Repair</span>
+                          <span>Out-of-Service</span>
                         </div>
                         <div className="text-sm font-medium grid grid-cols-3 gap-1">
                           <span className="text-success">{metrics.assetStatus.operational}</span>
