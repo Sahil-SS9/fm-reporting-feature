@@ -155,30 +155,28 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
                       </div>
                     </div>
 
-                    {/* Due date and single View action */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        <span>Due {item.dueDate}</span>
-                      </div>
-                      
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="h-7 text-xs"
-                        onClick={() => handleViewItem(item)}
-                      >
-                        <Eye className="h-3 w-3 mr-1" />
-                        View
-                      </Button>
+                    {/* Due date */}
+                    <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      <span>Due {item.dueDate}</span>
                     </div>
                   </div>
                   
-                  {/* Category badge */}
-                  <div className="flex items-start">
-                    <Badge variant={categoryBadge.variant} className="text-xs">
+                  {/* Right side: Category badge and View button aligned vertically */}
+                  <div className="flex flex-col items-end justify-between space-y-2 min-h-full">
+                    <Badge variant={categoryBadge.variant} className="text-xs whitespace-nowrap">
                       {categoryBadge.label}
                     </Badge>
+                    
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="h-7 text-xs"
+                      onClick={() => handleViewItem(item)}
+                    >
+                      <Eye className="h-3 w-3 mr-1" />
+                      View
+                    </Button>
                   </div>
                 </div>
               </div>
