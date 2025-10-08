@@ -392,23 +392,8 @@ export default function Dashboard() {
 
           {/* Performance Insights Section */}
           <div className="space-y-8">
-            {/* Date Filter for Performance Insights */}
-            <div className="flex justify-between items-center">
+            <div>
               <h2 className="text-2xl font-semibold text-foreground">Performance Insights</h2>
-              <div className="flex items-center gap-2">
-                <label className="text-sm text-muted-foreground">Date Range:</label>
-                <Select defaultValue="30">
-                  <SelectTrigger className="w-40">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="7">Last 7 days</SelectItem>
-                    <SelectItem value="30">Last 30 days</SelectItem>
-                    <SelectItem value="90">Last 90 days</SelectItem>
-                    <SelectItem value="365">Last year</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
 
             {/* Work Orders Section */}
