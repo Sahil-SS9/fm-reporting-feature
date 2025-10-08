@@ -1374,13 +1374,85 @@ export const mockReportConfigs: ReportConfig[] = [
     },
     createdAt: "2025-09-20T13:45:00Z",
     createdBy: { name: "Sarah Thompson" },
-    lastGeneratedAt: null,
+    lastGeneratedAt: "2025-10-12T16:30:00Z",
+    favorite: false
+  },
+  {
+    id: "config-4",
+    name: "Contractor Performance Analysis",
+    description: "Track contractor completion rates and quality metrics",
+    reportType: "Performance",
+    dataSource: "Contractors",
+    property: { id: "4", name: "Metro Business Complex" },
+    columns: ["name", "specialty", "rating", "activeProjects", "totalCompleted"],
+    filters: { 
+      analysis_period_start: "2024-09-01T00:00:00Z",
+      analysis_period_end: "2024-12-01T00:00:00Z"
+    },
+    createdAt: "2025-08-22T11:15:00Z",
+    createdBy: { name: "David Martinez" },
+    lastModified: "2025-09-30T10:45:00Z",
+    lastGeneratedAt: "2025-10-10T14:20:00Z",
+    favorite: true
+  },
+  {
+    id: "config-5",
+    name: "Invoice Status Report",
+    description: "Outstanding and overdue invoices across all properties",
+    reportType: "Activity",
+    dataSource: "Invoices",
+    property: { id: "2", name: "Westfield Shopping Centre" },
+    columns: ["invoiceNumber", "contractorTenant", "amount", "paymentStatus", "dueDate"],
+    filters: { 
+      paymentStatus: ["Outstanding", "Overdue"],
+      date_range_start: "2024-10-01T00:00:00Z",
+      date_range_end: "2024-12-31T00:00:00Z"
+    },
+    createdAt: "2025-09-05T09:30:00Z",
+    createdBy: { name: "Jennifer Lee" },
+    lastGeneratedAt: "2025-10-14T11:05:00Z",
+    favorite: true
+  },
+  {
+    id: "config-6",
+    name: "Critical Asset Inspection Report",
+    description: "Assets requiring immediate inspection or maintenance",
+    reportType: "Activity",
+    dataSource: "Assets",
+    property: { id: "1", name: "Downtown Office Tower" },
+    columns: ["name", "type", "condition", "lastInspection", "status", "priorityLevel"],
+    filters: { 
+      condition: ["Poor", "Critical"],
+      status: ["Pending Repair", "Out of Service"]
+    },
+    createdAt: "2025-08-18T14:00:00Z",
+    createdBy: { name: "Sarah Thompson" },
+    lastModified: "2025-10-01T09:15:00Z",
+    lastGeneratedAt: "2025-10-13T08:00:00Z",
+    favorite: false
+  },
+  {
+    id: "config-7",
+    name: "Document Expiry Dashboard",
+    description: "Track documents expiring in the next 90 days",
+    reportType: "Activity",
+    dataSource: "Documents",
+    property: { id: "3", name: "Industrial Park A" },
+    columns: ["name", "type", "propertyId", "modified", "expires"],
+    filters: { 
+      date_range_start: "2024-12-01T00:00:00Z",
+      date_range_end: "2025-03-01T00:00:00Z"
+    },
+    createdAt: "2025-09-12T10:20:00Z",
+    createdBy: { name: "Michael Chen" },
+    lastGeneratedAt: "2025-10-11T07:30:00Z",
     favorite: false
   }
 ];
 
 // Mock Report Instances
 export const mockReportInstances: ReportInstance[] = [
+  // Config-1: Weekly Work Orders Summary instances
   {
     id: "instance-1",
     configId: "config-1",
@@ -1389,8 +1461,8 @@ export const mockReportInstances: ReportInstance[] = [
     generatedBy: { name: "Sarah Thompson" },
     rowCount: 247,
     filePath: "/reports/instance-1.csv",
-    filters: { status: ["Completed", "In Progress"], priority: ["High", "Critical"] },
-    dateRange: { from: "2025-10-01", to: "2025-10-15" }
+    filters: { status: ["Open", "In Progress"], priority: ["High", "Critical"] },
+    dateRange: { from: "2025-10-08", to: "2025-10-15" }
   },
   {
     id: "instance-2",
@@ -1400,7 +1472,7 @@ export const mockReportInstances: ReportInstance[] = [
     generatedBy: { name: "Sarah Thompson" },
     rowCount: 193,
     filePath: "/reports/instance-2.csv",
-    filters: { status: ["Completed", "In Progress"] },
+    filters: { status: ["Open", "In Progress"] },
     dateRange: { from: "2025-10-01", to: "2025-10-08" }
   },
   {
@@ -1411,9 +1483,33 @@ export const mockReportInstances: ReportInstance[] = [
     generatedBy: { name: "Michael Chen" },
     rowCount: 218,
     filePath: "/reports/instance-3.csv",
-    filters: { status: ["Completed"] },
-    dateRange: { from: "2025-09-01", to: "2025-09-30" }
+    filters: { status: ["Open", "In Progress"] },
+    dateRange: { from: "2025-09-24", to: "2025-10-01" }
   },
+  {
+    id: "instance-25",
+    configId: "config-1",
+    status: "generated",
+    generatedAt: "2025-09-24T13:10:00Z",
+    generatedBy: { name: "Sarah Thompson" },
+    rowCount: 205,
+    filePath: "/reports/instance-25.csv",
+    filters: { status: ["Open", "In Progress"] },
+    dateRange: { from: "2025-09-17", to: "2025-09-24" }
+  },
+  {
+    id: "instance-26",
+    configId: "config-1",
+    status: "generated",
+    generatedAt: "2025-09-17T10:35:00Z",
+    generatedBy: { name: "David Martinez" },
+    rowCount: 189,
+    filePath: "/reports/instance-26.csv",
+    filters: { status: ["Open", "In Progress"] },
+    dateRange: { from: "2025-09-10", to: "2025-09-17" }
+  },
+  
+  // Config-2: Monthly Maintenance Performance instances
   {
     id: "instance-4",
     configId: "config-2",
@@ -1422,8 +1518,8 @@ export const mockReportInstances: ReportInstance[] = [
     generatedBy: { name: "Michael Chen" },
     rowCount: 156,
     filePath: "/reports/instance-4.csv",
-    filters: { condition: ["Good", "Fair", "Poor"] },
-    dateRange: { from: "2025-09-01", to: "2025-10-14" }
+    filters: { status: ["In Progress", "Completed"] },
+    dateRange: { from: "2025-09-14", to: "2025-10-14" }
   },
   {
     id: "instance-5",
@@ -1433,8 +1529,214 @@ export const mockReportInstances: ReportInstance[] = [
     generatedBy: { name: "Michael Chen" },
     rowCount: 142,
     filePath: "/reports/instance-5.csv",
-    filters: { condition: ["Fair", "Poor", "Critical"] },
+    filters: { status: ["In Progress", "Completed"] },
     dateRange: { from: "2025-09-01", to: "2025-09-30" }
+  },
+  {
+    id: "instance-27",
+    configId: "config-2",
+    status: "generated",
+    generatedAt: "2025-08-31T16:45:00Z",
+    generatedBy: { name: "Sarah Thompson" },
+    rowCount: 138,
+    filePath: "/reports/instance-27.csv",
+    filters: { status: ["In Progress", "Completed"] },
+    dateRange: { from: "2025-08-01", to: "2025-08-31" }
+  },
+  {
+    id: "instance-28",
+    configId: "config-2",
+    status: "generated",
+    generatedAt: "2025-07-31T14:20:00Z",
+    generatedBy: { name: "Michael Chen" },
+    rowCount: 165,
+    filePath: "/reports/instance-28.csv",
+    filters: { status: ["In Progress", "Completed"] },
+    dateRange: { from: "2025-07-01", to: "2025-07-31" }
+  },
+  
+  // Config-3: Asset Health Report instances
+  {
+    id: "instance-6",
+    configId: "config-3",
+    status: "generated",
+    generatedAt: "2025-10-12T16:30:00Z",
+    generatedBy: { name: "Sarah Thompson" },
+    rowCount: 89,
+    filePath: "/reports/instance-6.csv",
+    filters: { condition: ["Poor", "Critical"], status: ["Pending Repair", "Out of Service"] },
+    dateRange: { from: "2025-10-01", to: "2025-10-12" }
+  },
+  {
+    id: "instance-29",
+    configId: "config-3",
+    status: "generated",
+    generatedAt: "2025-09-15T11:25:00Z",
+    generatedBy: { name: "Jennifer Lee" },
+    rowCount: 76,
+    filePath: "/reports/instance-29.csv",
+    filters: { condition: ["Poor", "Critical"] },
+    dateRange: { from: "2025-09-01", to: "2025-09-15" }
+  },
+  {
+    id: "instance-30",
+    configId: "config-3",
+    status: "generated",
+    generatedAt: "2025-08-20T09:40:00Z",
+    generatedBy: { name: "Sarah Thompson" },
+    rowCount: 82,
+    filePath: "/reports/instance-30.csv",
+    filters: { condition: ["Poor", "Critical"] },
+    dateRange: { from: "2025-08-01", to: "2025-08-20" }
+  },
+  
+  // Config-4: Contractor Performance Analysis instances
+  {
+    id: "instance-7",
+    configId: "config-4",
+    status: "generated",
+    generatedAt: "2025-10-10T14:20:00Z",
+    generatedBy: { name: "David Martinez" },
+    rowCount: 34,
+    filePath: "/reports/instance-7.csv",
+    filters: {},
+    dateRange: { from: "2025-09-01", to: "2025-10-10" }
+  },
+  {
+    id: "instance-31",
+    configId: "config-4",
+    status: "generated",
+    generatedAt: "2025-09-10T13:15:00Z",
+    generatedBy: { name: "David Martinez" },
+    rowCount: 32,
+    filePath: "/reports/instance-31.csv",
+    filters: {},
+    dateRange: { from: "2025-08-01", to: "2025-09-10" }
+  },
+  {
+    id: "instance-32",
+    configId: "config-4",
+    status: "generated",
+    generatedAt: "2025-08-12T10:05:00Z",
+    generatedBy: { name: "Michael Chen" },
+    rowCount: 28,
+    filePath: "/reports/instance-32.csv",
+    filters: {},
+    dateRange: { from: "2025-07-01", to: "2025-08-12" }
+  },
+  
+  // Config-5: Invoice Status Report instances
+  {
+    id: "instance-8",
+    configId: "config-5",
+    status: "generated",
+    generatedAt: "2025-10-14T11:05:00Z",
+    generatedBy: { name: "Jennifer Lee" },
+    rowCount: 67,
+    filePath: "/reports/instance-8.csv",
+    filters: { paymentStatus: ["Outstanding", "Overdue"] },
+    dateRange: { from: "2025-10-01", to: "2025-10-14" }
+  },
+  {
+    id: "instance-33",
+    configId: "config-5",
+    status: "generated",
+    generatedAt: "2025-10-01T09:30:00Z",
+    generatedBy: { name: "Jennifer Lee" },
+    rowCount: 58,
+    filePath: "/reports/instance-33.csv",
+    filters: { paymentStatus: ["Outstanding", "Overdue"] },
+    dateRange: { from: "2025-09-01", to: "2025-10-01" }
+  },
+  {
+    id: "instance-34",
+    configId: "config-5",
+    status: "generated",
+    generatedAt: "2025-09-15T14:45:00Z",
+    generatedBy: { name: "Sarah Thompson" },
+    rowCount: 71,
+    filePath: "/reports/instance-34.csv",
+    filters: { paymentStatus: ["Outstanding", "Overdue"] },
+    dateRange: { from: "2025-08-15", to: "2025-09-15" }
+  },
+  {
+    id: "instance-35",
+    configId: "config-5",
+    status: "generated",
+    generatedAt: "2025-08-28T16:20:00Z",
+    generatedBy: { name: "Jennifer Lee" },
+    rowCount: 53,
+    filePath: "/reports/instance-35.csv",
+    filters: { paymentStatus: ["Outstanding", "Overdue"] },
+    dateRange: { from: "2025-08-01", to: "2025-08-28" }
+  },
+  
+  // Config-6: Critical Asset Inspection Report instances
+  {
+    id: "instance-9",
+    configId: "config-6",
+    status: "generated",
+    generatedAt: "2025-10-13T08:00:00Z",
+    generatedBy: { name: "Sarah Thompson" },
+    rowCount: 23,
+    filePath: "/reports/instance-9.csv",
+    filters: { condition: ["Poor", "Critical"], status: ["Pending Repair", "Out of Service"] },
+    dateRange: { from: "2025-10-01", to: "2025-10-13" }
+  },
+  {
+    id: "instance-36",
+    configId: "config-6",
+    status: "generated",
+    generatedAt: "2025-09-25T10:30:00Z",
+    generatedBy: { name: "Michael Chen" },
+    rowCount: 19,
+    filePath: "/reports/instance-36.csv",
+    filters: { condition: ["Poor", "Critical"] },
+    dateRange: { from: "2025-09-01", to: "2025-09-25" }
+  },
+  {
+    id: "instance-37",
+    configId: "config-6",
+    status: "generating",
+    generatedAt: "2025-10-16T07:15:00Z",
+    generatedBy: { name: "Sarah Thompson" },
+    rowCount: null,
+    filters: { condition: ["Poor", "Critical"] },
+    dateRange: { from: "2025-10-01", to: "2025-10-16" }
+  },
+  
+  // Config-7: Document Expiry Dashboard instances
+  {
+    id: "instance-10",
+    configId: "config-7",
+    status: "generated",
+    generatedAt: "2025-10-11T07:30:00Z",
+    generatedBy: { name: "Michael Chen" },
+    rowCount: 45,
+    filePath: "/reports/instance-10.csv",
+    filters: {},
+    dateRange: { from: "2025-10-11", to: "2026-01-11" }
+  },
+  {
+    id: "instance-38",
+    configId: "config-7",
+    status: "generated",
+    generatedAt: "2025-09-20T15:00:00Z",
+    generatedBy: { name: "David Martinez" },
+    rowCount: 52,
+    filePath: "/reports/instance-38.csv",
+    filters: {},
+    dateRange: { from: "2025-09-20", to: "2025-12-20" }
+  },
+  {
+    id: "instance-39",
+    configId: "config-7",
+    status: "failed",
+    generatedAt: "2025-09-05T08:45:00Z",
+    generatedBy: { name: "Michael Chen" },
+    rowCount: null,
+    filters: {},
+    dateRange: { from: "2025-09-05", to: "2025-12-05" }
   }
 ];
 
@@ -1469,6 +1771,78 @@ export const mockEmailHistory: EmailHistoryRecord[] = [
     sentBy: { name: "Michael Chen" },
     recipientsTo: ["facilities@company.com", "director@company.com"],
     recipientsCc: ["accounting@company.com"],
+    status: "sent",
+    csvAttached: true
+  },
+  {
+    id: "email-4",
+    instanceId: "instance-5",
+    configId: "config-2",
+    sentAt: "2025-09-30T10:30:00Z",
+    sentBy: { name: "Michael Chen" },
+    recipientsTo: ["maintenance@company.com"],
+    status: "sent",
+    csvAttached: true
+  },
+  {
+    id: "email-5",
+    instanceId: "instance-7",
+    configId: "config-4",
+    sentAt: "2025-10-10T15:00:00Z",
+    sentBy: { name: "David Martinez" },
+    recipientsTo: ["procurement@company.com", "director@company.com"],
+    recipientsCc: ["finance@company.com"],
+    status: "sent",
+    csvAttached: true
+  },
+  {
+    id: "email-6",
+    instanceId: "instance-8",
+    configId: "config-5",
+    sentAt: "2025-10-14T12:15:00Z",
+    sentBy: { name: "Jennifer Lee" },
+    recipientsTo: ["accounting@company.com", "finance@company.com"],
+    status: "sent",
+    csvAttached: true
+  },
+  {
+    id: "email-7",
+    instanceId: "instance-6",
+    configId: "config-3",
+    sentAt: "2025-10-12T17:00:00Z",
+    sentBy: { name: "Sarah Thompson" },
+    recipientsTo: ["facilities@company.com"],
+    recipientsCc: ["manager@company.com"],
+    status: "sent",
+    csvAttached: true
+  },
+  {
+    id: "email-8",
+    instanceId: "instance-9",
+    configId: "config-6",
+    sentAt: "2025-10-13T09:30:00Z",
+    sentBy: { name: "Sarah Thompson" },
+    recipientsTo: ["maintenance@company.com", "safety@company.com"],
+    status: "sent",
+    csvAttached: true
+  },
+  {
+    id: "email-9",
+    instanceId: "instance-3",
+    configId: "config-1",
+    sentAt: "2025-10-01T15:20:00Z",
+    sentBy: { name: "Michael Chen" },
+    recipientsTo: ["team@company.com"],
+    status: "sent",
+    csvAttached: false
+  },
+  {
+    id: "email-10",
+    instanceId: "instance-33",
+    configId: "config-5",
+    sentAt: "2025-10-01T10:45:00Z",
+    sentBy: { name: "Jennifer Lee" },
+    recipientsTo: ["accounting@company.com"],
     status: "sent",
     csvAttached: true
   }
