@@ -2,8 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AssetMaintenanceWidget } from "@/components/dashboard/AssetMaintenanceWidget";
 import { AssetStatusWidget } from "@/components/dashboard/AssetStatusWidget";
-import { AssetConditionWidget } from "@/components/dashboard/AssetConditionWidget";
 import { WarrantyExpiryWidget } from "@/components/dashboard/WarrantyExpiryWidget";
+import { WarrantyExpiredWidget } from "@/components/dashboard/WarrantyExpiredWidget";
+import { AssetWarrantyModal } from "@/components/dashboard/AssetWarrantyModal";
 import { PreventiveMaintenanceWidget } from "@/components/dashboard/PreventiveMaintenanceWidget";
 import { TopAssetsWidget } from "@/components/dashboard/TopAssetsWidget";
 import { OutstandingInvoicesWidget } from "@/components/dashboard/OutstandingInvoicesWidget";
@@ -122,6 +123,19 @@ export default function Dashboard() {
     workOrders: []
   });
 
+  // State for warranty modal
+  const [warrantyModal, setWarrantyModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    assets: typeof mockAssets;
+    type: "expiring" | "expired";
+  }>({
+    isOpen: false,
+    title: "",
+    assets: [],
+    type: "expiring"
+  });
+
   // Get filtered data based on selected property
   const filteredWorkOrders = getFilteredWorkOrders(selectedProperty);
   const filteredAssets = getFilteredAssets(selectedProperty);  
@@ -188,6 +202,42 @@ export default function Dashboard() {
       isOpen: true,
       title,
       workOrders: filtered
+    });
+  };
+
+  // Handler for warranty widget clicks
+  const handleWarrantyExpiryClick = () => {
+    const today = new Date();
+    const threeMonthsFromNow = new Date(today.getTime() + 3 * 30 * 24 * 60 * 60 * 1000);
+    
+    const expiringAssets = filteredAssets.filter(asset => {
+      if (!asset.warrantyExpirationDate) return false;
+      const warrantyDate = new Date(asset.warrantyExpirationDate);
+      return warrantyDate >= today && warrantyDate <= threeMonthsFromNow;
+    });
+    
+    setWarrantyModal({
+      isOpen: true,
+      title: "Assets with Expiring Warranties",
+      assets: expiringAssets,
+      type: "expiring"
+    });
+  };
+
+  const handleWarrantyExpiredClick = () => {
+    const today = new Date();
+    
+    const expiredAssets = filteredAssets.filter(asset => {
+      if (!asset.warrantyExpirationDate) return false;
+      const warrantyDate = new Date(asset.warrantyExpirationDate);
+      return warrantyDate < today;
+    });
+    
+    setWarrantyModal({
+      isOpen: true,
+      title: "Assets with Expired Warranties",
+      assets: expiredAssets,
+      type: "expired"
     });
   };
   
@@ -485,19 +535,19 @@ export default function Dashboard() {
 
         {/* Assets Tab */}
         <TabsContent value="assets" className="space-y-6">
-          {/* Core Asset Widgets - Asset Status and Condition compact, Asset Maintenance wider */}
-          <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
+          {/* Core Asset Widgets */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-1">
               <AssetStatusWidget filteredAssets={filteredAssets} />
             </div>
             <div className="lg:col-span-1">
-              <AssetConditionWidget filteredAssets={filteredAssets} />
-            </div>
-            <div className="lg:col-span-3">
               <AssetMaintenanceWidget filteredAssets={filteredAssets} />
             </div>
             <div className="lg:col-span-1">
-              <WarrantyExpiryWidget />
+              <WarrantyExpiryWidget onClick={handleWarrantyExpiryClick} />
+            </div>
+            <div className="lg:col-span-1">
+              <WarrantyExpiredWidget onClick={handleWarrantyExpiredClick} />
             </div>
           </div>
           
@@ -534,6 +584,15 @@ export default function Dashboard() {
         onOpenChange={(open) => setWorkOrderModal(prev => ({ ...prev, isOpen: open }))}
         title={workOrderModal.title}
         workOrders={workOrderModal.workOrders}
+      />
+      
+      {/* Asset Warranty Modal */}
+      <AssetWarrantyModal
+        open={warrantyModal.isOpen}
+        onOpenChange={(open) => setWarrantyModal(prev => ({ ...prev, isOpen: open }))}
+        title={warrantyModal.title}
+        assets={warrantyModal.assets}
+        type={warrantyModal.type}
       />
     </div>
     </DashboardContext.Provider>

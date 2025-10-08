@@ -2,12 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Clock, ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { mockAssets } from "@/data/mockData";
 import { useState } from "react";
 
-export function WarrantyExpiryWidget() {
-  const navigate = useNavigate();
+interface WarrantyExpiryWidgetProps {
+  onClick: () => void;
+}
+
+export function WarrantyExpiryWidget({ onClick }: WarrantyExpiryWidgetProps) {
   const [warrantyFilter, setWarrantyFilter] = useState("3months");
   const today = new Date();
   
@@ -23,20 +25,10 @@ export function WarrantyExpiryWidget() {
     return warrantyDate <= getWarrantyPeriod(warrantyFilter) && warrantyDate >= today;
   });
   
-  const handleClick = () => {
-    navigate('/assets', { 
-      state: { 
-        filter: { 
-          warrantyExpiring: warrantyExpiringAssets.length > 0
-        }
-      }
-    });
-  };
-  
   return (
     <Card 
       className="hover:shadow-md transition-shadow cursor-pointer group" 
-      onClick={handleClick}
+      onClick={onClick}
     >
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between">
