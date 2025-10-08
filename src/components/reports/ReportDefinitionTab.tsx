@@ -105,6 +105,8 @@ export const ReportDefinitionTab: React.FC<ReportDefinitionTabProps> = ({ config
                             <Badge key={i} variant="secondary">{v}</Badge>
                           ))}
                         </div>
+                      ) : key.includes('date') || key.includes('_at') ? (
+                        <span className="font-medium">{formatDateTime(String(value))}</span>
                       ) : (
                         <span className="font-medium">{String(value)}</span>
                       )}
@@ -121,7 +123,7 @@ export const ReportDefinitionTab: React.FC<ReportDefinitionTabProps> = ({ config
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            Selected Columns ({config.columns.length} selected)
+            Columns Included ({config.columns.length})
           </CardTitle>
         </CardHeader>
         <CardContent>

@@ -66,44 +66,6 @@ export default function ReportInstanceResults() {
         </span>
       </div>
 
-      {/* Header */}
-      <div className="space-y-4">
-        <Button 
-          variant="ghost" 
-          size="sm"
-          onClick={() => navigate(`/reports/${configId}?tab=history`)}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Report
-        </Button>
-
-        <div className="flex items-start justify-between">
-          <div className="space-y-3">
-            <h1 className="text-3xl font-bold">{config.name}</h1>
-            <div className="flex items-center gap-3">
-              <div className="text-sm text-muted-foreground">
-                Generated on {formatDateTime(instance.generatedAt)}
-              </div>
-              <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-200">
-                <CheckCircle2 className="h-3 w-3 mr-1" />
-                Generated
-              </Badge>
-              {instance.rowCount !== null && (
-                <Badge variant="secondary">
-                  {instance.rowCount} records from {config.property.name}
-                </Badge>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button onClick={handleDownload}>
-              <Download className="h-4 w-4 mr-2" />
-              Download CSV
-            </Button>
-          </div>
-        </div>
-      </div>
 
       {/* Results */}
       <ReportResults 

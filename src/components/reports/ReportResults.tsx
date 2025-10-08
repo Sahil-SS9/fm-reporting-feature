@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { format, parseISO } from "date-fns";
 import {
   Table,
   TableBody,
@@ -193,22 +194,25 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" onClick={onBack}>
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <div>
-            <h2 className="text-2xl font-bold">{config.name}</h2>
-            <p className="text-muted-foreground">{config.description}</p>
-          </div>
+      <div className="flex items-start justify-between mb-6">
+        <div className="space-y-3">
+          <h1 className="text-3xl font-bold">{config.name}</h1>
+          <p className="text-muted-foreground">{config.description}</p>
+          {config.generatedAt && (
+            <div className="text-sm text-muted-foreground">
+              Generated on {format(parseISO(config.generatedAt), 'MMM dd, yyyy \'at\' h:mm a')}
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={onBack}>
+            <ChevronLeft className="h-4 w-4 mr-2" />
+            Back to Report
+          </Button>
           <Button onClick={handleExportCSV}>
             <Download className="h-4 w-4 mr-2" />
-            Export CSV
+            Download CSV
           </Button>
         </div>
       </div>
@@ -223,8 +227,8 @@ export function ReportResults({ config, onBack }: ReportResultsProps) {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold">{config.properties?.length || 0}</div>
-            <div className="text-sm text-muted-foreground">Properties</div>
+            <div className="text-2xl font-bold">{getPropertyName(config.properties?.[0] || '')}</div>
+            <div className="text-sm text-muted-foreground">Property</div>
           </CardContent>
         </Card>
       </div>

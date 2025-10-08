@@ -496,7 +496,7 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
       {/* Step 3: Column Selection (View Only) */}
       <Collapsible open={step3Open} onOpenChange={setStep3Open}>
         <CollapsibleTrigger className="flex items-center justify-between w-full p-4 border rounded-lg hover:bg-muted/50">
-          <h3 className="text-lg font-semibold">Step 3: Available Columns</h3>
+          <h3 className="text-lg font-semibold">Step 3: Columns Included</h3>
           {step3Open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
         </CollapsibleTrigger>
         <CollapsibleContent className="mt-4">
@@ -504,9 +504,9 @@ export function EnhancedCreateReportSheet({ onClose, template }: CreateReportShe
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div>
-                  <Label>Available Columns</Label>
+                  <Label>Columns Included</Label>
                   <p className="text-xs text-muted-foreground mb-3">
-                    These columns will be included in your report
+                    The following columns will be automatically included in your report based on the selected data source and report type
                   </p>
                   <div className="space-y-2 max-h-60 overflow-y-auto">
                     {availableColumns.map((column) => (
