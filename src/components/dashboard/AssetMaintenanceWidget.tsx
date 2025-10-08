@@ -41,7 +41,7 @@ export function AssetMaintenanceWidget({ filteredAssets = [] }: AssetMaintenance
             <Badge variant="outline" className="text-xs">
               {totalMaintenance} Items
             </Badge>
-            <Eye className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Eye className="h-4 w-4 text-muted-foreground" />
           </div>
         </CardTitle>
       </CardHeader>

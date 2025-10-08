@@ -57,7 +57,7 @@ export function AverageCompletionTimeWidget() {
           <Clock className="h-5 w-5" />
           <span className="text-lg font-semibold">Avg Completion Time</span>
         </CardTitle>
-        <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <ArrowRight className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Main Performance Gauge */}

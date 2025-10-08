@@ -71,7 +71,7 @@ export function IssuedInvoicesWidget({ filteredInvoices = [] }: IssuedInvoicesWi
                   variant="ghost" 
                   size="sm"
                   onClick={(e) => e.stopPropagation()}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                  className="text-xs"
                 >
                   <Eye className="h-3 w-3 mr-1" />
                   View Details

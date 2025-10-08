@@ -73,7 +73,7 @@ export function DocumentExpiryWidget() {
                 All Current
               </Badge>
             )}
-            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </div>
         </CardTitle>
       </CardHeader>

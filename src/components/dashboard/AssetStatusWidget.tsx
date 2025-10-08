@@ -49,7 +49,7 @@ export function AssetStatusWidget({ filteredAssets = [] }: AssetStatusWidgetProp
             <Settings className="h-4 w-4 text-primary" />
             <span className="text-base font-semibold">Asset Status</span>
           </div>
-          <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <ArrowRight className="h-4 w-4 text-muted-foreground" />
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">

@@ -165,7 +165,7 @@ export function PriorityInboxWidget({ selectedProperty = "all", filteredWorkOrde
                       <Button 
                         size="sm" 
                         variant="outline" 
-                        className="h-7 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="h-7 text-xs"
                         onClick={() => handleViewItem(item)}
                       >
                         <Eye className="h-3 w-3 mr-1" />

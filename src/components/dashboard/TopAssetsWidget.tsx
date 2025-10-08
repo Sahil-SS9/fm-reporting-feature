@@ -103,7 +103,7 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
             <TrendingUp className="h-5 w-5 text-primary" />
             <span className="text-lg">High Maintenance Assets</span>
           </div>
-          <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <ArrowRight className="h-4 w-4 text-muted-foreground" />
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
