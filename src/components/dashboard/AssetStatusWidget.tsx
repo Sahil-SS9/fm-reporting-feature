@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Settings, ArrowRight } from "lucide-react";
+import { Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockAssets } from "@/data/mockData";
 import { DonutChartWithCenter } from "@/components/ui/enhanced-charts";
@@ -49,7 +49,6 @@ export function AssetStatusWidget({ filteredAssets = [] }: AssetStatusWidgetProp
             <Settings className="h-4 w-4 text-primary" />
             <span className="text-base font-semibold">Asset Status</span>
           </div>
-          <ArrowRight className="h-4 w-4 text-muted-foreground" />
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">

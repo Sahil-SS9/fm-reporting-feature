@@ -4,32 +4,32 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Clock, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { mockAssets } from "@/data/mockData";
+import { mockDocuments } from "@/data/mockData";
 import { useState } from "react";
 import { format } from "date-fns";
 
-export function WarrantyExpiryWidget() {
+export function DocumentsExpiringWidget() {
   const navigate = useNavigate();
-  const [warrantyFilter, setWarrantyFilter] = useState("3months");
+  const [expiryFilter, setExpiryFilter] = useState("30days");
   const [showTable, setShowTable] = useState(false);
   const today = new Date();
   
-  // Warranty expiry analysis
-  const getWarrantyPeriod = (months: string) => {
-    const monthsNum = months === "1month" ? 1 : months === "3months" ? 3 : months === "6months" ? 6 : 12;
-    return new Date(today.getTime() + monthsNum * 30 * 24 * 60 * 60 * 1000);
+  // Expiry filter period
+  const getExpiryPeriod = (filter: string) => {
+    const days = filter === "7days" ? 7 : filter === "30days" ? 30 : filter === "60days" ? 60 : 90;
+    return new Date(today.getTime() + days * 24 * 60 * 60 * 1000);
   };
   
-  const warrantyExpiringAssets = mockAssets.filter(asset => {
-    if (!asset.warrantyExpirationDate) return false;
-    const warrantyDate = new Date(asset.warrantyExpirationDate);
-    return warrantyDate <= getWarrantyPeriod(warrantyFilter) && warrantyDate >= today;
+  const expiringDocuments = mockDocuments.filter(doc => {
+    if (!doc.expires) return false;
+    const expiryDate = new Date(doc.expires);
+    return expiryDate <= getExpiryPeriod(expiryFilter) && expiryDate >= today;
   });
   
   const handleClick = () => {
-    navigate('/assets', { 
+    navigate('/documentation', { 
       state: { 
-        filter: { warrantyExpiring: true }
+        filter: { expiry: 'upcoming' }
       }
     });
   };
@@ -48,18 +48,18 @@ export function WarrantyExpiryWidget() {
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Clock className="h-4 w-4 text-primary" />
-            <span className="text-base">Warranty Expiry</span>
+            <span className="text-base">Documents Expiring</span>
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Expiring Assets</span>
+          <span className="text-sm font-medium">Expiring Documents</span>
           <div onClick={(e) => e.stopPropagation()}>
             <Select 
-              value={warrantyFilter} 
+              value={expiryFilter} 
               onValueChange={(value) => {
-                setWarrantyFilter(value);
+                setExpiryFilter(value);
                 setShowTable(false);
               }}
             >
@@ -67,10 +67,10 @@ export function WarrantyExpiryWidget() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1month">1M</SelectItem>
-                <SelectItem value="3months">3M</SelectItem>
-                <SelectItem value="6months">6M</SelectItem>
-                <SelectItem value="1year">1Y</SelectItem>
+                <SelectItem value="7days">7D</SelectItem>
+                <SelectItem value="30days">30D</SelectItem>
+                <SelectItem value="60days">60D</SelectItem>
+                <SelectItem value="90days">90D</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -82,24 +82,24 @@ export function WarrantyExpiryWidget() {
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="text-lg font-bold text-warning">{warrantyExpiringAssets.length}</div>
-              <span className="text-sm">assets</span>
+              <div className="text-lg font-bold text-warning">{expiringDocuments.length}</div>
+              <span className="text-sm">documents</span>
             </div>
             <Badge variant="outline" className="text-xs">
-              {warrantyFilter.replace("months", "M").replace("month", "M").replace("year", "Y")}
+              {expiryFilter.replace("days", "D")}
             </Badge>
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            Plan warranty renewals or replacements
+            Review and renew expiring documents
           </div>
         </div>
 
         {/* Data Table */}
-        {showTable && warrantyExpiringAssets.length > 0 && (
+        {showTable && expiringDocuments.length > 0 && (
           <div className="mt-4 pt-4 border-t">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-medium">
-                Expiring Assets ({warrantyExpiringAssets.length})
+                Expiring Documents ({expiringDocuments.length})
               </h4>
               <button
                 onClick={(e) => {
@@ -116,21 +116,19 @@ export function WarrantyExpiryWidget() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-xs">Asset Name</TableHead>
+                    <TableHead className="text-xs">Document Name</TableHead>
                     <TableHead className="text-xs">Type</TableHead>
-                    <TableHead className="text-xs">Location</TableHead>
-                    <TableHead className="text-xs">Warranty Date</TableHead>
+                    <TableHead className="text-xs">Expiry Date</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {warrantyExpiringAssets.slice(0, 10).map((asset) => (
-                    <TableRow key={asset.id}>
-                      <TableCell className="text-xs">{asset.name}</TableCell>
-                      <TableCell className="text-xs">{asset.type}</TableCell>
-                      <TableCell className="text-xs">{asset.location}</TableCell>
+                  {expiringDocuments.slice(0, 10).map((doc) => (
+                    <TableRow key={doc.id}>
+                      <TableCell className="text-xs">{doc.name}</TableCell>
+                      <TableCell className="text-xs">{doc.type}</TableCell>
                       <TableCell className="text-xs">
-                        {asset.warrantyExpirationDate 
-                          ? format(new Date(asset.warrantyExpirationDate), "MMM dd, yyyy")
+                        {doc.expires 
+                          ? format(new Date(doc.expires), "MMM dd, yyyy")
                           : "N/A"}
                       </TableCell>
                     </TableRow>
@@ -139,9 +137,9 @@ export function WarrantyExpiryWidget() {
               </Table>
             </div>
             
-            {warrantyExpiringAssets.length > 10 && (
+            {expiringDocuments.length > 10 && (
               <div className="text-xs text-muted-foreground text-center mt-2">
-                Showing 10 of {warrantyExpiringAssets.length} items
+                Showing 10 of {expiringDocuments.length} items
               </div>
             )}
           </div>

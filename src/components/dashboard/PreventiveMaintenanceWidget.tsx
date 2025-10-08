@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Wrench, ArrowRight, X } from "lucide-react";
+import { Wrench, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockAssets } from "@/data/mockData";
 import { useState } from "react";
@@ -63,7 +63,6 @@ export function PreventiveMaintenanceWidget() {
             <Wrench className="h-4 w-4 text-primary" />
             <span className="text-base">Preventive Maintenance</span>
           </div>
-          <ArrowRight className="h-4 w-4 text-muted-foreground" />
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, TrendingUp, TrendingDown, ArrowRight, Target } from "lucide-react";
+import { Clock, TrendingUp, TrendingDown, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
 import { SemiCircularGauge, RadialProgress, MiniTrendChart } from "@/components/ui/enhanced-charts";
@@ -57,7 +57,6 @@ export function AverageCompletionTimeWidget() {
           <Clock className="h-5 w-5" />
           <span className="text-lg font-semibold">Avg Completion Time</span>
         </CardTitle>
-        <ArrowRight className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Main Performance Gauge */}

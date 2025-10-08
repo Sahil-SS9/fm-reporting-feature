@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, ArrowRight, Calendar, Target } from "lucide-react";
+import { TrendingUp, TrendingDown, Calendar, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
 import { SemiCircularGauge, MiniTrendChart, RadialProgress } from "@/components/ui/enhanced-charts";
@@ -45,7 +45,6 @@ export function CasesCreatedClosedWidget() {
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle className="text-lg font-semibold">Cases This Week</CardTitle>
-        <ArrowRight className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="space-y-3">
         {/* Compact Metrics Row */}

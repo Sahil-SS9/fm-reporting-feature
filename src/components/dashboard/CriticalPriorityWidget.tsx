@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Clock, ArrowRight, Zap } from "lucide-react";
+import { AlertTriangle, Clock, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
 import { RadialProgress, StatusRing } from "@/components/ui/enhanced-charts";
@@ -46,7 +46,6 @@ export function CriticalPriorityWidget() {
             ) : (
               <Badge variant="secondary">All Clear</Badge>
             )}
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </div>
         </CardTitle>
       </CardHeader>

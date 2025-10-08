@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, ArrowRight } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { VerticalBarChart } from "@/components/ui/enhanced-charts";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
@@ -103,7 +103,6 @@ export function TopAssetsWidget({ filteredAssets = [], filteredWorkOrders = [] }
             <TrendingUp className="h-5 w-5 text-primary" />
             <span className="text-lg">High Maintenance Assets</span>
           </div>
-          <ArrowRight className="h-4 w-4 text-muted-foreground" />
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">

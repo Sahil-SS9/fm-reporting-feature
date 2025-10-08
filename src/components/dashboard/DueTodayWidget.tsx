@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CalendarDays, AlertTriangle, CheckCircle, ArrowRight, Clock } from "lucide-react";
+import { CalendarDays, AlertTriangle, CheckCircle, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
 import { StatusRing, SemiCircularGauge } from "@/components/ui/enhanced-charts";
@@ -52,7 +52,6 @@ export function DueTodayWidget() {
           <CalendarDays className="h-5 w-5" />
           <span className="text-lg font-semibold">Due Today vs Yesterday</span>
         </CardTitle>
-        <ArrowRight className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Main Urgency Ring */}

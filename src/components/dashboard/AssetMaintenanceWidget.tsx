@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Wrench, Eye } from "lucide-react";
+import { Wrench } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockAssets } from "@/data/mockData";
 import { OverdueVsUpcomingRing } from "./maintenance-rings/OverdueVsUpcomingRing";
@@ -37,12 +37,9 @@ export function AssetMaintenanceWidget({ filteredAssets = [] }: AssetMaintenance
             <Wrench className="h-4 w-4 text-primary" />
             <span className="text-base font-semibold">Asset Maintenance</span>
           </div>
-          <div className="flex items-center space-x-2">
-            <Badge variant="outline" className="text-xs">
-              {totalMaintenance} Items
-            </Badge>
-            <Eye className="h-4 w-4 text-muted-foreground" />
-          </div>
+          <Badge variant="outline" className="text-xs">
+            {totalMaintenance} Items
+          </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">

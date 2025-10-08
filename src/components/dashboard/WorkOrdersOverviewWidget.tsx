@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ClipboardList, AlertCircle, ArrowRight, TrendingUp } from "lucide-react";
+import { ClipboardList, AlertCircle, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
 import { SemiCircularGauge, StatusRing, MiniTrendChart } from "@/components/ui/enhanced-charts";
@@ -54,7 +54,6 @@ export function WorkOrdersOverviewWidget() {
             <Badge variant="outline" className="text-xs">
               {totalWorkOrders} Total
             </Badge>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </div>
         </CardTitle>
       </CardHeader>

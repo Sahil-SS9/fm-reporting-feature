@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Settings, Calendar, AlertCircle, ArrowRight, Wrench, Clock, TrendingUp, Gauge } from "lucide-react";
+import { Settings, Calendar, AlertCircle, Wrench, Clock, TrendingUp, Gauge } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockAssets, mockWorkOrders } from "@/data/mockData";
 import { DonutChartWithCenter, RadialProgress, VerticalBarChart } from "@/components/ui/enhanced-charts";
@@ -93,7 +93,6 @@ export function EnhancedAssetMaintenanceWidget() {
             <Badge variant="outline" className="text-xs">
               {healthScore}% Health
             </Badge>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </div>
         </CardTitle>
       </CardHeader>

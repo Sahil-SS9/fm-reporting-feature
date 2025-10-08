@@ -3,26 +3,26 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { AlertTriangle, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { mockAssets } from "@/data/mockData";
+import { mockDocuments } from "@/data/mockData";
 import { useState } from "react";
 import { format } from "date-fns";
 
-export function WarrantyExpiredWidget() {
+export function DocumentsExpiredWidget() {
   const navigate = useNavigate();
   const today = new Date();
   const [showTable, setShowTable] = useState(false);
   
-  // Find assets with expired warranties
-  const expiredWarrantyAssets = mockAssets.filter(asset => {
-    if (!asset.warrantyExpirationDate) return false;
-    const warrantyDate = new Date(asset.warrantyExpirationDate);
-    return warrantyDate < today;
+  // Find documents with expired dates
+  const expiredDocuments = mockDocuments.filter(doc => {
+    if (!doc.expires) return false;
+    const expiryDate = new Date(doc.expires);
+    return expiryDate < today;
   });
   
   const handleClick = () => {
-    navigate('/assets', { 
+    navigate('/documentation', { 
       state: { 
-        filter: { warrantyExpired: true }
+        filter: { expired: true }
       }
     });
   };
@@ -41,13 +41,13 @@ export function WarrantyExpiredWidget() {
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <AlertTriangle className="h-4 w-4 text-destructive" />
-            <span className="text-base">Warranty Expired</span>
+            <span className="text-base">Documents Expired</span>
           </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Expired Assets</span>
+          <span className="text-sm font-medium">Expired Documents</span>
         </div>
         
         <div 
@@ -56,24 +56,24 @@ export function WarrantyExpiredWidget() {
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="text-lg font-bold text-destructive">{expiredWarrantyAssets.length}</div>
-              <span className="text-sm">assets</span>
+              <div className="text-lg font-bold text-destructive">{expiredDocuments.length}</div>
+              <span className="text-sm">documents</span>
             </div>
             <Badge variant="destructive" className="text-xs">
               Expired
             </Badge>
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            Warranties that have already expired
+            Documents that have already expired
           </div>
         </div>
 
         {/* Data Table */}
-        {showTable && expiredWarrantyAssets.length > 0 && (
+        {showTable && expiredDocuments.length > 0 && (
           <div className="mt-4 pt-4 border-t">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-medium">
-                Expired Assets ({expiredWarrantyAssets.length})
+                Expired Documents ({expiredDocuments.length})
               </h4>
               <button
                 onClick={(e) => {
@@ -90,21 +90,19 @@ export function WarrantyExpiredWidget() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-xs">Asset Name</TableHead>
+                    <TableHead className="text-xs">Document Name</TableHead>
                     <TableHead className="text-xs">Type</TableHead>
-                    <TableHead className="text-xs">Location</TableHead>
-                    <TableHead className="text-xs">Warranty Date</TableHead>
+                    <TableHead className="text-xs">Expiry Date</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {expiredWarrantyAssets.slice(0, 10).map((asset) => (
-                    <TableRow key={asset.id}>
-                      <TableCell className="text-xs">{asset.name}</TableCell>
-                      <TableCell className="text-xs">{asset.type}</TableCell>
-                      <TableCell className="text-xs">{asset.location}</TableCell>
+                  {expiredDocuments.slice(0, 10).map((doc) => (
+                    <TableRow key={doc.id}>
+                      <TableCell className="text-xs">{doc.name}</TableCell>
+                      <TableCell className="text-xs">{doc.type}</TableCell>
                       <TableCell className="text-xs">
-                        {asset.warrantyExpirationDate 
-                          ? format(new Date(asset.warrantyExpirationDate), "MMM dd, yyyy")
+                        {doc.expires 
+                          ? format(new Date(doc.expires), "MMM dd, yyyy")
                           : "N/A"}
                       </TableCell>
                     </TableRow>
@@ -113,9 +111,9 @@ export function WarrantyExpiredWidget() {
               </Table>
             </div>
             
-            {expiredWarrantyAssets.length > 10 && (
+            {expiredDocuments.length > 10 && (
               <div className="text-xs text-muted-foreground text-center mt-2">
-                Showing 10 of {expiredWarrantyAssets.length} items
+                Showing 10 of {expiredDocuments.length} items
               </div>
             )}
           </div>

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
+import { TrendingUp, TrendingDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
 
@@ -45,7 +45,6 @@ export function WorkOrdersCreatedClosedWidget() {
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle className="text-lg font-semibold">Work Orders This Week</CardTitle>
-        <ArrowRight className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="space-y-3">
         {/* Compact Metrics Row */}

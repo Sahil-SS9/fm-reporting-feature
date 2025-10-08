@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, TrendingUp, TrendingDown, ArrowRight, Target, BarChart3 } from "lucide-react";
+import { Clock, TrendingUp, TrendingDown, Target, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockWorkOrders } from "@/data/mockData";
 import { MiniTrendChart, VerticalBarChart } from "@/components/ui/enhanced-charts";
@@ -61,7 +61,6 @@ export function EnhancedAverageCompletionTimeWidget() {
           <Badge variant={isImproving ? "default" : "secondary"} className="text-xs">
             {isImproving ? "Improving" : "Trending Up"}
           </Badge>
-          <ArrowRight className="h-4 w-4 text-muted-foreground" />
         </div>
       </CardHeader>
       <CardContent className="space-y-4">

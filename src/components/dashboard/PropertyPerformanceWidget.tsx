@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Building2, TrendingUp, TrendingDown, ArrowRight, Award } from "lucide-react";
+import { Building2, TrendingUp, TrendingDown, Award } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockProperties, mockWorkOrders, mockAssets } from "@/data/mockData";
 import { RadialProgress, SemiCircularGauge } from "@/components/ui/enhanced-charts";
@@ -80,7 +80,6 @@ export function PropertyPerformanceWidget() {
             >
               {needsAttentionProperties.length} Need Attention
             </Badge>
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
           </div>
         </CardTitle>
       </CardHeader>

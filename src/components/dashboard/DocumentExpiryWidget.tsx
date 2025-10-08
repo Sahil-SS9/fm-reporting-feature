@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, AlertCircle, Clock, ArrowRight } from "lucide-react";
+import { FileText, AlertCircle, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockDocuments } from "@/data/mockData";
 import { cn } from "@/lib/utils";
@@ -60,21 +60,18 @@ export function DocumentExpiryWidget() {
             <FileText className="h-5 w-5 text-primary" />
             <span>Document Expiry</span>
           </div>
-          <div className="flex items-center space-x-2">
-            {totalExpiringDocuments > 0 ? (
-              <Badge 
-                variant={expiredDocuments.length > 0 || expiringIn7Days.length > 0 ? "destructive" : "outline"} 
-                className="text-xs"
-              >
-                {totalExpiringDocuments} Expiring
-              </Badge>
-            ) : (
-              <Badge variant="secondary" className="text-xs">
-                All Current
-              </Badge>
-            )}
-            <ArrowRight className="h-4 w-4 text-muted-foreground" />
-          </div>
+          {totalExpiringDocuments > 0 ? (
+            <Badge 
+              variant={expiredDocuments.length > 0 || expiringIn7Days.length > 0 ? "destructive" : "outline"} 
+              className="text-xs"
+            >
+              {totalExpiringDocuments} Expiring
+            </Badge>
+          ) : (
+            <Badge variant="secondary" className="text-xs">
+              All Current
+            </Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
