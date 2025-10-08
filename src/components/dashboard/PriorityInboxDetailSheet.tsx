@@ -224,6 +224,13 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
 
   const renderInvoiceDetails = () => {
     const invoice = mockInvoices.find(inv => inv.id === item.id);
+    
+    // Helper to create a valid date or fallback
+    const getValidDate = (dateStr: string) => {
+      const date = new Date(dateStr);
+      return isNaN(date.getTime()) ? new Date().toISOString().split('T')[0] : dateStr;
+    };
+    
     // Fallback to creating invoice from item data if not found in mockInvoices
     const invoiceData = invoice || {
       id: item.id,
@@ -233,7 +240,7 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
       contractorTenant: "Contractor",
       amount: 5000.00,
       dateIssued: "2025-01-15",
-      dueDate: item.dueDate,
+      dueDate: getValidDate(item.dueDate || "2025-01-30"),
       paymentStatus: item.status as any,
       taxRate: 0,
       propertyId: "1"
@@ -309,13 +316,21 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <div>
                 <label className="text-sm font-medium text-foreground">Date Issued</label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {invoiceData.dateIssued ? format(new Date(invoiceData.dateIssued), "dd/MM/yyyy") : "No issued date"}
+                  {(() => {
+                    if (!invoiceData.dateIssued) return "No issued date";
+                    const date = new Date(invoiceData.dateIssued);
+                    return isNaN(date.getTime()) ? "Invalid date" : format(date, "dd/MM/yyyy");
+                  })()}
                 </p>
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground">Due Date</label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {invoiceData.dueDate ? format(new Date(invoiceData.dueDate), "dd/MM/yyyy") : "No due date"}
+                  {(() => {
+                    if (!invoiceData.dueDate) return "No due date";
+                    const date = new Date(invoiceData.dueDate);
+                    return isNaN(date.getTime()) ? "Invalid date" : format(date, "dd/MM/yyyy");
+                  })()}
                 </p>
               </div>
             </div>
@@ -346,7 +361,12 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <label className="text-sm font-medium text-foreground mb-2 block">Payment Date</label>
               <div className="flex items-center border rounded-md px-3 py-2">
                 <span className="text-sm text-muted-foreground">
-                  {invoiceData.paymentStatus === "Paid" ? format(new Date(invoiceData.dateIssued), "dd/MM/yyyy") : "Not paid"}
+                  {(() => {
+                    if (invoiceData.paymentStatus !== "Paid") return "Not paid";
+                    if (!invoiceData.dateIssued) return "Not paid";
+                    const date = new Date(invoiceData.dateIssued);
+                    return isNaN(date.getTime()) ? "Not paid" : format(date, "dd/MM/yyyy");
+                  })()}
                 </span>
                 <Calendar className="h-4 w-4 ml-auto text-muted-foreground" />
               </div>
@@ -504,7 +524,11 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
                 <div>
                   <label className="text-sm font-medium text-foreground">Installation date</label>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {assetData.installationDate ? format(new Date(assetData.installationDate), "dd/MM/yyyy") : "-"}
+                    {(() => {
+                      if (!assetData.installationDate) return "-";
+                      const date = new Date(assetData.installationDate);
+                      return isNaN(date.getTime()) ? "-" : format(date, "dd/MM/yyyy");
+                    })()}
                   </p>
                 </div>
                 <div>
@@ -540,7 +564,11 @@ export function PriorityInboxDetailSheet({ item, open, onOpenChange }: PriorityI
               <div>
                 <label className="text-sm font-medium text-foreground">Warranty expiration date</label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {assetData.warrantyExpirationDate ? format(new Date(assetData.warrantyExpirationDate), "dd/MM/yyyy") : "-"}
+                  {(() => {
+                    if (!assetData.warrantyExpirationDate) return "-";
+                    const date = new Date(assetData.warrantyExpirationDate);
+                    return isNaN(date.getTime()) ? "-" : format(date, "dd/MM/yyyy");
+                  })()}
                 </p>
               </div>
 
